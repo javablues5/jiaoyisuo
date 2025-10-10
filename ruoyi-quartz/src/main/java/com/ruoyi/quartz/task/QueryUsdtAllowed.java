@@ -9,7 +9,6 @@ import com.ruoyi.common.eth.EthUtils;
 import com.ruoyi.common.trc.TronUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.telegrambot.MyTelegramBot;
-import com.sun.org.apache.bcel.internal.generic.SWITCH;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;

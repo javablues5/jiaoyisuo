@@ -404,17 +404,17 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.47</version>
         </dependency>
-        <dependency>
-            <groupId>com.huobi.linear.swap.api</groupId>
-            <artifactId>huobi-linear-swap-api</artifactId>
-            <version>1.0.1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.servlet</groupId>
-                    <artifactId>servlet-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.huobi.linear.swap.api</groupId>-->
+<!--            <artifactId>huobi-linear-swap-api</artifactId>-->
+<!--            <version>1.0.1</version>-->
+<!--            <exclusions>-->
+<!--                <exclusion>-->
+<!--                    <groupId>javax.servlet</groupId>-->
+<!--                    <artifactId>servlet-api</artifactId>-->
+<!--                </exclusion>-->
+<!--            </exclusions>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>io.github.binance</groupId>
             <artifactId>binance-connector-java</artifactId>

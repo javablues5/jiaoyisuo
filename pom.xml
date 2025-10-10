@@ -217,31 +217,56 @@
         </plugins>
     </build>
 
+<!--    <repositories>-->
+<!--        <repository>-->
+<!--            <id>echo2-group</id>-->
+<!--            <name>echo2-group</name>-->
+<!--            <url>https://nexus.ok6.cc/repository/echo2-group/</url>-->
+<!--            <releases>-->
+<!--                <enabled>true</enabled>-->
+<!--            </releases>-->
+<!--        </repository>-->
+<!--    </repositories>-->
+
+<!--    <distributionManagement>-->
+<!--        <repository>-->
+<!--            <id>echo2-group</id>-->
+<!--            <name>echo2-group</name>-->
+<!--            <url>https://nexus.ok6.cc/repository/echo2-group/</url>-->
+<!--            <uniqueVersion>true</uniqueVersion>-->
+<!--        </repository>-->
+<!--    </distributionManagement>-->
+
+<!--    <pluginRepositories>-->
+<!--        <pluginRepository>-->
+<!--            <id>echo2-group</id>-->
+<!--            <name>echo2-group</name>-->
+<!--            <url>https://nexus.ok6.cc/repository/echo2-group/</url>-->
+<!--            <releases>-->
+<!--                <enabled>true</enabled>-->
+<!--            </releases>-->
+<!--            <snapshots>-->
+<!--                <enabled>false</enabled>-->
+<!--            </snapshots>-->
+<!--        </pluginRepository>-->
+<!--    </pluginRepositories>-->
+
     <repositories>
         <repository>
-            <id>echo2-group</id>
-            <name>echo2-group</name>
-            <url>https://nexus.ok6.cc/repository/echo2-group/</url>
+            <id>public</id>
+            <name>aliyun nexus</name>
+            <url>https://maven.aliyun.com/repository/public</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
         </repository>
     </repositories>
 
-    <distributionManagement>
-        <repository>
-            <id>echo2-group</id>
-            <name>echo2-group</name>
-            <url>https://nexus.ok6.cc/repository/echo2-group/</url>
-            <uniqueVersion>true</uniqueVersion>
-        </repository>
-    </distributionManagement>
-
     <pluginRepositories>
         <pluginRepository>
-            <id>echo2-group</id>
-            <name>echo2-group</name>
-            <url>https://nexus.ok6.cc/repository/echo2-group/</url>
+            <id>public</id>
+            <name>aliyun nexus</name>
+            <url>https://maven.aliyun.com/repository/public</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
