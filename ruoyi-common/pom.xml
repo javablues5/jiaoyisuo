@@ -52,13 +52,13 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
-  
+
         <!-- JSON工具类 -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
-        
+
         <!-- 动态数据源 -->
 		<dependency>
 			<groupId>com.baomidou</groupId>
@@ -287,6 +287,13 @@
             <version>5.3.5</version>
         </dependency>
         <!--trx-->
+        <dependency>
+            <groupId>com.huobi.linear.swap.api</groupId>
+            <artifactId>huobi-linear-swap-api</artifactId>
+            <version>1.0.1</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/src/lib/huobi-linear-swap-api-1.0.1.jar</systemPath>
+        </dependency>
         <dependency>
             <groupId>org.tron.trident</groupId>
             <artifactId>abi</artifactId>
