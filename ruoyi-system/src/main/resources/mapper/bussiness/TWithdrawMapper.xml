@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.bussiness.mapper.TWithdrawMapper">
+
+    <resultMap type="TWithdraw" id="TWithdrawResult">
+        <result property="id"    column="id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="userId"    column="user_id"    />
+        <result property="username"    column="username"    />
+        <result property="address"    column="address"    />
+        <result property="amount"    column="amount"    />
+        <result property="status"    column="status"    />
+        <result property="serialId"    column="serial_id"    />
+        <result property="searchValue"    column="search_value"    />
+        <result property="fromAddr"    column="from_addr"    />
+        <result property="type"    column="type"    />
+        <result property="coin"    column="coin"    />
+        <result property="ratio"    column="ratio"    />
+        <result property="fee"    column="fee"    />
+        <result property="withdrawId"    column="withdraw_id"    />
+        <result property="host"    column="host"    />
+        <result property="realAmount"    column="real_amount"    />
+        <result property="toAdress"    column="to_adress"    />
+        <result property="noticeFlag"    column="notice_flag"    />
+        <result property="withDrawRemark"    column="with_draw_remark"    />
+        <result property="bankName"    column="bank_name"    />
+        <result property="bankUserName"    column="bank_user_name"    />
+        <result property="bankBranch"    column="bank_branch"    />
+        <result property="adminParentIds"    column="admin_parent_ids"    />
+        <result property="fixedFee" column="fixed_fee"/>
+        <result property="orderType" column="order_type"/>
+        <result property="exchangeRate" column="exchange_rate"/>
+        <result property="receiptAmount" column="receipt_amount"/>
+        <result property="receiptRealAmount" column="receipt_real_amount"/>
+        <result property="receiptCoin" column="receipt_coin"/>
+    </resultMap>
+
+    <sql id="selectTWithdrawVo">
+        select id, create_by, create_time, update_by, update_time, remark, user_id, username,
+               address, amount, status, serial_id, search_value, from_addr, type, coin, ratio,
+               fee, withdraw_id, host, real_amount, to_adress, admin_parent_ids, notice_flag,
+               with_draw_remark, bank_name, bank_user_name, bank_branch,order_type, exchange_rate,
+               receipt_amount,receipt_real_amount,receipt_coin
+        from t_withdraw
+    </sql>
+
+    <select id="selectTWithdrawList" parameterType="TWithdraw" resultType="TWithdraw">
+        SELECT
+        ANY_VALUE(w.id) AS id,
+        ANY_VALUE(w.create_by) AS createBy,
+        MAX(w.create_time) AS createTime,  <!-- 使用 MAX 用于排序 -->
+        ANY_VALUE(w.update_by) AS updateBy,
+        ANY_VALUE(w.update_time) AS updateTime,
+        ANY_VALUE(w.remark) AS remark,
+        ANY_VALUE(w.user_id) AS userId,
+        ANY_VALUE(w.username) AS username,
+        ANY_VALUE(w.address) AS address,
+        ANY_VALUE(w.amount) AS amount,
+        ANY_VALUE(w.STATUS) AS status,
+        w.serial_id AS serialId,
+        ANY_VALUE(w.search_value) AS searchValue,
+        ANY_VALUE(w.from_addr) AS fromAddr,
+        ANY_VALUE(w.type) AS type,
+        ANY_VALUE(w.coin) AS coin,
+        ANY_VALUE(w.ratio) AS ratio,
+        ANY_VALUE(w.fee) AS fee,
+        ANY_VALUE(w.withdraw_id) AS withdrawId,
+        ANY_VALUE(w.HOST) AS host,
+        ANY_VALUE(w.real_amount) AS realAmount,
+        ANY_VALUE(w.to_adress) AS toAdress,
+        ANY_VALUE(w.admin_parent_ids) AS adminParentIds,
+        ANY_VALUE(w.notice_flag) AS noticeFlag,
+        ANY_VALUE(w.with_draw_remark) AS withDrawRemark,
+        ANY_VALUE(w.bank_name) AS bankName,
+        ANY_VALUE(w.bank_user_name) AS bankUserName,
+        ANY_VALUE(w.bank_branch) AS bankBranch,
+        ANY_VALUE(w.fixed_fee) AS fixedFee,
+        ANY_VALUE(w.order_type) AS orderType,
+        ANY_VALUE(w.exchange_rate) AS exchangeRate,
+        ANY_VALUE(w.receipt_amount) AS receiptAmount,
+        ANY_VALUE(w.receipt_real_amount) AS receiptRealAmount,
+        ANY_VALUE(w.receipt_coin) AS receiptCoin,
+        ANY_VALUE(u.is_test) AS isTest,
+        ANY_VALUE(r.u_amount) AS uamount
+        FROM t_withdraw w
+        LEFT JOIN t_app_user u ON w.user_id = u.user_id
+        LEFT JOIN t_app_wallet_record r ON r.serial_id = w.serial_id AND (r.type = '2' OR r.type = '8' OR r.type = '50')
+        <where>
+            <if test="orderType != null and orderType != '' and orderType != '-1'">
+                <choose>
+                    <when test="orderType == 2">
+                        AND w.order_type = #{orderType}
+                    </when>
+                    <otherwise>
+                        AND (w.order_type = #{orderType} OR w.order_type IS NULL)
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="isTest != null"> AND u.is_test = #{isTest}</if>
+            <if test="userId != null"> AND w.user_id = #{userId}</if>
+            <if test="username != null and username != ''"> AND w.username LIKE CONCAT('%', #{username}, '%')</if>
+            <if test="address != null and address != ''"> AND w.address = #{address}</if>
+            <if test="maxAmount != null"> AND w.amount &lt;= #{maxAmount}</if>
+            <if test="minAmount != null"> AND w.amount &gt;= #{minAmount}</if>
+            <if test="status != null"> AND w.status = #{status}</if>
+            <if test="serialId != null and serialId != ''"> AND w.serial_id = #{serialId}</if>
+            <if test="searchValue != null and searchValue != ''"> AND w.search_value = #{searchValue}</if>
+            <if test="fromAddr != null and fromAddr != ''"> AND w.from_addr = #{fromAddr}</if>
+            <if test="type != null and type != ''"> AND w.type = #{type}</if>
+            <if test="coin != null and coin != ''"> AND w.coin = #{coin}</if>
+            <if test="ratio != null"> AND w.ratio = #{ratio}</if>
+            <if test="fee != null"> AND w.fee = #{fee}</if>
+            <if test="withdrawId != null and withdrawId != ''"> AND w.withdraw_id = #{withdrawId}</if>
+            <if test="host != null and host != ''"> AND w.host = #{host}</if>
+            <if test="realAmount != null"> AND w.real_amount = #{realAmount}</if>
+            <if test="toAdress != null and toAdress != ''"> AND to_adress = #{toAdress}</if>
+            <if test="noticeFlag != null"> AND w.notice_flag = #{noticeFlag}</if>
+            <if test="withDrawRemark != null and withDrawRemark != ''"> AND w.with_draw_remark = #{withDrawRemark}</if>
+            <if test="bankName != null and bankName != ''"> AND w.bank_name LIKE CONCAT('%', #{bankName}, '%')</if>
+            <if test="bankUserName != null and bankUserName != ''"> AND w.bank_user_name LIKE CONCAT('%', #{bankUserName}, '%')</if>
+            <if test="bankBranch != null and bankBranch != ''"> AND w.bank_branch = #{bankBranch}</if>
+            <if test="adminParentIds != null and adminParentIds != ''"> AND FIND_IN_SET(#{adminParentIds}, w.admin_parent_ids)</if>
+            <if test="params != null">
+                <if test="params.startOperateTime != null and params.startOperateTime != ''">
+                    AND DATE_FORMAT(w.operate_time, '%Y-%m-%d %H:%i:%s') &gt;= DATE_FORMAT(#{params.startOperateTime}, '%Y-%m-%d %H:%i:%s')
+                </if>
+                <if test="params.endOperateTime != null and params.endOperateTime != ''">
+                    AND DATE_FORMAT(w.operate_time, '%Y-%m-%d %H:%i:%s') &lt;= DATE_FORMAT(#{params.endOperateTime}, '%Y-%m-%d %H:%i:%s')
+                </if>
+                <if test="params.beginTime != null and params.beginTime != ''">
+                    AND DATE_FORMAT(w.create_time, '%Y-%m-%d %H:%i:%s') &gt;= DATE_FORMAT(#{params.beginTime}, '%Y-%m-%d %H:%i:%s')
+                </if>
+                <if test="params.endTime != null and params.endTime != ''">
+                    AND DATE_FORMAT(w.create_time, '%Y-%m-%d %H:%i:%s') &lt;= DATE_FORMAT(#{params.endTime}, '%Y-%m-%d %H:%i:%s')
+                </if>
+            </if>
+        </where>
+        GROUP BY w.serial_id
+        ORDER BY MAX(w.create_time) DESC  <!-- 使用聚合函数排序 -->
+    </select>
+
+    <select id="selectTWithdrawById" parameterType="Long" resultMap="TWithdrawResult">
+        <include refid="selectTWithdrawVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectTWithdrawVoice" resultType="com.ruoyi.bussiness.domain.TWithdraw">
+        select  * from t_withdraw w
+        where w.status=0
+        <if test="parentId != null  and  parentId!= '' ">
+            and find_in_set(#{parentId},w.admin_user_ids)
+        </if>
+    </select>
+    <select id="getAllWithdraw" resultType="java.math.BigDecimal">
+        SELECT
+            IFNULL(SUM(t.u_amount),0)
+        FROM
+            t_withdraw w
+                LEFT JOIN t_app_user u ON w.user_id = u.user_id
+                LEFT JOIN t_app_wallet_record t ON t.serial_id = w.serial_id
+        WHERE
+            u.is_test = 0
+            and w.status != 2
+            <if test="type !=null">
+                <choose>
+                    <when test="type == -1">
+                        AND (t.`type` = 2 or  t.`type` = 50)
+                    </when>
+                    <otherwise>
+                        AND t.`type` =  #{type}
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="parentId != null and parentId!=''">
+                AND find_in_set(#{parentId},w.admin_parent_ids)
+            </if>
+            AND w.user_id IN (
+                SELECT
+                    u1.user_id
+                FROM
+                    t_app_user u1)
+    </select>
+    <select id="selectFreezeList" resultType="WithdrawFreezeVO"
+            parameterType="com.ruoyi.bussiness.domain.TWithdraw">
+        SELECT coin AS coin,SUM(amount) AS price FROM t_withdraw WHERE `status` = #{status} and user_id = #{userId}
+        GROUP BY coin
+    </select>
+
+    <insert id="insertTWithdraw" parameterType="TWithdraw" useGeneratedKeys="true" keyProperty="id">
+        insert into t_withdraw
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="username != null">username,</if>
+            <if test="address != null">address,</if>
+            <if test="amount != null">amount,</if>
+            <if test="status != null">status,</if>
+            <if test="serialId != null">serial_id,</if>
+            <if test="searchValue != null">search_value,</if>
+            <if test="fromAddr != null">from_addr,</if>
+            <if test="type != null">type,</if>
+            <if test="coin != null">coin,</if>
+            <if test="ratio != null">ratio,</if>
+            <if test="fee != null">fee,</if>
+            <if test="withdrawId != null">withdraw_id,</if>
+            <if test="host != null">host,</if>
+            <if test="realAmount != null">real_amount,</if>
+            <if test="toAdress != null">to_adress,</if>
+            <if test="adminParentIds != null">admin_parent_ids,</if>
+            <if test="noticeFlag != null">notice_flag,</if>
+            <if test="withDrawRemark != null">with_draw_remark,</if>
+            <if test="bankName != null">bank_name,</if>
+            <if test="bankUserName != null">bank_user_name,</if>
+            <if test="bankBranch != null">bank_branch,</if>
+            <if test="fixedFee !=null">fixed_fee,</if>
+            <if test="orderType !=null">order_type,</if>
+            <if test="exchangeRate !=null">exchange_rate,</if>
+            <if test="receiptAmount !=null">receipt_amount,</if>
+            <if test="receiptRealAmount !=null">receipt_real_amount,</if>
+            <if test="receiptCoin !=null">receipt_coin,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="username != null">#{username},</if>
+            <if test="address != null">#{address},</if>
+            <if test="amount != null">#{amount},</if>
+            <if test="status != null">#{status},</if>
+            <if test="serialId != null">#{serialId},</if>
+            <if test="searchValue != null">#{searchValue},</if>
+            <if test="fromAddr != null">#{fromAddr},</if>
+            <if test="type != null">#{type},</if>
+            <if test="coin != null">#{coin},</if>
+            <if test="ratio != null">#{ratio},</if>
+            <if test="fee != null">#{fee},</if>
+            <if test="withdrawId != null">#{withdrawId},</if>
+            <if test="host != null">#{host},</if>
+            <if test="realAmount != null">#{realAmount},</if>
+            <if test="toAdress != null">#{toAdress},</if>
+            <if test="adminParentIds != null">#{adminParentIds},</if>
+            <if test="noticeFlag != null">#{noticeFlag},</if>
+            <if test="withDrawRemark != null">#{withDrawRemark},</if>
+            <if test="bankName != null">#{bankName},</if>
+            <if test="bankUserName != null">#{bankUserName},</if>
+            <if test="bankBranch != null">#{bankBranch},</if>
+            <if test="fixedFee != null">#{fixedFee},</if>
+            <if test="orderType != null">#{orderType},</if>
+            <if test="exchangeRate != null">#{exchangeRate},</if>
+            <if test="receiptAmount != null">#{receiptAmount},</if>
+            <if test="receiptRealAmount != null">#{receiptRealAmount},</if>
+            <if test="receiptCoin != null">#{receiptCoin},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTWithdraw" parameterType="TWithdraw">
+        update t_withdraw
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="username != null">username = #{username},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="amount != null">amount = #{amount},</if>
+            <if test="status != null ">status = #{status},</if>
+            <if test="serialId != null">serial_id = #{serialId},</if>
+            <if test="searchValue != null">search_value = #{searchValue},</if>
+            <if test="fromAddr != null">from_addr = #{fromAddr},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="coin != null">coin = #{coin},</if>
+            <if test="ratio != null">ratio = #{ratio},</if>
+            <if test="fee != null">fee = #{fee},</if>
+            <if test="withdrawId != null">withdraw_id = #{withdrawId},</if>
+            <if test="host != null">host = #{host},</if>
+            <if test="realAmount != null">real_amount = #{realAmount},</if>
+            <if test="toAdress != null">to_adress = #{toAdress},</if>
+            <if test="adminParentIds != null">admin_parent_ids = #{adminParentIds},</if>
+            <if test="noticeFlag != null">notice_flag = #{noticeFlag},</if>
+            <if test="withDrawRemark != null">with_draw_remark = #{withDrawRemark},</if>
+            <if test="bankName != null">bank_name = #{bankName},</if>
+            <if test="bankUserName != null">bank_user_name = #{bankUserName},</if>
+            <if test="bankBranch != null">bank_branch = #{bankBranch},</if>
+            <if test="fixedFee !=null">fixed_fee = #{fixedFee},</if>
+            <if test="orderType !=null">order_type = #{orderType},</if>
+            <if test="exchangeRate !=null">exchange_rate = #{exchangeRate},</if>
+            <if test="receiptAmount !=null">receipt_amount = #{receiptAmount},</if>
+            <if test="receiptRealAmount !=null">receipt_real_amount = #{receiptRealAmount},</if>
+            <if test="receiptCoin !=null">receipt_coin = #{receiptCoin},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTWithdrawById" parameterType="Long">
+        delete from t_withdraw where id = #{id}
+    </delete>
+
+    <delete id="deleteTWithdrawByIds" parameterType="String">
+        delete from t_withdraw where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getWeekWithdraw" resultType="java.util.Map">
+        SELECT
+            DATE_FORMAT(w.create_time,'%Y-%m-%d') as createTime,
+            IFNULL(SUM(t.u_amount),0) as withdraw
+        FROM
+            t_withdraw w
+        LEFT JOIN t_app_user u ON w.user_id = u.user_id
+        LEFT JOIN t_app_wallet_record t ON t.serial_id = w.serial_id
+        WHERE
+            u.is_test = 0
+            AND w.`status` = 1
+            AND (w.order_type = 1 OR w.order_type IS NULL)
+            <if test="parentId != null and parentId!=''">
+                AND find_in_set(#{parentId},w.admin_parent_ids)
+            </if>
+            AND DATE_SUB(CURDATE(), INTERVAL 7 DAY)  <![CDATA[<]]> DATE(w.create_time)
+            AND w.user_id IN (SELECT u1.user_id FROM t_app_user u1)
+        GROUP BY createTime;
+    </select>
+
+    <select id="getWeekFailedWithdraw" resultType="java.util.Map">
+        SELECT
+            DATE_FORMAT(w.create_time,'%Y-%m-%d') as createTime,
+            IFNULL(SUM(w.amount),0) as withdraw
+        FROM
+            t_withdraw w
+        LEFT JOIN t_app_user u ON w.user_id = u.user_id
+        WHERE
+            u.is_test = 0
+            AND w.`status` = 2
+            AND (w.order_type = 1 OR w.order_type IS NULL)
+            <if test="parentId != null and parentId!=''">
+                AND find_in_set(#{parentId},w.admin_parent_ids)
+            </if>
+            AND DATE_SUB(CURDATE(), INTERVAL 7 DAY)  <![CDATA[<]]> DATE(w.create_time)
+            AND w.user_id IN (SELECT u1.user_id FROM t_app_user u1)
+        GROUP BY createTime;
+    </select>
+    <select id="getCountByUserId" parameterType="Long" resultType="java.lang.Integer">
+        select count(id) from t_withdraw where user_id = #{userId} and (status = 0  or status =3)
+    </select>
+
+</mapper>
