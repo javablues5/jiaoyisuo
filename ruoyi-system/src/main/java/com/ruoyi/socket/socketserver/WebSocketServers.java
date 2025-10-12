@@ -88,8 +88,12 @@ public class WebSocketServers {
             redisCache.deleteObject(this.userId);
             //DETAIL   TRADE   KLINE
             List<String> detail = detailMap.get("DETAIL");
-            detail.remove(userId);
-            detailMap.put("DETAIL",detail);
+            if (detail!=null && detail.contains(userId)) {
+                detail.remove(userId);
+                detailMap.put("DETAIL",detail);
+            }
+//            detail.remove(userId);
+//            detailMap.put("DETAIL",detail);
             for (Map.Entry<String,  List<String>> entry : klineMap.entrySet()) {
                 List<String> value = entry.getValue();
                 value.remove(userId);

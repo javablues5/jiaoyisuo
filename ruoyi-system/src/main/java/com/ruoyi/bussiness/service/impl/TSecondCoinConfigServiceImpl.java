@@ -232,8 +232,10 @@ public class TSecondCoinConfigServiceImpl extends ServiceImpl<TSecondCoinConfigM
             BigDecimal cacheObject = redisCache.getCacheObject(CachePrefix.CURRENCY_PRICE.getPrefix() + tSecondCoinConfig1.getCoin());
             symbolCoinConfigVO.setAmount(cacheObject);
             String logo = tSecondCoinConfig1.getLogo();
-            if(logo.contains("echo-res")){
+            if(logo!=null && logo.contains("echo-res")){
                 symbolCoinConfigVO.setLogo(logo);
+            }else if (logo==null){
+                symbolCoinConfigVO.setLogo("");
             }else {
                 symbolCoinConfigVO.setLogo("https://taizi00123.oss-cn-hongkong.aliyuncs.com/waihui"+logo.substring(logo.lastIndexOf("/"),logo.length()));
             }
