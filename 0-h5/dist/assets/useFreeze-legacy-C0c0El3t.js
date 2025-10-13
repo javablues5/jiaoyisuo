@@ -1,0 +1,1 @@
+System.register(["./index-legacy-DeCpTJ6v.js"],(function(e,t){"use strict";var s,r;return{setters:[e=>{s=e.f,r=e.h}],execute:function(){e("u",(()=>{const e=s().userInfo.user.status;return{_isFreeze:(t=[])=>!t.includes(__config._APP_ENV)||!e||(r("event_freezePopup"),!1)}}))}}}));
