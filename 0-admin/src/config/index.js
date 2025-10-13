@@ -12,9 +12,9 @@ const getMainDomain = (url = location.host) => {
 export const loadAppConfig = () => {
   window.__config = {
     _BASE_API:
-      process.env.VUE_APP_BASE_API || `http://47.76.27.203:8080`,
+      process.env.VUE_APP_BASE_API || `http://127.0.0.1:8080`,
     _BASE_WSS:
-      process.env.VUE_APP_BASE_WSS || `ws://47.76.27.203:8080`,
+      process.env.VUE_APP_BASE_WSS || `ws://127.0.0.1:8080`,
   };
 
   for (const key in process.env) {
