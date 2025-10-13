@@ -1,7 +1,0 @@
-vendor
-.idea
-runtime
-.git
-.DS_Store
-.gitignore
-.ignore-files
