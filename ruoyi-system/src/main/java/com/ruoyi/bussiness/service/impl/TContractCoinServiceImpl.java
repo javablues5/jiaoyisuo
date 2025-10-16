@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -149,24 +150,44 @@ public class TContractCoinServiceImpl extends ServiceImpl<TContractCoinMapper, T
         tContractCoin.setVisible(0L);
         List<TContractCoin> list = tContractCoinMapper.selectTContractCoinList(tContractCoin);
         list =list.stream().sorted(Comparator.comparing(TContractCoin::getSort)).collect(Collectors.toList());
+
+        List<TUserCoin> userCoins = new ArrayList<>();
+        if(StpUtil.isLogin()) {
+            LambdaQueryWrapper<TUserCoin> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(TUserCoin::getUserId, StpUtil.getLoginIdAsLong());
+            userCoins = userCoinMapper.selectList(queryWrapper);
+        }
+
         for (TContractCoin tContractCoin1: list) {
             String logo = tContractCoin1.getLogo();
-            if(logo.contains("echo-res")){
-                tContractCoin1.setLogo(logo);
-            }else {
-                tContractCoin1.setLogo(" https://taizi00123.oss-cn-hongkong.aliyuncs.com/waihui"+    logo.substring(logo.lastIndexOf("/"),logo.length()));
+            if (logo==null) tContractCoin1.setLogo("");
+//            if (logo==null){
+//                tContractCoin1.setLogo("");
+//            }else {
+//                if(logo.contains("echo-res")){
+//                    tContractCoin1.setLogo(logo);
+//                }else {
+//                    tContractCoin1.setLogo(" https://taizi00123.oss-cn-hongkong.aliyuncs.com/waihui"+    logo.substring(logo.lastIndexOf("/"),logo.length()));
+//                }
+//            }
+
+            for (TUserCoin coin : userCoins) {
+                boolean b = tContractCoin1.getCoin().toLowerCase().equals(coin.getCoin());
+                tContractCoin1.setIsCollect(b?1:2);
             }
-            LambdaQueryWrapper<TUserCoin> queryWrapper = new LambdaQueryWrapper<TUserCoin>();
-            queryWrapper.eq(TUserCoin::getCoin, tContractCoin1.getCoin().toLowerCase());
-            if(StpUtil.isLogin()){
-                queryWrapper.eq(TUserCoin::getUserId, StpUtil.getLoginIdAsLong());
-                TUserCoin userCoin = userCoinMapper.selectOne(queryWrapper);
-                if(ObjectUtils.isNotEmpty(userCoin)){
-                    tContractCoin1.setIsCollect(1);
-                }else {
-                    tContractCoin1.setIsCollect(2);
-                }
-            }
+
+
+//            LambdaQueryWrapper<TUserCoin> queryWrapper = new LambdaQueryWrapper<TUserCoin>();
+//            queryWrapper.eq(TUserCoin::getCoin, tContractCoin1.getCoin().toLowerCase());
+//            if(StpUtil.isLogin()){
+//                queryWrapper.eq(TUserCoin::getUserId, StpUtil.getLoginIdAsLong());
+//                TUserCoin userCoin = userCoinMapper.selectOne(queryWrapper);
+//                if(ObjectUtils.isNotEmpty(userCoin)){
+//                    tContractCoin1.setIsCollect(1);
+//                }else {
+//                    tContractCoin1.setIsCollect(2);
+//                }
+//            }
         }
         return list;
     }

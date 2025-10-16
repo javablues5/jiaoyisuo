@@ -69,6 +69,6 @@ private static final long serialVersionUID=1L;
     /**
      * 币种
      */
-    private String coin;
+    //private String coin;
 
 }

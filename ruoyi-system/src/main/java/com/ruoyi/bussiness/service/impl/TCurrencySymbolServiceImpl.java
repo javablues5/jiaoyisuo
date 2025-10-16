@@ -183,24 +183,40 @@ public class TCurrencySymbolServiceImpl extends ServiceImpl<TCurrencySymbolMappe
         tCurrencySymbol.setEnable("1");
         tCurrencySymbol.setIsShow("1");
         List<TCurrencySymbol> tCurrencySymbols = tCurrencySymbolMapper.selectTCurrencySymbolList(tCurrencySymbol);
+
+        List<TUserCoin> userCoins = new ArrayList<>();
+        if(StpUtil.isLogin()) {
+            LambdaQueryWrapper<TUserCoin> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(TUserCoin::getUserId, StpUtil.getLoginIdAsLong());
+            userCoins = userCoinMapper.selectList(queryWrapper);
+        }
+
         for (TCurrencySymbol tCurrencySymbol1: tCurrencySymbols) {
             String logo = tCurrencySymbol1.getLogo();
-            if(logo.contains("echo-res")){
-                tCurrencySymbol1.setLogo(logo);
-            }else {
-                tCurrencySymbol1.setLogo(" https://taizi00123.oss-cn-hongkong.aliyuncs.com/waihui"+    logo.substring(logo.lastIndexOf("/"),logo.length()));
+            if (logo==null) tCurrencySymbol1.setLogo("");
+//            if(logo.contains("echo-res")){
+//                tCurrencySymbol1.setLogo(logo);
+//            }else {
+//                tCurrencySymbol1.setLogo(" https://taizi00123.oss-cn-hongkong.aliyuncs.com/waihui"+    logo.substring(logo.lastIndexOf("/"),logo.length()));
+//            }
+
+            for (TUserCoin coin : userCoins) {
+                boolean b = tCurrencySymbol1.getCoin().toLowerCase().equals(coin.getCoin());
+                tCurrencySymbol1.setIsCollect(b?1:2);
             }
-            LambdaQueryWrapper<TUserCoin> queryWrapper = new LambdaQueryWrapper<TUserCoin>();
-            queryWrapper.eq(TUserCoin::getCoin, tCurrencySymbol1.getCoin().toLowerCase());
-            if(StpUtil.isLogin()){
-                queryWrapper.eq(TUserCoin::getUserId, StpUtil.getLoginIdAsLong());
-                TUserCoin userCoin = userCoinMapper.selectOne(queryWrapper);
-                if(ObjectUtils.isNotEmpty(userCoin)){
-                    tCurrencySymbol1.setIsCollect(1);
-                }else {
-                    tCurrencySymbol1.setIsCollect(2);
-                }
-            }
+
+
+//            LambdaQueryWrapper<TUserCoin> queryWrapper = new LambdaQueryWrapper<TUserCoin>();
+//            queryWrapper.eq(TUserCoin::getCoin, tCurrencySymbol1.getCoin().toLowerCase());
+//            if(StpUtil.isLogin()){
+//                queryWrapper.eq(TUserCoin::getUserId, StpUtil.getLoginIdAsLong());
+//                TUserCoin userCoin = userCoinMapper.selectOne(queryWrapper);
+//                if(ObjectUtils.isNotEmpty(userCoin)){
+//                    tCurrencySymbol1.setIsCollect(1);
+//                }else {
+//                    tCurrencySymbol1.setIsCollect(2);
+//                }
+//            }
         }
         return tCurrencySymbols;
     }

@@ -2,11 +2,12 @@ package com.ruoyi.web.controller.common;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -54,6 +55,7 @@ import com.ruoyi.framework.config.ServerConfig;
 public class CommonController
 {
     private static final Logger log = LoggerFactory.getLogger(CommonController.class);
+    private final ExecutorService executorService = Executors.newFixedThreadPool(10);
 
     @Resource
     private RedisCache redisCache;
@@ -98,56 +100,87 @@ public class CommonController
         }
     }
 
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
+
     @ApiOperation(value = "获取币种列表")
     @PostMapping("/getCoinList")
-    public AjaxResult getCoinList() {
+    public AjaxResult getCoinList() throws Exception {
+        System.out.println("进入当前时间：" + LocalTime.now().format(formatter));
         //查询币种跟随性价格
        // LocalDateTime now = LocalDateTime.now();
        // LocalDateTime beforeTime = now.minusDays(1);
       //  List<TBotKlineModel> list = tBotKlineModelService.list(new LambdaQueryWrapper<TBotKlineModel>().between(TBotKlineModel::getBeginTime, beforeTime, now).eq(TBotKlineModel::getModel, 0));
         HashMap<String, BigDecimal> stringBigDecimalHashMap = tBotKlineModelService.getyesterdayPrice();
+        //System.out.println("获取Map后当前时间：" + LocalTime.now().format(formatter));
+
         List<SymbolCoinConfigVO> coinList = tSecondCoinConfigService.getSymbolList();
-        for (SymbolCoinConfigVO s:coinList) {
-            BigDecimal bigDecimal = stringBigDecimalHashMap.get(s.getSymbol().toLowerCase());
-            if(bigDecimal==null){
-                bigDecimal=BigDecimal.ZERO;
+        //System.out.println("coinList后的当前时间：" + LocalTime.now().format(formatter));
+        Future<?> future1 = executorService.submit(() -> {
+            //List<SymbolCoinConfigVO> coinList = tSecondCoinConfigService.getSymbolList();
+            //System.out.println("coinList:" + coinList.size()+"--异步当前时间：" + LocalTime.now().format(formatter));
+            for (SymbolCoinConfigVO s : coinList) {
+                BigDecimal bigDecimal = stringBigDecimalHashMap.get(s.getSymbol().toLowerCase());
+                if (bigDecimal == null) {
+                    bigDecimal = BigDecimal.ZERO;
+                }
+                BigDecimal openPrice = KLoader.OPEN_PRICE.get(s.getCoin());
+                s.setOpen(Objects.isNull(openPrice) ? BigDecimal.ZERO : openPrice.add(bigDecimal));
+                if (s.getMarket().equals("metal")) {
+                    BigDecimal currentlyPrice = redisCache.getCacheObject(CachePrefix.CURRENCY_PRICE.getPrefix() + s.getCoin());
+                    s.setAmount(Objects.isNull(currentlyPrice) ? BigDecimal.ZERO : currentlyPrice);
+                } else {
+                    BigDecimal currentlyPrice = redisCache.getCacheObject(CachePrefix.CURRENCY_PRICE.getPrefix() + s.getCoin().toLowerCase());
+                    s.setAmount(Objects.isNull(currentlyPrice) ? BigDecimal.ZERO : currentlyPrice);
+                }
             }
-            BigDecimal openPrice = KLoader.OPEN_PRICE.get(s.getCoin());
-            s.setOpen(Objects.isNull(openPrice)?BigDecimal.ZERO:openPrice.add(bigDecimal));
-            if(s.getMarket().equals("metal")){
-                BigDecimal currentlyPrice = redisCache.getCacheObject(CachePrefix.CURRENCY_PRICE.getPrefix() + s.getCoin());
-                s.setAmount(Objects.isNull(currentlyPrice)?BigDecimal.ZERO:currentlyPrice);
-            }else{
-                BigDecimal currentlyPrice = redisCache.getCacheObject(CachePrefix.CURRENCY_PRICE.getPrefix() + s.getCoin().toLowerCase());
-                s.setAmount(Objects.isNull(currentlyPrice)?BigDecimal.ZERO:currentlyPrice);
-            }
-        }
+            //System.out.println("coinList:" + coinList.size()+"--异步结束时间：" + LocalTime.now().format(formatter));
+        });
+
         List<TCurrencySymbol> currencyList = tCurrencySymbolService.getSymbolList();
-        for (TCurrencySymbol t:currencyList) {
-            BigDecimal currentlyPrice = redisCache.getCacheObject(CachePrefix.CURRENCY_PRICE.getPrefix() + t.getCoin().toLowerCase());
-            t.setAmount(Objects.isNull(currentlyPrice)?BigDecimal.ZERO:currentlyPrice);
-            BigDecimal bigDecimal = stringBigDecimalHashMap.get(t.getSymbol().toLowerCase());
-            if(bigDecimal==null){
-                bigDecimal=BigDecimal.ZERO;
+        //System.out.println("currencyList后的当前时间：" + LocalTime.now().format(formatter));
+        Future<?> future2 = executorService.submit(() -> {
+            //List<TCurrencySymbol> currencyList = tCurrencySymbolService.getSymbolList();
+            System.out.println("currencyList:" + currencyList.size()+"--异步当前时间：" + LocalTime.now().format(formatter));
+            for (TCurrencySymbol t : currencyList) {
+                BigDecimal currentlyPrice = redisCache.getCacheObject(CachePrefix.CURRENCY_PRICE.getPrefix() + t.getCoin().toLowerCase());
+                t.setAmount(Objects.isNull(currentlyPrice) ? BigDecimal.ZERO : currentlyPrice);
+                BigDecimal bigDecimal = stringBigDecimalHashMap.get(t.getSymbol().toLowerCase());
+                if (bigDecimal == null) {
+                    bigDecimal = BigDecimal.ZERO;
+                }
+                BigDecimal openPrice = KLoader.OPEN_PRICE.get(t.getCoin().toLowerCase());
+                t.setOpen(Objects.isNull(openPrice) ? BigDecimal.ZERO : openPrice.add(bigDecimal));
             }
-            BigDecimal openPrice = KLoader.OPEN_PRICE.get(t.getCoin().toLowerCase());
-            t.setOpen(Objects.isNull(openPrice)?BigDecimal.ZERO:openPrice.add(bigDecimal));
-        }
+            //System.out.println("currencyList:" + currencyList.size()+"--异步结束时间：" + LocalTime.now().format(formatter));
+        });
+
         List<TContractCoin> contractList = tContractCoinService.getCoinList();
-        for (TContractCoin coin:contractList) {
-            BigDecimal currentlyPrice = redisCache.getCacheObject(CachePrefix.CURRENCY_PRICE.getPrefix() + coin.getCoin().toLowerCase());
-            BigDecimal bigDecimal = stringBigDecimalHashMap.get(coin.getSymbol().toLowerCase());
-            if(bigDecimal==null){
-                bigDecimal=BigDecimal.ZERO;
+        //System.out.println("contractList后的当前时间：" + LocalTime.now().format(formatter));
+        Future<?> future3 = executorService.submit(() -> {
+            //List<TContractCoin> contractList = tContractCoinService.getCoinList();
+            System.out.println("contractList:" + contractList.size()+"--异步当前时间：" + LocalTime.now().format(formatter));
+            for (TContractCoin coin : contractList) {
+                BigDecimal currentlyPrice = redisCache.getCacheObject(CachePrefix.CURRENCY_PRICE.getPrefix() + coin.getCoin().toLowerCase());
+                BigDecimal bigDecimal = stringBigDecimalHashMap.get(coin.getSymbol().toLowerCase());
+                if (bigDecimal == null) {
+                    bigDecimal = BigDecimal.ZERO;
+                }
+                BigDecimal openPrice = KLoader.OPEN_PRICE.get(coin.getCoin().toLowerCase());
+                coin.setOpen(Objects.isNull(openPrice) ? BigDecimal.ZERO : openPrice.add(bigDecimal));
+                coin.setAmount(Objects.isNull(currentlyPrice) ? BigDecimal.ZERO : currentlyPrice);
             }
-            BigDecimal openPrice = KLoader.OPEN_PRICE.get(coin.getCoin().toLowerCase());
-            coin.setOpen(Objects.isNull(openPrice)?BigDecimal.ZERO:openPrice.add(bigDecimal));
-            coin.setAmount(Objects.isNull(currentlyPrice)?BigDecimal.ZERO:currentlyPrice);
-        }
+            //System.out.println("contractList:" + contractList.size()+"--异步结束时间：" + LocalTime.now().format(formatter));
+        });
+
+        future1.get();
+        future2.get();
+        future3.get();
+
         Map<String, Object> map = new HashMap<>();
         map.put("coinList",coinList);
         map.put("currencyList",currencyList);
         map.put("contractList",contractList);
+        //System.out.println("map:"+map.size()+"--当前时间：" + LocalTime.now().format(formatter));
         return AjaxResult.success(map);
     }
 

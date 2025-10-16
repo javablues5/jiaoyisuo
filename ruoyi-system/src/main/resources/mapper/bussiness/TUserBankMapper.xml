@@ -21,11 +21,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="bankCode"    column="bank_code"    />
         <result property="userAddress"    column="user_address"    />
         <result property="adminParentIds"    column="admin_parent_ids"    />
-        <result property="coin"    column="coin"    />
+<!--        <result property="coin"    column="coin"    />-->
     </resultMap>
 
     <sql id="selectTUserBankVo">
-        select id, user_name, card_number, bank_name, bank_address, bank_branch, user_id, create_by, create_time, update_by, update_time, remark, search_value, bank_code, user_address, admin_parent_ids, coin from t_user_bank
+        select id, user_name, card_number, bank_name, bank_address, bank_branch, user_id, create_by, create_time, update_by, update_time, remark, search_value, bank_code, user_address, admin_parent_ids from t_user_bank
     </sql>
 
     <select id="selectTUserBankList" parameterType="TUserBank" resultMap="TUserBankResult">
@@ -41,7 +41,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="bankCode != null  and bankCode != ''"> and bank_code = #{bankCode}</if>
             <if test="userAddress != null  and userAddress != ''"> and user_address = #{userAddress}</if>
             <if test="adminParentIds != null  and adminParentIds != ''"> and find_in_set(#{adminParentIds},admin_parent_ids)</if>
-            <if test="coin != null  and coin != ''"> and coin = #{coin}</if>
+<!--            <if test="coin != null  and coin != ''"> and coin = #{coin}</if>-->
         </where>
     </select>
     
@@ -68,7 +68,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="bankCode != null">bank_code,</if>
             <if test="userAddress != null">user_address,</if>
             <if test="adminParentIds != null">admin_parent_ids,</if>
-            <if test="coin != null">coin,</if>
+<!--            <if test="coin != null">coin,</if>-->
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="userName != null">#{userName},</if>
@@ -86,7 +86,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="bankCode != null">#{bankCode},</if>
             <if test="userAddress != null">#{userAddress},</if>
             <if test="adminParentIds != null">#{adminParentIds},</if>
-            <if test="coin != null">#{coin},</if>
+<!--            <if test="coin != null">#{coin},</if>-->
          </trim>
     </insert>
 
@@ -108,7 +108,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="bankCode != null">bank_code = #{bankCode},</if>
             <if test="userAddress != null">user_address = #{userAddress},</if>
             <if test="adminParentIds != null">admin_parent_ids = #{adminParentIds},</if>
-            <if test="coin != null">coin = #{coin},</if>
+<!--            <if test="coin != null">coin = #{coin},</if>-->
         </trim>
         where id = #{id}
     </update>

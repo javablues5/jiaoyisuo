@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import java.math.BigDecimal;
 import java.net.URISyntaxException;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -215,15 +217,26 @@ public class TSecondCoinConfigServiceImpl extends ServiceImpl<TSecondCoinConfigM
             }
         return this.saveBatch(list);
     }
-
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
     @Override
     public List<SymbolCoinConfigVO> getSymbolList() {
-        List<SymbolCoinConfigVO> rtn = new ArrayList<SymbolCoinConfigVO>();
+        //System.out.println("getSymbolList进入当前时间：" + LocalTime.now().format(formatter));
+        List<SymbolCoinConfigVO> rtn = new ArrayList<>();
         TSecondCoinConfig tSecondCoinConfig = new TSecondCoinConfig();
         tSecondCoinConfig.setStatus(1L);
         tSecondCoinConfig.setShowFlag(1L);
         List<TSecondCoinConfig> tSecondCoinConfigs = selectTSecondCoinConfigList(tSecondCoinConfig);
         tSecondCoinConfigs.stream().sorted(Comparator.comparing(TSecondCoinConfig::getSort)).collect(Collectors.toList());
+        //System.out.println("getSymbolList进入后当前时间：" + LocalTime.now().format(formatter));
+
+        List<TUserCoin> userCoins = new ArrayList<>();
+        if(StpUtil.isLogin()) {
+            LambdaQueryWrapper<TUserCoin> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(TUserCoin::getUserId, StpUtil.getLoginIdAsLong());
+            userCoins = userCoinMapper.selectList(queryWrapper);
+        }
+
+
         for (TSecondCoinConfig tSecondCoinConfig1: tSecondCoinConfigs ) {
             SymbolCoinConfigVO symbolCoinConfigVO = new SymbolCoinConfigVO();
             BeanUtils.copyProperties(tSecondCoinConfig1 ,symbolCoinConfigVO);
@@ -232,27 +245,35 @@ public class TSecondCoinConfigServiceImpl extends ServiceImpl<TSecondCoinConfigM
             BigDecimal cacheObject = redisCache.getCacheObject(CachePrefix.CURRENCY_PRICE.getPrefix() + tSecondCoinConfig1.getCoin());
             symbolCoinConfigVO.setAmount(cacheObject);
             String logo = tSecondCoinConfig1.getLogo();
-            if(logo!=null && logo.contains("echo-res")){
-                symbolCoinConfigVO.setLogo(logo);
-            }else if (logo==null){
-                symbolCoinConfigVO.setLogo("");
-            }else {
-                symbolCoinConfigVO.setLogo("https://taizi00123.oss-cn-hongkong.aliyuncs.com/waihui"+logo.substring(logo.lastIndexOf("/"),logo.length()));
-            }
-            LambdaQueryWrapper<TUserCoin> queryWrapper = new LambdaQueryWrapper<TUserCoin>();
-            queryWrapper.eq(TUserCoin::getCoin, symbolCoinConfigVO.getCoin().toLowerCase());
-            if(StpUtil.isLogin()){
-                queryWrapper.eq(TUserCoin::getUserId, StpUtil.getLoginIdAsLong());
-                TUserCoin userCoin = userCoinMapper.selectOne(queryWrapper);
-                if(ObjectUtils.isNotEmpty(userCoin)){
-                    symbolCoinConfigVO.setIsCollect(1);
-                }else {
-                    symbolCoinConfigVO.setIsCollect(2);
-                }
-            }
-            rtn.add(symbolCoinConfigVO);
+            if (logo==null) symbolCoinConfigVO.setLogo("");
+//            if(logo!=null && logo.contains("echo-res")){
+//                symbolCoinConfigVO.setLogo(logo);
+//            }else if (logo==null){
+//                symbolCoinConfigVO.setLogo("");
+//            }else {
+//                symbolCoinConfigVO.setLogo("https://taizi00123.oss-cn-hongkong.aliyuncs.com/waihui"+logo.substring(logo.lastIndexOf("/"),logo.length()));
+//            }
 
+            for (TUserCoin coin : userCoins) {
+                boolean b = symbolCoinConfigVO.getCoin().toLowerCase().equals(coin.getCoin());
+                symbolCoinConfigVO.setIsCollect(b?1:2);
+            }
+
+
+//            LambdaQueryWrapper<TUserCoin> queryWrapper = new LambdaQueryWrapper<TUserCoin>();
+//            queryWrapper.eq(TUserCoin::getCoin, symbolCoinConfigVO.getCoin().toLowerCase());
+//            if(StpUtil.isLogin()){
+//                queryWrapper.eq(TUserCoin::getUserId, StpUtil.getLoginIdAsLong());
+//                TUserCoin userCoin = userCoinMapper.selectOne(queryWrapper);
+//                if(ObjectUtils.isNotEmpty(userCoin)){
+//                    symbolCoinConfigVO.setIsCollect(1);
+//                }else {
+//                    symbolCoinConfigVO.setIsCollect(2);
+//                }
+//            }
+            rtn.add(symbolCoinConfigVO);
         }
+        //System.out.println("getSymbolList结束当前时间：" + LocalTime.now().format(formatter));
         return rtn;
     }
 
