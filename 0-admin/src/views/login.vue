@@ -138,6 +138,7 @@ export default {
       register: false,
       redirect: undefined,
       adminCode: true,
+      url: true,
     };
   },
   watch: {
@@ -167,6 +168,7 @@ export default {
         let temObj = res.data?.MARKET_URL;
         console.log(temObj, "temObjtemObjtemObjtemObjtemObj");
         this.adminCode = temObj?.adminCode;
+        this.url = temObj?.url;
       });
     },
     getCode() {
