@@ -97,14 +97,16 @@ export default {
             {
               name: legendData?.[0],
               itemStyle: {
-                normal: {
-                  color: "#FF005A",
-                  lineStyle: {
-                    color: "#FF005A",
-                    width: 2,
-                  },
-                },
+                // normal: {
+                //   color: "#FF005A",
+                //   lineStyle: {
+                //     color: "#FF005A",
+                //     width: 2,
+                //   },
+                // },
+                color: "#FF005A",
               },
+
               smooth: true,
               type: "line",
               data: expectedData,
@@ -116,16 +118,20 @@ export default {
               smooth: true,
               type: "line",
               itemStyle: {
-                normal: {
-                  color: "#3888fa",
-                  lineStyle: {
-                    color: "#3888fa",
-                    width: 2,
-                  },
-                  areaStyle: {
-                    color: "#f3f8ff",
-                  },
-                },
+                // normal: {
+                //   color: "#3888fa",
+                //   lineStyle: {
+                //     color: "#3888fa",
+                //     width: 2,
+                //   },
+                //   areaStyle: {
+                //     color: "#f3f8ff",
+                //   },
+                // },
+                color: "#3888fa",
+              },
+              areaStyle: {
+                color: "#f3f8ff",
               },
               data: actualData,
               animationDuration: 2800,

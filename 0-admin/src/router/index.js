@@ -177,7 +177,7 @@ export const dynamicRoutes = [
       {
         path: "index/:helpId(\\d+)/:language",
         component: () => import("@/views/system/help/detail"),
-        name: "Data",
+        name: "HelpData",
         meta: { title: "详情数据", activeMenu: "/system/help" },
       },
     ],

@@ -68,8 +68,7 @@ export default class PlayAudio {
    * 获取媒体设备权限
    */
   getUserMediaPermission = () => {
-    navigator.mediaDevices
-      .getUserMedia({ audio: true })
+    navigator.mediaDevices?.getUserMedia({ audio: true })
       .then(function (stream) {
         // console.error("获取媒体设备权限：", stream);
       })
