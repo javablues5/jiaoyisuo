@@ -1,1 +1,0 @@
-import{d as i}from"./index-D_GDdZsP.js";const r=r=>i("/api/mingOrder/show",r),a=r=>i("/api/mingProduct/list",r),s=r=>i("/api/mingOrder/submit",r),e=r=>i("/api/mingOrder/list?".concat(r)),m=r=>i("/api/mingOrder/redemption",r),n=r=>i("/api/mingOrder/redempNewtion",r);export{r as a,m as b,e as c,a as g,s as p,n as r};

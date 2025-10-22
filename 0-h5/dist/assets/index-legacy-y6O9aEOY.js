@@ -1,1 +1,0 @@
-System.register(["./index-legacy-DeCpTJ6v.js"],(function(i,n){"use strict";var e,t;return{setters:[i=>{e=i.aX,t=i.d}],execute:function(){i("o",(i=>t(`/api/ownCoin/list?status=${i}`))),i("g",(i=>e(`/api/ownCoinOrder/list?${i}`))),i("a",(i=>e(`/api/ownCoin/getDetail/${i}`))),i("s",(i=>t("/api/ownCoin/subscribeCoins",i))),i("p",(i=>t("/api/ownCoinOrder/placing",i)))}}}));

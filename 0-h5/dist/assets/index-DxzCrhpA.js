@@ -1,1 +1,0 @@
-import{d as a}from"./index-D_GDdZsP.js";const i=i=>a("/api/financial/list",i),n=i=>a("api/financial/".concat(i)),c=(i,n,c)=>a("api/financial/submit?planId=".concat(i,"&money=").concat(n,"&days=").concat(c)),o=(i,n)=>a("api/order/list?pageNum=".concat(i,"&pageSize=").concat(n)),s=()=>a("api/financial/personalIncome");export{c as a,n as f,i as g,o as i,s as p};

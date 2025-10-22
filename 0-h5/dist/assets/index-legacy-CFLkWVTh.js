@@ -1,1 +1,0 @@
-System.register(["./index-legacy-DeCpTJ6v.js"],(function(e,t){"use strict";var n;return{setters:[e=>{n=e.d}],execute:function(){e("g",(()=>n("/api/helpcenter/list"))),e("a",(e=>n(`/api/helpCenterInfo/${e}`)))}}}));
