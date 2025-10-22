@@ -68,10 +68,13 @@ export const useUserStore = defineStore('user', {
     async getUserInfo() {
       const res = await getUserInfo()
       if (res.code == 200) {
+        if (JSON.stringify(res.data || {}) !== JSON.stringify(this.userInfo)) {
+          dispatchCustomEvent('event_userInfoChange', Object.assign(this.userInfo, res.data || {}))
+        }
         Object.assign(this.userInfo, res.data || {})
         Object.assign(this.asset, this.userInfo.asset || [])
-        dispatchCustomEvent('event_userInfoChange', this.userInfo)
         // dispatchCustomEvent('event_userInfoChange2', this.userInfo)
+        // dispatchCustomEvent('event_userInfoChange', this.userInfo)
         localStorage.setItem(storageDict.USER_INFO, JSON.stringify(this.userInfo))
         closeToast()
         const mainStore = useMainStore()

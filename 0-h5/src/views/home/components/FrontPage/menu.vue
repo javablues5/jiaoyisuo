@@ -120,7 +120,7 @@ const getInfoList = async () => {
   //   }
   // })
 }
-getInfoList()
+// getInfoList()
 /**直播弹窗内容 */
 const showNotice = ref(false)
 const showNoticeContent = ref({})
