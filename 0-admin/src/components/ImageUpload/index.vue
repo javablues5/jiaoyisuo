@@ -164,8 +164,8 @@ export default {
     handleUploadSuccess(res, file) {
       this.hideUpload = false;
       if (res.code === 200) {
-        // this.uploadList.push({ name: res.fileName, url: res.fileName });
-        this.uploadList.push({ name: res.url, url: res.url });
+        this.uploadList.push({ name: res.fileName, url: res.fileName });
+        //this.uploadList.push({ name: res.url, url: res.url });
         this.uploadedSuccessfully(res);
       } else {
         this.number--;
