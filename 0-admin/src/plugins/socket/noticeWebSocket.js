@@ -1,6 +1,34 @@
 import store from "@/store";
 import { _playAudio } from "@/plugins/audio/index.js";
 
+export function getSocketUrl() {
+  // 使用环境变量配置WebSocket地址
+  let url;
+  // 从环境变量读取配置
+  const socketBaseUrl = process.env.VUE_APP_BASE_WSS;
+  let socketPort;
+
+  if (socketBaseUrl) {
+    // 根据当前页面协议自动选择
+    if (window.location.protocol === "https:") {
+      url = new URL(socketBaseUrl.replace("http://", "https://"));
+    } else {
+      url = new URL(socketBaseUrl.replace("https://", "http://"));
+    }
+
+    // 如果配置了端口，添加端口
+    if (socketPort && !socketBaseUrl.includes(":" + socketPort)) {
+      url.port = socketPort;
+    }
+  } else {
+    // 兜底配置，使用当前域名
+    url = new URL(window.location.origin);
+  }
+  if (url && url.origin) {
+    return url.origin;
+  }
+  return url;
+}
 export default class NoticeWebSocket {
   /**
    * 心跳定时器
@@ -23,8 +51,8 @@ export default class NoticeWebSocket {
   // 已连接
   WS_READY_STATE_OPEN = 1;
   constructor(userId) {
-    let baseUrl = "wss://adminapi.probitus.vip"
-      // || __config._BASE_WSS;
+    let baseUrl =
+      getSocketUrl() || __config._BASE_WSS;
     this.userId = userId;
     this.url = baseUrl + `/webSocket/notice/${this.userId}/${+new Date()}`;
     this.init();

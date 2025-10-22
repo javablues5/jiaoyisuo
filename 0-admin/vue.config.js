@@ -1,5 +1,6 @@
 "use strict";
 const path = require("path");
+const fs = require("fs");
 
 function resolve(dir) {
   return path.join(__dirname, dir);
@@ -10,25 +11,46 @@ const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 
 const port = process.env.port || process.env.npm_config_port || 80; // 端口
 
-// vue.config.js 配置说明
+// ------------------------------
+// 关键：实现vue.config.js改动自动重启服务
+// 原理：通过监听vue.config.js文件变化，自动退出进程，
+//       这样npm run serve（或yarn serve）会重启。
+// 推荐：使用webpack-dev-server的before钩子实现，文件变化后自动退出。
+// ------------------------------
+
+let watchingConfig = false;
+function watchConfigRestart() {
+  if (process.env.NODE_ENV === "development" && !watchingConfig) {
+    watchingConfig = true;
+    const configPath = path.resolve(__dirname, "vue.config.js");
+    fs.watch(configPath, { persistent: false }, (eventType) => {
+      if (eventType === "change" || eventType === "rename") {
+        console.log(
+          "\x1b[36m%s\x1b[0m",
+          "[dev-server] Detected vue.config.js change. Restarting dev server..."
+        );
+        process.exit(0);
+      }
+    });
+  }
+}
+watchConfigRestart();
+
 module.exports = {
-  // 部署生产环境和开发环境下的URL。
-  // 默认情况下，Vue CLI 会假设你的应用是被部署在一个域名的根路径上
   publicPath: process.env.NODE_ENV === "production" ? "/" : "/",
-  // 在npm run build 或 yarn build 时 ，生成文件的目录名称（要和baseUrl的生产环境路径一致）（默认dist）
   outputDir: "dist",
-  // 用于放置生成的静态资源 (js、css、img、fonts) 的；（项目打包之后，静态资源会放在这个文件夹下）
   assetsDir: "static",
-  // 是否开启eslint保存检测，有效值：ture | false | 'error'
   lintOnSave: process.env.NODE_ENV === "development",
-  // 如果你不需要生产环境的 source map，可以将其设置为 false 以加速生产环境构建。
   productionSourceMap: false,
-  // webpack-dev-server 相关配置
   devServer: {
     host: "0.0.0.0",
     port: port,
     open: true,
     disableHostCheck: true,
+    before() {
+      watchConfigRestart();
+    },
+    // proxy: {...},
   },
   css: {
     loaderOptions: {
