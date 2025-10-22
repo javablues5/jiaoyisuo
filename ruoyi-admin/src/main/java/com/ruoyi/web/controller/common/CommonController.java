@@ -20,6 +20,7 @@ import com.ruoyi.telegrambot.TelegramBotConfig;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,7 +29,9 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.util.*;
+
 
 /**
  * 通用请求处理
@@ -40,6 +43,7 @@ import java.util.*;
 public class CommonController
 {
     private static final Logger log = LoggerFactory.getLogger(CommonController.class);
+    private static final List<String> SUFFIX_LIST = Arrays.asList("png","jpg","ico");
 
     @Resource
     private ServerConfig serverConfig;
@@ -52,6 +56,9 @@ public class CommonController
     @Resource
     private SettingService settingService;
 
+    // **重要：** 请修改为您希望保存文件的实际路径
+    @Value("${upload.path}")
+    private String uploadPath = "/var/uploads/";
     private static final String FILE_DELIMETER = ",";
 
     /**
@@ -177,7 +184,7 @@ public class CommonController
         }
     }
 
-    @PostMapping("/upload/OSS")
+    //@PostMapping("/upload/OSS")
     public AjaxResult uploadFileOSS(MultipartFile file, String remark) {
         try {
             String filename = file.getResource().getFilename();
@@ -191,6 +198,42 @@ public class CommonController
             return ajax;
         } catch (Exception e) {
             e.getMessage();
+            return AjaxResult.error(e.getMessage());
+        }
+    }
+
+    @PostMapping("/upload/OSS")
+    public AjaxResult uploadImage(MultipartFile file) {
+        try {
+            String suffix = Objects.requireNonNull(file.getOriginalFilename()).substring(file.getOriginalFilename().lastIndexOf('.')+1);
+            System.out.println(suffix);
+            if (!SUFFIX_LIST.contains(suffix.toLowerCase())){
+                return AjaxResult.error("类型错误！");
+            }
+
+            // 3. 检查并创建保存目录
+            File destDir = new File(uploadPath);
+            if (!destDir.exists()) {
+                destDir.mkdirs();
+            }
+            String filename = file.getResource().getFilename();
+            //这里文件名用了uuid 防止重复，可以根据自己的需要来写
+            String name = UUID.randomUUID() + filename.substring(filename.lastIndexOf("."), filename.length());
+            name = name.replace("-", "");
+
+            // 4. 定义完整保存路径
+            File destFile = new File(uploadPath + name);
+
+            // 5. 核心操作：将上传的文件内容传输到目标文件
+            file.transferTo(destFile);
+
+            AjaxResult ajax = AjaxResult.success();
+            ajax.put("fileName", name);
+            ajax.put("url", "123");
+            return ajax;
+
+        } catch (Exception e) {
+            e.printStackTrace();
             return AjaxResult.error(e.getMessage());
         }
     }
