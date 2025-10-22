@@ -43,7 +43,10 @@ const path = computed(() => {
   } else if (props.filePath) {
     if (isCustomized.value) {
       tempPath = `/resource/images/${tempTheme}${__config._APP_ENV}/${props.filePath}?${_APP_VERSION}`
-    } else {
+    }else if(props.filePath.includes("local-oss")){
+        return  `${props.filePath}?${_APP_VERSION}`
+    }
+     else {
       tempPath = `/resource/images/${tempTheme}${props.filePath}?${_APP_VERSION}`
     }
   }
