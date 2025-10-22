@@ -15,7 +15,7 @@
       v-model:active="currentIndex"
       line-width="20"
       line-height="2"
-      color="#3CBC8C"
+      color="#edc96d"
       background="#fff"
       title-active-color="#000000"
       title-inactive-color="#838B9C"

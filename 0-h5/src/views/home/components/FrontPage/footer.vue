@@ -11,8 +11,8 @@
         v-model:active="showTab"
         line-width="20"
         line-height="2"
-        title-active-color="#17AC74"
-        color="#17ac74"
+        title-active-color="#edc96d"
+        color="#edc96d"
         title-inactive-color="#5d626d"
         @click-tab="handelShowTab(showTab)"
         shrink

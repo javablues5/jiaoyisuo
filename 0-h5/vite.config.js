@@ -70,7 +70,14 @@ export default ({ mode }) =>
       // 当端口被占用时是否直接退出，设置为 true 则直接退出
       strictPort: false,
       // 热更新功能
-      hmr: true
+      hmr: true,
+      proxy: {
+        '/api': {
+          target: 'http://47.76.27.203:81', // 测试
+          changeOrigin: true, // 开启跨域
+          rewrite: (path) => path.replace(/^\/api/, ''), // 路径重写，去掉 /api 前缀
+        },
+      },
     },
     css: {
       // PostCSS 配置

@@ -1,7 +1,8 @@
 /** 黑色主题*/
 :root body[theme='dark'] {
+  $primary-color: #edc96d;
   /* 主题色 */
-  --ex-primary-color: #4936DF;
+  --ex-primary-color: #edc96d;
   /* 默认背景色 */
   --ex-default-background-color: #1f2329;
   /* 默认文本色 */
@@ -16,7 +17,7 @@
   // 平
   --ex-rfd-draw-bg: rgba(125, 145, 157, 0.2);
   // 涨
-  --ex-rfd-rise: #8072F1;
+  --ex-rfd-rise: #3bad6d;
   // 跌
   --ex-rfd-fall: #d62548;
   // 平
@@ -32,7 +33,7 @@
   /* 边框色 */
   --ex-home-box-border-color: #4c4e53;
   /* 字体颜色 */
-  --ex-home-font-color: #4936DF;
+  --ex-home-font-color: #edc96d;
   /* 通知背景 */
   --ex-home-notice-bgcolor: #34393e;
   /* 通知字体 */
@@ -45,7 +46,7 @@
   /* 列表字体1 */
   --ex-home-list-ftcolor2: #838b9c;
   /* 列表字体2 */
-  --ex-home-list-ftcolor3: #4936DF;
+  --ex-home-list-ftcolor3: edc96d;
   /* tabbar顶部边框*/
   --ex-home-tabbar-border: #34393e;
   /* 弹窗钱包地址背景 字体*/
@@ -62,7 +63,7 @@
 
   /* 按钮*/
   /* 提交按钮背景 字体 边框*/
-  --ex-btn-background-color: #4936DF;
+  --ex-btn-background-color: #edc96d;
   --ex-btn-font-color: #ffffff;
   --ex-btn-background-color2: #fff;
   --ex-btn-font-color2: #4936DF;
@@ -127,7 +128,7 @@
   --ex-login-tab-background-color: #1f2329;
 
   /* 选中文本色 */
-  --ex-active-font-color: #4936DF;
+  --ex-active-font-color: #edc96d;
   /* 未选中文本色 */
   --ex-passive-font-color: #838b9c;
   /* tab背景颜色  快捷充币选中*/
@@ -153,7 +154,7 @@
   --ex-font-color4: #d62548;
   --ex-font-color5: #d9d9d9;
   --ex-font-color7: #505050;
-  --ex-font-color9: #4936DF;
+  --ex-font-color9: #edc96d;
   --ex-font-color10: #d50f3a;
   --ex-font-color11: #34393e;
   --ex-font-color12: #ffffff;
