@@ -30,6 +30,9 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 
@@ -220,12 +223,20 @@ public class CommonController
             //这里文件名用了uuid 防止重复，可以根据自己的需要来写
             String name = UUID.randomUUID() + filename.substring(filename.lastIndexOf("."), filename.length());
             name = name.replace("-", "");
+            name = "local-oss"+name;
 
             // 4. 定义完整保存路径
             File destFile = new File(uploadPath + name);
-
+            System.out.println("Final target path: " + destFile.getAbsolutePath());
             // 5. 核心操作：将上传的文件内容传输到目标文件
             file.transferTo(destFile);
+
+//            byte[] bytes = file.getBytes();
+//            Path filePath = Paths.get(uploadPath, name);
+//            System.out.println("filePath:"+filePath);
+//            Path filePath1 = Files.write(filePath, bytes);
+//            System.out.println("1111");
+//            System.out.println(filePath1);
 
             AjaxResult ajax = AjaxResult.success();
             ajax.put("fileName", name);
@@ -234,7 +245,7 @@ public class CommonController
 
         } catch (Exception e) {
             e.printStackTrace();
-            return AjaxResult.error(e.getMessage());
+            return AjaxResult.error("上传失败！");
         }
     }
 
