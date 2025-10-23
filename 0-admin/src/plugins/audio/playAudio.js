@@ -52,7 +52,12 @@ export default class PlayAudio {
     this.audio.play().catch((error) => {
       console.log("playPermission", error);
       // 不支持自动播放
-      this.getUserMediaPermission();
+       try {
+        this.getUserMediaPermission();
+       } catch (error) {
+        console.log("🚀 ~ PlayAudio ~ error:", error)
+       }
+    
     });
     setTimeout(() => {
       this.audio.pause();
