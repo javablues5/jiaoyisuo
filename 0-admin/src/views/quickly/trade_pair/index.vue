@@ -270,6 +270,11 @@
         <el-form-item label="显示名称" prop="showSymbol">
           <el-input v-model="form.showSymbol" placeholder="请输入显示名称" />
         </el-form-item>
+
+        <el-form-item label="logo" prop="logo">
+           <ImageUpload :limit="1" v-model="form.logo"></ImageUpload>
+        </el-form-item>
+
         <el-form-item label="状态" prop="status">
           <!-- 1展示 0不展示 -->
           <el-switch
