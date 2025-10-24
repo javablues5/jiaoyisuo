@@ -38,6 +38,12 @@ export default [
     name: 'Quote',
     component: () => import('@/views/quote/index.vue')
   },
+  {
+    path: '/message',
+    name: 'Message',
+    component: () => import('@/views/message/index.vue')
+  },
+  
   // 交易
   {
     path: '/trade',

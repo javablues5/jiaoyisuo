@@ -12,7 +12,9 @@
       </van-swipe> -->
       <div class="top">
         <div><Logo></Logo> <span class="title">数字币交易</span></div>
-        <div>
+        <div class="leftSide">
+          <svg-load name="sousuo" class="rightImg" @click="$router.push('/quote')"></svg-load>
+          <svg-load name="message" class="rightImg" @click="$router.push('/message')"></svg-load>
           <svg-load name="user" class="rightImg" @click="openSideBar"></svg-load>
         </div>
       </div>
@@ -156,6 +158,10 @@ onMounted(async () => {
     justify-content: space-between;
     position: relative;
     margin: 10px;
+    .leftSide{
+      display: flex;
+      gap: 8px;
+    }
     .title {
       font-size: 16px;
     }
