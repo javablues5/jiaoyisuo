@@ -5,31 +5,30 @@
       <SideBar @closeSideBar="closeSideBar"></SideBar>
     </van-popup>
     <div class="carousel">
-      <van-swipe :autoplay="3000" lazy-render :loop="true" :show-indicators="false">
+      <!-- <van-swipe :autoplay="3000" lazy-render :loop="true" :show-indicators="false">
         <van-swipe-item v-for="(item, index) in carouselList" :key="index">
           <image-load :filePath="item.imgUrl" alt="" class="carouselItem" @click="linkto(item)" />
         </van-swipe-item>
-      </van-swipe>
+      </van-swipe> -->
       <div class="top">
-        <div>
-          <Logo></Logo>
-        </div>
+        <div><Logo></Logo> <span class="title">数字币交易</span></div>
         <div>
           <svg-load name="user" class="rightImg" @click="openSideBar"></svg-load>
         </div>
       </div>
     </div>
-    <div class="currentList">
-      <div
-        class="item centerItem"
-        v-for="(item, index) in dataList.filter((it, idx) => {
-          return idx < 4
-        })"
-        :key="index"
-        @click="linkTo(item)"
-      >
-        <div class="itemTop fw-num">{{ item.showSymbol }}</div>
+    <div class="listBox">
+      <span class="title"> 市场概览</span>
+      <div class="currentList">
         <div
+          class="item centerItem"
+          v-for="(item, index) in dataList.filter((it, idx) => {
+            return idx < 4
+          })"
+          :key="index"
+          @click="linkTo(item)"
+        >
+          <!-- <div
           :class="[
             _isRFD(
               tradeStore.allCoinPriceInfo[item.coin]?.openPrice,
@@ -39,17 +38,19 @@
           ]"
         >
           {{ tradeStore.allCoinPriceInfo[item.coin]?.priceChangePercent }}%
-        </div>
-        <div
-          :class="[
-            _isRFD(
-              tradeStore.allCoinPriceInfo[item.coin]?.open,
-              tradeStore.allCoinPriceInfo[item.coin]?.close
-            ),
-            'itemFooter fw-num'
-          ]"
-        >
-          {{ tradeStore.allCoinPriceInfo[item.coin]?.close }}
+        </div> -->
+          <div
+            :class="[
+              _isRFD(
+                tradeStore.allCoinPriceInfo[item.coin]?.open,
+                tradeStore.allCoinPriceInfo[item.coin]?.close
+              ),
+              'itemFooter fw-num'
+            ]"
+          >
+            ${{ tradeStore.allCoinPriceInfo[item.coin]?.close }}
+          </div>
+          <div class="itemBottom fw-num">{{ item.showSymbol }}</div>
         </div>
       </div>
     </div>
@@ -102,9 +103,9 @@ const linkTo = (item) => {
   $router.push(`/trade?symbol=${item.coin}`)
 }
 const carouselList = ref([
-   {
-     imgUrl: '../../resource/images/light/banner.jpg',
-   }
+  {
+    imgUrl: '../../resource/images/light/banner.jpg'
+  }
 ])
 // 轮播图跳转
 const linkto = (detail) => {
@@ -136,8 +137,8 @@ onMounted(async () => {
 }
 
 .carousel {
-  height: 200px;
-  background-color: #f2b80a;
+  // height: 200px;
+  // background-color: #f2b80a;
 
   .carouselItem {
     height: 200px;
@@ -153,11 +154,11 @@ onMounted(async () => {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    position: absolute;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: calc(100% - 30px);
+    position: relative;
+    margin: 10px;
+    .title {
+      font-size: 16px;
+    }
 
     /* 减去两侧的间距 */
     .leftImg {
@@ -178,29 +179,45 @@ onMounted(async () => {
   }
 }
 
+.listBox{
+  background-color: #1f232a;
+  padding: 10px;
+  margin: 10px;
+  border: 1px solid #2e2e2e;
+  border-radius: 10px;
+  .title{
+    font-size: 16px;
+  }
+}
+
 .currentList {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  width: calc(100% - 30px);
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 每行两列 */
+  gap: 10px; /* 可根据需要设置间隔 */
   /* 减去两侧的间距 */
   box-sizing: border-box;
-  top: 172px;
-  background-color: var(--ex-home-box-background-color);
+ 
   box-shadow: 0px 3px 10px 1px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
-  display: flex;
-  padding: 20px 0;
+  display: grid;
+ 
+  grid-template-columns: repeat(2fr, 2);
 
   .item {
     flex: 1;
     display: flex;
     flex-direction: column;
+    border: 1px solid #2e2e2e;
+    background-color: #262626;
+    padding: 10px;
+    border-radius: 8px;
 
-    .itemTop {
-      font-size: 14px;
+    .itemBottom {
+      font-size: 13px;
       color: var(--ex-default-font-color);
       font-weight: 400;
+      margin-top: 4px;
     }
 
     .itemMain {
@@ -219,9 +236,10 @@ onMounted(async () => {
 
     .itemFooter {
       display: flex;
-      font-size: 16px;
+      font-size: 18px;
       margin-top: 5px;
     }
+    
   }
 
   .centerItem {
