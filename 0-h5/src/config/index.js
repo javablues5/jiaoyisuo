@@ -37,6 +37,7 @@ const loadAppConfig = () => {
       try {
         testPlatformData = JSON.parse(testPlatformData)
         __config._APP_ENV = testPlatformData.platform
+        console.log("🚀 ~ loadAppConfig ~ __config._APP_ENV:", __config._APP_ENV)
         if (testPlatformData.domain) {
           __config._BASE_API = `https://api.${testPlatformData.domain}`
           __config._BASE_WSS = `wss://api.${testPlatformData.domain}`

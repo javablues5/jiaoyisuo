@@ -1,25 +1,25 @@
 <template>
   <div class="assetDetails">
-    <div v-for="(item, index) in assetDetails" :key="index">
-      <div class="title" v-if="item.icon == 'usdt'">
+    <div class="title">
         <!-- 资产明细 -->
         <div class="left fw-bold">{{ _t18('asset_detail', ['ebc']) }}</div>
       </div>
+    <div v-for="(item, index) in assetDetails" :key="index"  class="item">
       <div class="details">
-        <div class="top">
+        <div class="left">
           <svg-load v-if="item.title == 'USDT'" :name="item.icon" class="currencyIcon"></svg-load>
           <image-load :filePath="item.loge" v-else />
           <p class="fw-num">{{ item.title }}</p>
         </div>
-        <div class="bottom">
-          <div>
+        <div class="right">
+          <div v-if="false">
             <!-- 可用 -->
             <p class="til">{{ _t18('asset_available') }}</p>
             <p class="num fw-num">
               {{ amountFormat(item.keyong) }}
             </p>
           </div>
-          <div>
+          <div v-if="false">
             <!-- 占用 冻结-->
             <p class="til" v-if="['rxce'].includes(_getConfig('_APP_ENV'))">
               {{ _t18('asset_cold') }}
@@ -29,12 +29,14 @@
               {{ amountFormat(item.zhanyong, 4) }}
             </p>
           </div>
+
           <div>
             <!-- 折合 -->
-            <p class="til">{{ _t18('asset_equivalent', ['bitmake', 'ebc']) }}(USDT)</p>
+            <!-- <p class="til">{{ _t18('asset_equivalent', ['bitmake', 'ebc']) }}(USDT)</p> -->
             <p class="num fw-num">
-              {{ amountFormat(item.zhehe) }}
+              ${{ amountFormat(item.zhehe) }}
             </p>
+            <span class="keyong">可交易 {{ amountFormat(item.keyong) }}</span>
           </div>
         </div>
       </div>
@@ -73,14 +75,13 @@ const amountFormat = (amount, decimal = 0) => {
 
 <style lang="scss" scoped>
 .assetDetails {
-  padding-bottom: 100px;
-  & > div {
-    padding: 20px 15px;
-    border-top: 1px solid var(--ex-border-color);
-    .title {
+  padding: 0 16px 100px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  .title {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 20px;
       .left {
         color: var(--ex-font-color6);
         font-size: 16px;
@@ -89,15 +90,23 @@ const amountFormat = (amount, decimal = 0) => {
         font-size: 16px;
       }
     }
+  .item{
+     border: 1px solid #342f4f;
+     padding: 16px 16px 20px 16px;
+     border-radius: 8px;
+
     .details {
-      .top {
+      display: flex;
+      .left {
         display: flex;
         align-items: center;
+
         img {
           border-radius: 100%;
           width: 20px;
           height: 20px;
           margin-right: 5px;
+          border: 6px solid #374454;
         }
         .currencyIcon {
           font-size: 20px;
@@ -108,11 +117,13 @@ const amountFormat = (amount, decimal = 0) => {
           color: var(--ex-font-color6);
         }
       }
-      .bottom {
+      .right {
         display: flex;
+        flex: 1;
         & > div {
           flex: 1;
           text-align: center;
+          font-size: 16px;
           .til {
             padding: 20px 0;
             color: var(--ex-passive-font-color);
@@ -120,6 +131,10 @@ const amountFormat = (amount, decimal = 0) => {
           .num {
             color: var(--ex-font-color6);
             font-size: 14px;
+          }
+          .keyong{
+            color: #a1a8ab;
+            font-size: 12px;
           }
           &:first-child {
             text-align: start;

@@ -23,8 +23,8 @@
         v-model:active="currentIndex"
         line-width="20"
         line-height="2"
-        color="#4936DF"
-        title-active-color="#4936DF"
+        color="#f2b80a"
+        title-active-color="#f2b80a"
         title-inactive-color="#5d626d"
         background="var(--ex-div-bgColor8)"
       >

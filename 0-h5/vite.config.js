@@ -77,6 +77,11 @@ export default ({ mode }) =>
           changeOrigin: true, // 开启跨域
           rewrite: (path) => path.replace(/^\/api/, ''), // 路径重写，去掉 /api 前缀
         },
+        '^/local-oss': {
+          target: 'http://47.76.27.203:81', // 测试
+          changeOrigin: true, // 开启跨域
+          // rewrite: (path) => path.replace(/^\/api/, ''), // 路径重写，去掉 /api 前缀
+        },
       },
     },
     css: {

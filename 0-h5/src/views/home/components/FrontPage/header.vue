@@ -137,7 +137,7 @@ onMounted(async () => {
 
 .carousel {
   height: 200px;
-  background-color: #4936DF;
+  background-color: #f2b80a;
 
   .carouselItem {
     height: 200px;

@@ -642,12 +642,13 @@ export default {
     },
     /**币种交易所 */
     changeCoin(e) {
-      let list = this.coinList.filter((item) => {
+      let list = this.filter((item) => {
         if (item.coin == e) {
           return item;
         }
       });
       this.currentMarket = list[0];
+      console.log("🚀 ~ this.currentMarket:", this.currentMarket)
       this.form.referMarket = this.currentMarket?.market; //交易所
       this.amountAvailable = this.currentMarket?.price;
       this.form.price = this.currentMarket?.price; //初始价格
@@ -687,6 +688,7 @@ export default {
           }
         }
       } else {
+        console.log("🚀 ~ else:", "else")
         this.sliderValue = 0;
         this.form.price = this.amountAvailable;
         this.form.proportion = 100;

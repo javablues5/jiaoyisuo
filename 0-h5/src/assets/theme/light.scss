@@ -1,7 +1,7 @@
 /** 白色主题*/
 :root body[theme='light'] {
   /* 主题色 */
-  --ex-primary-color: #4936DF;
+  --ex-primary-color: #f2b80a;
   /* 默认背景色 */
   --ex-default-background-color: #fff;
   /* 默认文本色 */
@@ -34,7 +34,7 @@
   /* 边框色 */
   --ex-home-box-border-color: #f5f5f5;
   /* 字体颜色 */
-  --ex-home-font-color: #4936DF;
+  --ex-home-font-color: #f2b80a;
   /* 通知背景 */
   --ex-home-notice-bgcolor: #f4f6f8;
   /* 通知字体 */
@@ -49,7 +49,7 @@
   --ex-home-list-ftcolor2: #333;
   /* 列表字体2 */
   // --ex-home-list-ftcolor3: #000;
-  --ex-home-list-ftcolor3: #4936DF;
+  --ex-home-list-ftcolor3: #f2b80a;
   /* 弹窗钱包地址背景 字体*/
   --ex-home-sidebar-address-bgcolor: #f3f1f7;
   --ex-home-sidebar-address-ftcolor: #000;
@@ -64,12 +64,12 @@
 
   /* 按钮*/
   /* 提交按钮背景 字体 边框*/
-  --ex-btn-background-color: #4936DF;
+  --ex-btn-background-color: #f2b80a;
   --ex-btn-font-color: #ffffff;
-  --ex-btn-boder-color: #4936DF;
+  --ex-btn-boder-color: #f2b80a;
   --ex-login-btn-background-color2: #fff;
-  --ex-login-btn-font-color2: #4936DF;
-  --ex-login-btn-boder-color2: #4936DF;
+  --ex-login-btn-font-color2: #f2b80a;
+  --ex-login-btn-boder-color2: #f2b80a;
 
   /* 高级认证 实名认证*/
   /* 输入框背景颜色 字体 边框*/
@@ -97,10 +97,10 @@
   /* eth 背景 边框 字体 label 按钮*/
   --ex-eth-background-color: #fff;
   --ex-eth-border-color: #f5f5f5;
-  --ex-eth-font-color: #4936DF;
+  --ex-eth-font-color: #f2b80a;
   --ex-eth-font-color2: #333;
   --ex-eth-label-color: #838b9c;
-  --ex-eth-button-color: linear-gradient(-30deg, #4936DF, #72dbb1);
+  --ex-eth-button-color: linear-gradient(-30deg, #f2b80a, #72dbb1);
   --ex-eth-button-bdcolor: #fff;
 
   /* 挡位收益比率*/
@@ -133,7 +133,7 @@
   /* 默认文本色 */
   --ex-default-font-color: #333333;
   /* 选中文本色 */
-  --ex-active-font-color: #4936DF;
+  --ex-active-font-color: #f2b80a;
   /* 未选中文本色 */
   --ex-passive-font-color: #838b9c;
   /* tab背景颜色  快捷充币选中*/
@@ -160,7 +160,7 @@
   --ex-font-color4: #d62548;
   --ex-font-color5: #d9d9d9;
   --ex-font-color7: #505050;
-  --ex-font-color9: #4936DF;
+  --ex-font-color9: #f2b80a;
   --ex-font-color10: #d50f3a;
   --ex-font-color11: #f5f5f5;
   --ex-font-color12: #898989;
@@ -179,7 +179,7 @@
 
   /* 背景色 */
   --ex-div-bgColor: #ebebeb;
-  --ex-div-bgColor1: #4936DF;
+  --ex-div-bgColor1: #f2b80a;
   --ex-div-bgColor2: #f5f5f5;
   --ex-div-bgColor3: #d9d9d9;
   --ex-div-bgColor4: #515151;
@@ -209,7 +209,7 @@
   --ex-div-bgColor29: #eff8f5;
 
   /* 按钮背景色 */
-  --ex-btn-pramary-bgColor: #4936DF;
+  --ex-btn-pramary-bgColor: #f2b80a;
   --ex-btn-bgColor: #f1f1f1;
   --ex-btn-bgColor1: #ecfcf6;
 
@@ -231,7 +231,7 @@
   --ex-border-color1: #f5f5f5;
   --ex-border-color2: #bcbcbc;
   --ex-border-color3: #2A18B8;
-  --ex-border-color4: #4936DF;
+  --ex-border-color4: #f2b80a;
   --ex-border-color5: #fbfbfb;
   --ex-border-color6: #eee;
   --ex-border-color7: #8072F1;

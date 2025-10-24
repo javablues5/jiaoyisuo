@@ -1,12 +1,12 @@
 <template>
   <div class="userAmount">
-    <div>
+    <div class="top">
       <!-- 账户余额 -->
       <p>{{ _t18('asset_account', ['ebc']) }}(USDT)</p>
       <svg-load :name="showicon" class="yanjin" @click="handleYanjin"></svg-load>
       <svg-load name="refresh" class="shuaxin" @click="handleShuaxin"></svg-load>
     </div>
-    <p class="userInfo fw-num">{{ _numberWithCommas(amount) }}</p>
+    <p class="userInfo fw-num">${{ _numberWithCommas(amount) }}</p>
   </div>
   <div class="currencyAbout">
     <div
@@ -152,15 +152,18 @@ const toRecharge = (url) => {
   color: var(--ex-default-font-color);
 }
 .userAmount {
-  // margin-top: 61px;
-  padding: 30px 15px;
+  border: 1px solid #342f4f;
+
+  padding: 16px 15px;
+  margin: 10px 16px;
+  border-radius: 8px;
   // border-bottom: 1px solid var(--ex-border-color);
   display: flex;
   flex-direction: column;
   div {
     display: flex;
     align-items: center;
-    margin-bottom: 25px;
+    margin-bottom: 10px;
     .yanjin {
       font-size: 14px;
       margin-left: 15px;

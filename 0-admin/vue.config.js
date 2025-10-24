@@ -82,7 +82,7 @@ module.exports = {
               warnings: false, // 禁用警告
               compress: {
                 drop_console: process.env.NODE_ENV === "production",
-                drop_debugger: true,
+                drop_debugger: process.env.NODE_ENV === "production",
                 // pure_funcs: ["console.log"], // 移除console
               },
             },
