@@ -1,23 +1,11 @@
 package com.ruoyi.websocket;
 
-import com.ruoyi.common.utils.DateUtils;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
-
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
-
 import javax.annotation.Resource;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.URI;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @Slf4j
 @Configuration
@@ -34,6 +22,8 @@ public class WebSocketRunner implements CommandLineRunner {
         WebSocketSubscriber webSocketSubscriberKline = webSocketConfigdd.webSocketSubscriberKline();
         WebSocketSubscriber webSocketSubscriberDetail = webSocketConfigdd.webSocketSubscriberDetail();
 
+        //LDWebSocketSubscriber ldWebSocketSubscriber = webSocketConfigdd.lDWebSocketSubscriber();
+
         //Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 33210));
         //
         //webSocketSubscriberKline.setProxy(proxy);
@@ -43,6 +33,9 @@ public class WebSocketRunner implements CommandLineRunner {
         webSocketSubscriberDetail.connect();
         map.put("kline",webSocketSubscriberKline);
         map.put("detaul",webSocketSubscriberDetail);
+
+//        ldWebSocketSubscriber.connect();
+//        map.put("ld",ldWebSocketSubscriber);
     }
     public void reStart(String... args) throws InterruptedException {
         WebSocketSubscriber webSocketSubscriberKline = (WebSocketSubscriber) map.get("kline");

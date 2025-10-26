@@ -1,27 +1,16 @@
 package com.ruoyi.web.controller.bussiness;
 
 import java.util.List;
-import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.bussiness.domain.TAppUser;
 import com.ruoyi.web.controller.common.ApiBaseController;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.ruoyi.common.annotation.Log;
-import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
-import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.bussiness.domain.TAppMail;
 import com.ruoyi.bussiness.service.ITAppMailService;
-import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
 
 /**
@@ -36,6 +25,25 @@ public class TAppMailController extends ApiBaseController
 {
     @Autowired
     private ITAppMailService tAppMailService;
+
+    /**
+     * 查询站内信列表
+     */
+    @PostMapping("/list")
+    public TableDataInfo list(TAppMail tAppMail)
+    {
+        startPage();
+        TAppUser appUser = getAppUser();
+        tAppMail.setUserId(appUser.getUserId());
+        tAppMail.setDelFlag("0");
+        List<TAppMail> list = tAppMailService.selectTAppMailList(tAppMail);
+        TAppMail t = new TAppMail();
+        t.setType("2");
+        t.setDelFlag("0");
+        List<TAppMail> qz = tAppMailService.selectTAppMailList(t);
+        list.addAll(qz);
+        return getDataTable(list);
+    }
 
     /**
      * 查询1v1站内信列表
