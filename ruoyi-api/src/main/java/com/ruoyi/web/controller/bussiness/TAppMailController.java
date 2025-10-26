@@ -61,7 +61,7 @@ public class TAppMailController extends ApiBaseController
      * 修改1v1站内信
      */
     @PostMapping("/updateMail")
-    public AjaxResult updateMail( Long[] ids)
+    public AjaxResult updateMail(Long[] ids)
     {
         TAppUser appUser = getAppUser();
         return toAjax(tAppMailService.updateMail(ids,appUser));
