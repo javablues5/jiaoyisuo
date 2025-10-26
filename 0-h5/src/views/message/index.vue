@@ -1,6 +1,6 @@
 <template>
     <div class="message">
-        <HeaderBar currentName="信息" :border_bottom="false"></HeaderBar>
+        <HeaderBar :currentName="_t18('message')" :border_bottom="false"></HeaderBar>
         <van-tabs v-model:active="active" title-active-color="#edc96d" color="#edc96d" title-inactive-color="#5d626d">
             <van-tab v-for="item in tabs" :key="item.value" :title="item.label">
             </van-tab>
@@ -15,7 +15,7 @@
                     </div>
                 </div>
                 <div class="bottom" @click="toggleExpand(item)">
-                    <span>查看详情</span>
+                    <span>{{ _t18('view_details') }}</span>
                     <van-icon :name="item.expanded ? 'arrow-up' : 'arrow-down'" />
                 </div>
                 <div class="detail" v-show="item.expanded">
@@ -29,11 +29,12 @@
 <script setup>
 import HeaderBar from '@/components/HeaderBar/index.vue'
 import { getMessages, haveRead } from '@/api/info.js'
-import { onMounted } from 'vue'
+import { onMounted, computed, ref } from 'vue'
 import { useUserStore } from '@/store/user/index'
-import { computed } from 'vue'
 import { showToast } from 'vant'
-const tabs = [{ label: "未读", value: 0 }, { label: "全部", value: 1 }]
+import { _t18 } from '@/utils/public'
+
+const tabs = computed(() => [{ label: _t18('unread'), value: 0 }, { label: _t18('all'), value: 1 }])
 const userStore = useUserStore()
 const tokenStatus = ref(userStore.isSign)
 const active = ref(0)

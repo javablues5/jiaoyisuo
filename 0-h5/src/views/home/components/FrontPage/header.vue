@@ -11,7 +11,7 @@
         </van-swipe-item>
       </van-swipe> -->
       <div class="top">
-        <div><Logo></Logo> <span class="title">数字币交易</span></div>
+        <div><Logo></Logo> <span class="title">{{ _t18('digital_currency_trading') }}</span></div>
         <div class="leftSide">
           <svg-load name="sousuo" class="rightImg" @click="$router.push('/quote')"></svg-load>
           <svg-load name="message" class="rightImg" @click="$router.push('/message')"></svg-load>
@@ -20,7 +20,7 @@
       </div>
     </div>
     <div class="listBox">
-      <span class="title"> 市场概览</span>
+      <span class="title">{{ _t18('market_overview') }}</span>
       <div class="currentList">
         <div
           class="item centerItem"
@@ -62,9 +62,9 @@
 import { useTradeStore } from '@/store/trade/index'
 import { useMainStore } from '@/store/index.js'
 import { useRouter } from 'vue-router'
-import { onMounted } from 'vue'
+import { onMounted, computed, ref } from 'vue'
 import { publiceNotice } from '@/api/common/index'
-import { computed } from 'vue'
+import { _t18 } from '@/utils/public'
 import SideBar from '@/views/home/sidebar/index.vue'
 const show = ref(false)
 const openSideBar = () => {

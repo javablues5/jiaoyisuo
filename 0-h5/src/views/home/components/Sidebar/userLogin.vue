@@ -14,7 +14,7 @@
       </Copy>
       <!-- 信用分 -->
       <div class="rightBot">
-        {{ _t18('credit_score') }}：{{ userStore.userInfo.detail?.credits }}
+        {{ _t18('invitationCode') }}：{{ userStore.userInfo.user?.activeCode }}
       </div>
     </div>
   </div>
