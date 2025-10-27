@@ -1,6 +1,6 @@
 import { socketDict } from '@/config/dict'
 import PubSub from 'pubsub-js'
-export default class ClientWebSocket {
+export default class WssWebSocket {
   // ws 最终链接
   url = ''
 
@@ -14,8 +14,10 @@ export default class ClientWebSocket {
 
   constructor(userId) {
     // 初始化
+    console.log('🚀 初始化雷达 WebSocket, userId:', userId)
     let baseUrl = __config._BASE_WSS
-    this.url = `${baseUrl}/ws/coin/${userId}`
+    this.url = `${baseUrl}/webSocket/ld/${userId}`
+    console.log('📡 雷达 WebSocket URL:', this.url)
     this.init()
   }
 
@@ -40,24 +42,17 @@ export default class ClientWebSocket {
   /**
    * 已连接
    */
-  onOpen = () => {}
+  onOpen = () => {
+    console.log('✅ 雷达 WebSocket 连接成功')
+  }
 
   /**
    * 响应数据
    */
   onMessage = (e) => {
-    console.log('响应数据', e.data)
+    // console.log('响应数据LADAR', e.data)
     let data = JSON.parse(e.data)
-    if ([socketDict.HEARTBEAT].includes(data.type)) {
-      this.send('ping')
-    } else if (
-      [
-        socketDict.USER_STATUS,
-        socketDict.SETTLEMENT,
-        socketDict.POSITION,
-        socketDict.OWNCOIN,
-      ].includes(data.type)
-    ) {
+    if ([socketDict.LADAR].includes(data.type)) {
       PubSub.publish(data.type, data)
     }
   }
@@ -72,14 +67,17 @@ export default class ClientWebSocket {
   /**
    * 连接异常
    */
-  onError = () => {
+  onError = (error) => {
+    console.error('❌ 雷达 WebSocket 连接错误:', error)
     this.reconnect()
   }
 
   /**
    * 连接关闭
    */
-  onClose = () => {}
+  onClose = () => {
+    console.log('🔒 雷达 WebSocket 连接已关闭')
+  }
 
   /**
    * 重新连接

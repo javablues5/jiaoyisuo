@@ -1136,5 +1136,15 @@
   "robinhood2_quick_recharge": "Quick deposit",
   "robinhood2_recharge_fast": "Quick deposit",
   "math_exchange_bullish": "buy up",
-  "math_exchange_bearish": "buy down"
+  "math_exchange_bearish": "buy down",
+  "radar_title": "Trading Radar",
+  "radar_price_fluctuation": "Price Fluctuation",
+  "radar_tip_prefix": "Price ",
+  "radar_rise": "rose by ",
+  "radar_fall": "fell by ",
+  "radar_seconds_ago": " seconds ago",
+  "radar_minutes_ago": " minutes ago",
+  "radar_hours_ago": " hours ago",
+  "radar_just_now": "Just now",
+  "radar_minutes_ago_relative": " minutes ago"
 }

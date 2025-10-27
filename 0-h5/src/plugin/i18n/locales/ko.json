@@ -1136,5 +1136,15 @@
   "robinhood2_quick_recharge": "빠른 재충전",
   "robinhood2_recharge_fast": "간편 충전",
   "math_exchange_bullish": "상승세",
-  "math_exchange_bearish": "하락세"
+  "math_exchange_bearish": "하락세",
+  "radar_title": "거래 레이더",
+  "radar_price_fluctuation": "가격 변동",
+  "radar_tip_prefix": "가격이",
+  "radar_rise": "상승했습니다",
+  "radar_fall": "하락했습니다",
+  "radar_seconds_ago": "초 전",
+  "radar_minutes_ago": "분 전",
+  "radar_hours_ago": "시간 전",
+  "radar_just_now": "방금",
+  "radar_minutes_ago_relative": "분 전"
 }

@@ -112,6 +112,6 @@ export default class CoinWebSocket {
    * 重新连接
    */
   reconnect = () => {
-    setTimeout(this.init.apply(this), 3 * 1000)
+    setTimeout(() => this.init(), 3 * 1000)
   }
 }

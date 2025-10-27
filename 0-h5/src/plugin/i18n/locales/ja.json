@@ -1136,5 +1136,15 @@
   "robinhood2_quick_recharge": "急速充電",
   "robinhood2_recharge_fast": "高速入金",
   "math_exchange_bullish": "上昇",
-  "math_exchange_bearish": "下落"
+  "math_exchange_bearish": "下落",
+  "radar_title": "取引レーダー",
+  "radar_price_fluctuation": "価格変動",
+  "radar_tip_prefix": "価格が",
+  "radar_rise": "上昇しました",
+  "radar_fall": "下落しました",
+  "radar_seconds_ago": "秒前",
+  "radar_minutes_ago": "分前",
+  "radar_hours_ago": "時間前",
+  "radar_just_now": "たった今",
+  "radar_minutes_ago_relative": "分前"
 }

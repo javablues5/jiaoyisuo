@@ -1136,5 +1136,15 @@
   "robinhood2_quick_recharge": "快速充值",
   "robinhood2_recharge_fast": "快捷充币",
   "math_exchange_bullish": "看涨",
-  "math_exchange_bearish": "看跌"
+  "math_exchange_bearish": "看跌",
+  "radar_title": "交易雷达",
+  "radar_price_fluctuation": "价格波动",
+  "radar_tip_prefix": "价格在",
+  "radar_rise": "上涨了",
+  "radar_fall": "下跌了",
+  "radar_seconds_ago": "秒钟内",
+  "radar_minutes_ago": "分钟内",
+  "radar_hours_ago": "小时内",
+  "radar_just_now": "刚刚",
+  "radar_minutes_ago_relative": "分钟前"
 }

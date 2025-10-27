@@ -41,17 +41,20 @@ export const storageDict = getStorageDict()
  */
 const getSocketDict = () => {
   // kLine部分
+  // 这个数组用于定义和 socket 通信时涉及到的所有消息类型 key（如订阅、取消订阅、行情明细、K线、成交、心跳、结算、持仓、用户状态、自有币等）
+  // 后续会转为对象，作为 socket 消息通信中的事件类型字典，方便安全地引用和对比 socket 消息类型
   let kLineTempList = [
-    'subscribe',
-    'unsubscribe',
-    'DETAIL',
-    'KLINE',
-    'TRADE',
-    'HEARTBEAT',
-    'SETTLEMENT',
-    'POSITION',
-    'USER_STATUS',
-    'OWNCOIN'
+    'subscribe',     // 订阅操作
+    'unsubscribe',   // 取消订阅操作
+    'DETAIL',        // 行情明细
+    'KLINE',         // K线图数据
+    'TRADE',         // 成交记录
+    'HEARTBEAT',     // 心跳包
+    'SETTLEMENT',    // 结算推送
+    'POSITION',      // 持仓推送
+    'USER_STATUS',   // 用户状态变化
+    'OWNCOIN' ,       // 自有币推送
+    'LADAR'          //雷达推送
   ]
 
   let tempList = [...kLineTempList]
