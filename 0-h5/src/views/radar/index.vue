@@ -30,8 +30,28 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useMainStore } from '@/store/index.js'
 import { _t18 } from '@/utils/public'
+import { getRadarList } from '@/api/radar'
 const mainStroe = useMainStore()
 const dataList = ref([])
+
+// 首次加载交易雷达列表
+const initRadarList = async () => {
+    try {
+        const res = await getRadarList({
+            pageNum: 1,
+            pageSize: 50,
+            orderByColumn: 'time',
+            isAsc: 'asc'
+        })
+        // 兼容不同返回结构，优先 rows
+        const list = res?.rows 
+        if (Array.isArray(list) && list.length) {
+            dataList.value.push(...list)
+        }
+    } catch (e) {
+        // 忽略错误，页面继续依赖 websocket 数据
+    }
+}
 /**
  * 用户信息改变监听回调事件
  */
@@ -63,7 +83,13 @@ function formatTimeTip(time) {
     }
     const match = time.match(/^(\d+)([smh])$/)
     if (!match) return ''
-    const [, num, unit] = match
+    let num = match[1]
+    const unit = match[2]
+    // 避免num为undefined/null/非数字字符串时转NaN
+    if (!/^\d+$/.test(num)) return ''
+    num = Number(num)
+    // 特殊处理：避免 NaN
+    if (isNaN(num)) return ''
     return `${num}${unitMap[unit] || ''}`
 }
 
@@ -116,6 +142,8 @@ onRadarMessage()
 
 onMounted(() => {
     document.addEventListener('event_userInfoChange', event_userInfoChange)
+    // 首次加载交易雷达列表
+    initRadarList()
 })
 
 onUnmounted(() => {

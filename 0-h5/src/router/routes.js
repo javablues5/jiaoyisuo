@@ -43,12 +43,24 @@ export default [
     name: 'Message',
     component: () => import('@/views/message/index.vue')
   },
-  
+
   // 交易
   {
     path: '/trade',
     name: 'Trade',
     component: () => import('@/views/trade/index.vue')
+  },
+  // 跟单
+  {
+    path: '/follow',
+    name: 'follow',
+    component: () => import('@/views/follow/index.vue')
+  },
+  // 交易雷达
+  {
+    path: '/radar',
+    name: 'radar',
+    component: () => import('@/views/radar/index.vue')
   },
   // 交易杠杆
   {
