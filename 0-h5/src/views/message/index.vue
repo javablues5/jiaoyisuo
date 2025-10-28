@@ -1,53 +1,65 @@
 <template>
     <div class="message">
         <HeaderBar :currentName="_t18('message')" :border_bottom="false"></HeaderBar>
-        <van-tabs v-model:active="active" title-active-color="#edc96d" color="#edc96d" title-inactive-color="#5d626d">
-            <van-tab v-for="item in tabs" :key="item.value" :title="item.label">
+        <van-tabs v-model:active="activeName" title-active-color="#edc96d" color="#edc96d"
+            title-inactive-color="#5d626d">
+            <van-tab v-for="item in tabs" :key="item.value" :title="item.label" :name="item.name">
+                <div class="message-content">
+                    <van-pull-refresh v-model="refreshing" :key="item.name" @refresh="onRefresh"
+                        :loading-text="_t18('loading')" :loosing-text="_t18('release_refresh')">
+                        <van-loading v-if="showLoading" />
+                        <template v-else>
+                            <van-list v-if="messageList.length > 0" v-model:loading="loading" :finished="finished"
+                                :finished-text="_t18('no_more_data')" :loading-text="_t18('loading')" @load="onLoad">
+                                <div class="item" v-for="item in messageList" :key="item.id">
+                                    <div class="top">
+                                        <div class="left">
+                                            <span class="title">{{ item.title }}</span>
+                                            <span class="date">{{ item.createTime }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="bottom" @click="toggleExpand(item)">
+                                        <span>{{ _t18('view_details') }}</span>
+                                        <van-icon :name="item.expanded ? 'arrow-up' : 'arrow-down'" />
+                                    </div>
+                                    <div class="detail" v-show="item.expanded">
+                                        <div v-html="item.content?.replace(/\n/g, '<br>')"></div>
+                                    </div>
+                                    <div class="badge" v-if="item.status === 0"></div>
+                                </div>
+                            </van-list>
+                            <div class="empty-data" v-else>
+                                <van-empty description="暂无数据" />
+                            </div>
+                        </template>
+                    </van-pull-refresh>
+                </div>
             </van-tab>
         </van-tabs>
-        <div class="message-content">
-            <div class="item" v-for="item in computedList" :key="item.id">
-                <div class="top">
-                    <div class="left">
-                        <span class="title">{{ item.title }}</span>
-                        <span class="date">{{ item.createTime
-                            }}</span>
-                    </div>
-                </div>
-                <div class="bottom" @click="toggleExpand(item)">
-                    <span>{{ _t18('view_details') }}</span>
-                    <van-icon :name="item.expanded ? 'arrow-up' : 'arrow-down'" />
-                </div>
-                <div class="detail" v-show="item.expanded">
-                    <div v-html="item.content?.replace(/\n/g, '<br>')"></div>
-                </div>
-                <div class="badge" v-if="item.status === 0"></div>
-            </div>
-        </div>
+
     </div>
 </template>
 <script setup>
 import HeaderBar from '@/components/HeaderBar/index.vue'
 import { getMessages, haveRead } from '@/api/info.js'
-import { onMounted, computed, ref } from 'vue'
+import { onMounted, computed, ref, watch } from 'vue'
 import { useUserStore } from '@/store/user/index'
-import { showToast } from 'vant'
 import { _t18 } from '@/utils/public'
 
-const tabs = computed(() => [{ label: _t18('unread'), value: 0 }, { label: _t18('all'), value: 1 }])
+const tabs = computed(() => [ { label: _t18('all'), value: 1, name: "b" },{ label: _t18('unread'), value: 0, name: 'a' },])
 const userStore = useUserStore()
 const tokenStatus = ref(userStore.isSign)
-const active = ref(0)
+const activeName = ref('b')
+// 分页与加载状态
+const pageNum = ref(1)
+const pageSize = ref(10)
+const total = ref(0)
+const loading = ref(false)
+const finished = ref(false)
+const refreshing = ref(false)
+const showLoading = ref(true)
 
 const messageList = ref([])
-const computedList = computed(() => {
-    if (active.value === 0) {
-        return messageList.value.filter((v) => v.status === 0)
-    } else {
-        return messageList.value
-    }
-
-})
 
 const readMsgs = (item) => {
     if (item.id) {
@@ -66,17 +78,60 @@ async function toggleExpand(item) {
     }
 }
 
+const resetAndFetch = () => {
+    // 重置分页状态并加载
+    pageNum.value = 1
+    total.value = 0
+    finished.value = false
+    loading.value = true
+    showLoading.value = true
+    messageList.value = []
+    getInfoList()
+}
+
 const getInfoList = async () => {
-    if (tokenStatus.value) {
-        let res = await getMessages()
-        if (res.code == '200' && res.rows.length > 0) {
-            messageList.value = res.rows
+    if (!tokenStatus.value) return
+    const res = await getMessages({ pageNum: pageNum.value, pageSize: pageSize.value, orderByColumn: "createTime", status: activeName.value === 'a' ? 0 : null })
+    if (res.code == '200') {
+        // 结束下拉与加载动画
+        if (showLoading.value) showLoading.value = false
+        if (refreshing.value) refreshing.value = false
+        loading.value = false
+
+        const rows = Array.isArray(res.rows) ? res.rows : []
+        total.value = Number(res.total || 0)
+        messageList.value = messageList.value.concat(rows)
+
+        if (messageList.value.length >= total.value || rows.length < pageSize.value) {
+            finished.value = true
         }
+        pageNum.value++
+    } else {
+        // 异常兜底
+        finished.value = true
+        loading.value = false
+        showLoading.value = false
+        refreshing.value = false
     }
 }
 
+const onLoad = () => {
+    if (finished.value || loading.value) return
+    loading.value = true
+    getInfoList()
+}
 
-onMounted(() => getInfoList())
+const onRefresh = () => {
+    refreshing.value = true
+    resetAndFetch()
+}
+
+// Tab 切换重置
+watch(activeName, () => {
+    resetAndFetch()
+})
+
+onMounted(() => resetAndFetch())
 
 </script>
 
@@ -113,6 +168,7 @@ onMounted(() => getInfoList())
             border-radius: 6px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             position: relative;
+            margin-bottom: 10px;
 
             .badge {
                 position: absolute;
