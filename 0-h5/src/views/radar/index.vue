@@ -40,10 +40,9 @@ const initRadarList = async () => {
         const res = await getRadarList({
             pageNum: 1,
             pageSize: 50,
-            orderByColumn: 'time',
-            isAsc: 'asc'
+            orderByColumn: 'nowTime',
+            isAsc: 'desc'
         })
-        // 兼容不同返回结构，优先 rows
         const list = res?.rows 
         if (Array.isArray(list) && list.length) {
             dataList.value.push(...list)

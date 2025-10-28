@@ -2,6 +2,38 @@ import axios from 'axios'
 import { useUserStore } from '@/store/user/index.js'
 import { showToast } from 'vant'
 
+
+/**
+ * 参数处理
+ * @param {*} params  参数
+ */
+export function tansParams(params) {
+  let result = "";
+  for (const propName of Object.keys(params)) {
+    const value = params[propName];
+    var part = encodeURIComponent(propName) + "=";
+    if (value !== null && value !== "" && typeof value !== "undefined") {
+      if (typeof value === "object") {
+        for (const key of Object.keys(value)) {
+          if (
+            value[key] !== null &&
+            value[key] !== "" &&
+            typeof value[key] !== "undefined"
+          ) {
+            let params = propName + "[" + key + "]";
+            var subPart = encodeURIComponent(params) + "=";
+            result += subPart + encodeURIComponent(value[key]) + "&";
+          }
+        }
+      } else {
+        result += part + encodeURIComponent(value) + "&";
+      }
+    }
+  }
+  return result;
+}
+
+
 let _axios = null
 /**
  * 初始化
@@ -33,6 +65,13 @@ _axios.interceptors.request.use((config) => {
   config.headers['language'] = document.querySelector('html').getAttribute('language')
   config.headers['lang'] = document.querySelector('html').getAttribute('lang')
 
+   // get请求映射params参数
+  if (config.method === "get" && config.params) {
+    let url = config.url + "?" + tansParams(config.params);
+    url = url.slice(0, -1);
+    config.params = {};
+    config.url = url;
+  }
   return config
 })
 
