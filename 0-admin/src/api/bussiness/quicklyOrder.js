@@ -42,3 +42,12 @@ export function delOrder(id) {
     method: 'delete'
   })
 }
+
+// 一键补仓
+export function oneClickReplenish(data) {
+  return request({
+    url: '/bussiness/secondContractOrder/oneClickReplenish',
+    method: 'post',
+    data: data
+  })
+}

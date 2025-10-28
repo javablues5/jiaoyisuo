@@ -72,23 +72,79 @@
           <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
             >重置</el-button
           >
+          <el-button
+            type="default"
+            size="mini"
+            icon="el-icon-setting"
+            @click="toggleInlineReplenish"
+          >一键补仓设置</el-button>
         </el-form-item>
       </el-form>
+      <!-- 内嵌一键补仓设置（默认折叠） -->
+      <div v-show="showInlineReplenish" style="margin-top: 10px;">
+        <el-form :model="inlineReplenish" label-width="100px" size="small">
+          <el-card shadow="never">
+            <div slot="header">补偿比例设置</div>
+            <el-row :gutter="10">
+              <el-col :span="24">
+                <el-form-item label="计算方式">
+                  <el-radio-group v-model="inlineReplenish.compensationMode">
+                    <el-radio label="fixed">固定比率</el-radio>
+                    <el-radio label="ladder">阶梯比率</el-radio>
+                  </el-radio-group>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item label="补偿比例(%)">
+                  <el-input-number
+                    v-model="inlineReplenish.compensationRate"
+                    :min="0"
+                    :max="100"
+                    :precision="2"
+                    :step="1"
+                    controls-position="right"
+                    style="width: 100%"
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="10">
+                <el-form-item label="开盘时间">
+                  <el-date-picker
+                    v-model="inlineReplenish.openTime"
+                    type="datetime"
+                    value-format="yyyy-MM-dd HH:mm:ss"
+                    format="yyyy-MM-dd HH:mm:ss"
+                    placeholder="选择日期时间（到秒）"
+                    style="width: 100%"
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item label="是否全部">
+                  <el-checkbox v-model="inlineReplenish.isAll">全部</el-checkbox>
+                </el-form-item>
+              </el-col>
+              <el-col :span="24">
+                <el-form-item>
+                  <el-button type="primary" @click="submitInlineReplenish">一键补仓</el-button>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-card>
+        </el-form>
+      </div>
     </SearchFormBox>
     <TableContentBox>
       <el-row :gutter="10" class="mb8">
-        <!-- <el-col :span="1.5">
+        <el-col :span="1.5">
           <el-button
-            type="warning"
+            type="primary"
             plain
-            icon="el-icon-download"
+            icon="el-icon-plus"
             size="mini"
-            :disabled="multiple"
-            @click="handleExport"
-            v-hasPermi="['secondContractOrder:order:export']"
-            >导出</el-button
-          >
-        </el-col> -->
+            @click="openReplenish"
+          >一键补仓</el-button>
+        </el-col>
         <right-toolbar
           :showSearch.sync="showSearch"
           @queryTable="getList"
@@ -242,6 +298,12 @@
         @pagination="getList"
       />
     </TableContentBox>
+    <ReplenishDialog
+      :visible.sync="replenishVisible"
+      @confirm="onReplenishConfirm"
+      @cancel="onReplenishCancel"
+      @apply-filter="onReplenishApplyFilter"
+    />
     <!-- 添加或修改秒合约订单对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
@@ -262,6 +324,8 @@
 </template>
 
 <script>
+import ReplenishDialog from "./ReplenishDialog.vue";
+import { oneClickReplenish } from "@/api/bussiness/quicklyOrder";
 import {
   listOrder,
   getOrder,
@@ -272,6 +336,7 @@ import {
 
 export default {
   name: "Order",
+  components: { ReplenishDialog },
   dicts: [
     "coin_quickly_status",
     "coin_quickly_result",
@@ -299,6 +364,16 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
+      // 一键补仓弹窗
+      replenishVisible: false,
+      // 内嵌一键补仓设置
+      showInlineReplenish: false,
+      inlineReplenish: {
+        compensationMode: 'fixed',
+        compensationRate: 0,
+        openTime: '',
+        isAll: false,
+      },
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -371,6 +446,43 @@ export default {
     this.getList();
   },
   methods: {
+    toggleInlineReplenish() {
+      this.showInlineReplenish = !this.showInlineReplenish;
+    },
+    submitInlineReplenish() {
+      const payload = {
+        compensationMode: this.inlineReplenish.compensationMode,
+        compensationRate: this.inlineReplenish.compensationRate,
+        openTime: this.inlineReplenish.openTime,
+        isAll: this.inlineReplenish.isAll,
+        // 合并搜索栏的用户ID与订单号
+        userId: this.queryParams.userId,
+        orderNo: this.queryParams.orderNo,
+      };
+      oneClickReplenish(payload).then(() => {
+        this.$modal.msgSuccess('一键补仓提交成功');
+        this.getList();
+      });
+    },
+    openReplenish() {
+      this.replenishVisible = true;
+    },
+    onReplenishCancel() {
+      this.replenishVisible = false;
+    },
+    onReplenishConfirm(payload) {
+      oneClickReplenish(payload).then(() => {
+        this.$modal.msgSuccess("已提交补仓配置");
+        this.replenishVisible = false;
+        // 可选：刷新列表
+        this.getList();
+      });
+    },
+    onReplenishApplyFilter(payload) {
+      // TODO: 可选：将筛选条件应用到查询参数
+      // 示例：this.queryParams.userStatus = payload.accountStatus
+      this.$message.success("筛选条件已应用（示例）");
+    },
     /** 复制代码成功 */
     clipboardSuccess() {
       this.$modal.msgSuccess("复制成功");
