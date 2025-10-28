@@ -14,7 +14,7 @@
                 </div>
                 <span class="tip">{{ _t18('radar_tip_prefix') }}{{ formatTimeTip(item.time) }}{{ item.percentage > 0 ? _t18('radar_rise') : _t18('radar_fall') }}{{ item.percentage
                 }}%</span>
-                <span class="time">{{ formatRelativeTime(item.now_time) }}</span>
+                <span class="time">{{ formatRelativeTime(item.nowTime) }}</span>
             </li>
         </ul>
     </div>
