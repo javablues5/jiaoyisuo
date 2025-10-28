@@ -22,7 +22,7 @@ public class WebSocketRunner implements CommandLineRunner {
         WebSocketSubscriber webSocketSubscriberKline = webSocketConfigdd.webSocketSubscriberKline();
         WebSocketSubscriber webSocketSubscriberDetail = webSocketConfigdd.webSocketSubscriberDetail();
 
-        //LDWebSocketSubscriber ldWebSocketSubscriber = webSocketConfigdd.lDWebSocketSubscriber();
+        LDWebSocketSubscriber ldWebSocketSubscriber = webSocketConfigdd.lDWebSocketSubscriber();
 
         //Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 33210));
         //
@@ -34,8 +34,8 @@ public class WebSocketRunner implements CommandLineRunner {
         map.put("kline",webSocketSubscriberKline);
         map.put("detaul",webSocketSubscriberDetail);
 
-//        ldWebSocketSubscriber.connect();
-//        map.put("ld",ldWebSocketSubscriber);
+        ldWebSocketSubscriber.connect();
+        map.put("ld",ldWebSocketSubscriber);
     }
     public void reStart(String... args) throws InterruptedException {
         WebSocketSubscriber webSocketSubscriberKline = (WebSocketSubscriber) map.get("kline");
@@ -44,6 +44,8 @@ public class WebSocketRunner implements CommandLineRunner {
         webSocketSubscriberDetail.onClose(-1,null,true);
         WebSocketSubscriber webSocketSubscriber1 = webSocketConfigdd.webSocketSubscriberKline();
         WebSocketSubscriber webSocketSubscriber2 = webSocketConfigdd.webSocketSubscriberDetail();
+        LDWebSocketSubscriber ldWebSocketSubscriber = webSocketConfigdd.lDWebSocketSubscriber();
+        map.put("ld",ldWebSocketSubscriber);
         map.put("kline",webSocketSubscriber1);
         map.put("detaul",webSocketSubscriber2);
         webSocketSubscriber1.connect();

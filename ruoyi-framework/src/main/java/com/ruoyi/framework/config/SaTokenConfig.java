@@ -27,6 +27,7 @@ public class SaTokenConfig implements WebMvcConfigurer {
                         "/api/user/easyGenerateCode",
                         "/api/common/**",
                         "/api/app/**",
+                        "/api/ld/socket/**",
                         "/api/user/sendEmailCode",
                         "/api/user/sendMobileCode",
                         "/api/user/getCountryCode",

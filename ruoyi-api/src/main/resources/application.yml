@@ -46,7 +46,7 @@ spring:
     # 国际化资源文件路径
     basename: i18n/messages
   profiles: 
-    active: dev
+    active: dev1
   # 文件上传
   servlet:
      multipart:
@@ -77,6 +77,12 @@ mybatis-plus:
   mapperLocations: classpath*:mapper*/**/*Mapper.xml
   # 加载全局的配置文件
   configLocation: classpath:mybatis/mybatis-config.xml
+  global-config:
+    db-config:
+      where-strategy: not_empty
+      # 影响 INSERT VALUES 部分
+      # 配置插入策略为 not_empty，MyBatis-Plus 就会忽略值为 null 和 "" 的字段
+      insert-strategy: not_empty
 
 # PageHelper分页插件
 pagehelper: 
