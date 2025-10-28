@@ -24,7 +24,7 @@ public class SocketMessageLdVo extends BaseEntity {
     private String name;
     private String time;
     private BigDecimal percentage;
-    @TableField("now_time")
-    private Long now_time;
+    //@TableField("now_time")
+    private Long nowTime;
 
 }

@@ -61,7 +61,7 @@ public class LDSevice {
             // 可以在这里添加您的自定义雷达警报逻辑（如发送通知、自动下单等）
             SocketMessageLdVo ldVo = SocketMessageLdVo.builder().logo("").type("LADAR")
                     .name(klineData.getS().replace("USDT", "/USDT"))
-                    .time(time).percentage(percentage).now_time(System.currentTimeMillis()).build();
+                    .time(time).percentage(percentage).nowTime(System.currentTimeMillis()).build();
 
             MpCrudTool.insert(ldVo);
             WebSocketLeiDa.sendInfoAll(JSON.toJSONString(ldVo));
