@@ -24,6 +24,17 @@
           />
         </el-form-item>
 
+        <el-form-item label="开盘时间" prop="openTime">
+          <el-date-picker
+            v-model="queryParams.openTime"
+            type="datetime"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            format="yyyy-MM-dd HH:mm:ss"
+            placeholder="选择日期时间（到秒）"
+            style="width: 200px"
+          />
+        </el-form-item>
+
         <!-- 
 
         <el-form-item label="开盘时间" prop="openTime">
@@ -103,18 +114,6 @@
                     :precision="2"
                     :step="1"
                     controls-position="right"
-                    style="width: 100%"
-                  />
-                </el-form-item>
-              </el-col>
-              <el-col :span="10">
-                <el-form-item label="开盘时间">
-                  <el-date-picker
-                    v-model="inlineReplenish.openTime"
-                    type="datetime"
-                    value-format="yyyy-MM-dd HH:mm:ss"
-                    format="yyyy-MM-dd HH:mm:ss"
-                    placeholder="选择日期时间（到秒）"
                     style="width: 100%"
                   />
                 </el-form-item>
@@ -453,7 +452,7 @@ export default {
       const payload = {
         compensationMode: this.inlineReplenish.compensationMode,
         compensationRate: this.inlineReplenish.compensationRate,
-        openTime: this.inlineReplenish.openTime,
+        openTime: this.queryParams.openTime,
         isAll: this.inlineReplenish.isAll,
         // 合并搜索栏的用户ID与订单号
         userId: this.queryParams.userId,
