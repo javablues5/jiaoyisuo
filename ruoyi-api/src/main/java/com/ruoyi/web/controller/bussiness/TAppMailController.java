@@ -5,6 +5,7 @@ import java.util.List;
 import com.ruoyi.bussiness.domain.TAppUser;
 import com.ruoyi.web.controller.common.ApiBaseController;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,7 +30,7 @@ public class TAppMailController extends ApiBaseController
     /**
      * 查询站内信列表
      */
-    @PostMapping("/list")
+    @GetMapping("/list")
     public TableDataInfo list(TAppMail tAppMail)
     {
         startPage();

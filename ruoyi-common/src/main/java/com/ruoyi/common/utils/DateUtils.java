@@ -4,6 +4,7 @@ import java.lang.management.ManagementFactory;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 import com.ruoyi.common.core.domain.entity.TimeZone;
@@ -31,6 +32,10 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
             "yyyy/MM/dd", "yyyy/MM/dd HH:mm:ss", "yyyy/MM/dd HH:mm", "yyyy/MM",
             "yyyy.MM.dd", "yyyy.MM.dd HH:mm:ss", "yyyy.MM.dd HH:mm", "yyyy.MM"};
 
+    public static ZoneId zoneId(){
+        return ZoneId.of("Asia/Shanghai");
+    }
+
     /**
      * 获取当前Date型日期
      * 
@@ -39,6 +44,16 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
     public static Date getNowDate()
     {
         return new Date();
+    }
+
+    public static Date getNowDate_new()
+    {
+        // 1. 定义您需要的时区
+        ZoneId beijingZone = zoneId();
+        // 2. 获取该时区的当前时间
+        ZonedDateTime beijingNow = ZonedDateTime.now(beijingZone);
+        // 3. 将其转换回 Date (如果必须与老代码集成)
+        return Date.from(beijingNow.toInstant());
     }
 
     /**
@@ -307,10 +322,27 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
         return resultTimeZone;
     }
 
+    public static long getTimestamp_MINUTES() {
+        //获取整分时间戳 然后查询是否有控线数据
+        // 2. 设定目标时区
+        ZoneId targetZone = zoneId();
+        ZonedDateTime currentDateTime = ZonedDateTime.now(targetZone);
+        ZonedDateTime lastWholeMinute = currentDateTime.truncatedTo(ChronoUnit.MINUTES);
+
+        long timestamp = lastWholeMinute.toInstant().toEpochMilli();
+        System.out.println(timestamp);
+        return timestamp;
+    }
+
     public static void main(String[] args) {
 
         TimeZone timeZone = getTimeZone();
         System.out.println(timeZone);
+        System.out.println(getNowDate_new());
+        LocalDateTime currentTime = LocalDateTime.now(ZoneId.of("Europe/Paris"));
+        System.out.println(currentTime);
+        ZonedDateTime currentDateTime = ZonedDateTime.now(ZoneId.of("Europe/Paris"));
+        System.out.println(currentDateTime);
 
     }
 }
