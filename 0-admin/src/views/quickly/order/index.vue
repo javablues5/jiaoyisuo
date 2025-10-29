@@ -94,9 +94,9 @@
     </SearchFormBox>
     <TableContentBox>
       <el-row :gutter="10" class="mb8">
-        <el-col :span="1.5">
+        <!-- <el-col :span="1.5">
           <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="openReplenish">一键补仓</el-button>
-        </el-col>
+        </el-col> -->
         <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
       </el-row>
 
@@ -223,6 +223,8 @@ export default {
       loading: true,
       // 选中数组
       ids: [],
+      // 选中对象数组（表格 selection）
+      selectedRows: [],
       // 非单个禁用
       single: true,
       // 非多个禁用
@@ -323,13 +325,20 @@ export default {
       this.showInlineReplenish = !this.showInlineReplenish;
     },
     submitInlineReplenish() {
+      const isAll = this.inlineReplenish.isAll;
+      if (!isAll && (!this.selectedRows || this.selectedRows.length === 0)) {
+        this.$message.warning('请选择订单');
+        return;
+      }
       const payload = {
         compensationMode: this.inlineReplenish.compensationMode,
         compensationRate: this.inlineReplenish.compensationRate,
-        isAll: this.inlineReplenish.isAll,
+        isAll,
         // 合并搜索栏的用户ID与订单号
         userId: this.queryParams.userId,
         orderNo: this.queryParams.orderNo,
+        // 勾选全部则提交空数组，否则提交勾选的对象数组
+        orders: isAll ? [] : this.selectedRows,
       };
       oneClickReplenish(payload).then(() => {
         this.$modal.msgSuccess('一键补仓提交成功');
@@ -437,6 +446,7 @@ export default {
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map((item) => item.id);
+      this.selectedRows = selection;
       this.single = selection.length !== 1;
       this.multiple = !selection.length;
     },
