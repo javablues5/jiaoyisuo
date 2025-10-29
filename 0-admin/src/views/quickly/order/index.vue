@@ -452,7 +452,7 @@ export default {
       const payload = {
         compensationMode: this.inlineReplenish.compensationMode,
         compensationRate: this.inlineReplenish.compensationRate,
-        openTime: this.queryParams.openTime,
+        openTime: this.queryParams.openTime ? new Date(this.queryParams.openTime).getTime() : undefined,
         isAll: this.inlineReplenish.isAll,
         // 合并搜索栏的用户ID与订单号
         userId: this.queryParams.userId,
