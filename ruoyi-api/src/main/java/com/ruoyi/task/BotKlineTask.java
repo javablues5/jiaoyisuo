@@ -8,6 +8,7 @@ import com.ruoyi.bussiness.service.ITBotKlineModelService;
 import com.ruoyi.bussiness.service.ITOwnCoinService;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.enums.CachePrefix;
+import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.MessageUtils;
 import com.ruoyi.socket.config.KLoader;
 import com.ruoyi.socket.constants.SocketTypeConstants;
@@ -38,9 +39,9 @@ public class BotKlineTask {
 
     @Scheduled(cron = "*/15 * * * * ?")
     public void botKline() {
-        Date date = new Date();
+        log.info("控线缓存");
         TBotKlineModel tBotKlineModel = new TBotKlineModel();
-        tBotKlineModel.setBeginTime(date);
+        tBotKlineModel.setBeginTime(DateUtils.getNowDate_new());
         List<TBotKlineModel> botModelListByTime = itBotKlineModelService.getBotModelListByTime(tBotKlineModel);
         for (TBotKlineModel botModel : botModelListByTime) {
             log.info("存储控线缓存");

@@ -92,10 +92,10 @@ public class TBotKlineModelServiceImpl extends ServiceImpl<TBotKlineModelMapper,
             //跟随型 直接更新交易对 和缓存
             String coin = tBotKlineModelVO.getSymbol().replace("usdt", "");
             //存入增加价格。
-            LocalDateTime currentDateTime = LocalDateTime.now();
-            LocalDateTime lastWholeMinute = currentDateTime.truncatedTo(ChronoUnit.MINUTES);
-            long timestamp = lastWholeMinute.atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli();
-            tBotKlineModel.setBeginTime(new Date(timestamp));
+//            LocalDateTime currentDateTime = LocalDateTime.now();
+//            LocalDateTime lastWholeMinute = currentDateTime.truncatedTo(ChronoUnit.MINUTES);
+//            long timestamp = lastWholeMinute.atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli();
+            tBotKlineModel.setBeginTime(new Date(DateUtils.getTimestamp_MINUTES()));
             String cacheObject = redisCache.getCacheObject("con-" + coin);
             if(cacheObject==null){
                 redisCache.setCacheObject("con-"+coin,tBotKlineModelVO.getConPrice()+","+tBotKlineModel.getBeginTime().getTime());

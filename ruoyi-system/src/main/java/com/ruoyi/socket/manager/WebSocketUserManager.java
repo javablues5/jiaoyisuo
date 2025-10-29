@@ -9,6 +9,7 @@ import com.huobi.wss.event.MarketTradeDetailSubResponse;
 import com.ruoyi.bussiness.domain.TBotKlineModelInfo;
 import com.ruoyi.bussiness.mapper.TBotKlineModelInfoMapper;
 import com.ruoyi.bussiness.service.ITBotKlineModelService;
+import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.bussiness.service.ITBotKlineModelService;
 import com.ruoyi.socket.config.KLoader;
@@ -283,12 +284,12 @@ public class WebSocketUserManager {
             String coin = cacheMapc.replace("bot-", "").toLowerCase();
             klineTickBean.setIntervention(true);
             //获取整分时间戳 然后查询是否有控线数据
-            LocalDateTime currentDateTime = LocalDateTime.now();
-            LocalDateTime lastWholeMinute = currentDateTime.truncatedTo(ChronoUnit.MINUTES);
-            long timestamp = lastWholeMinute.atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli();
+//            LocalDateTime currentDateTime = LocalDateTime.now();
+//            LocalDateTime lastWholeMinute = currentDateTime.truncatedTo(ChronoUnit.MINUTES);
+//            long timestamp = lastWholeMinute.atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli();
             TBotKlineModelInfo tBotKlineModelInfo = new TBotKlineModelInfo();
             tBotKlineModelInfo.setModelId((Long)cacheMap.get("id"));
-            tBotKlineModelInfo.setDateTime(timestamp);
+            tBotKlineModelInfo.setDateTime(DateUtils.getTimestamp_MINUTES());
             TBotKlineModelInfo tBotKlineModelInfo1=tBotKlineModelInfoMapper.selectOne(new QueryWrapper<>(tBotKlineModelInfo));
             //不等于null  Y不等于0为控线状态
             if(null!=tBotKlineModelInfo1&&!tBotKlineModelInfo1.getY().equals("0")){
@@ -305,11 +306,13 @@ public class WebSocketUserManager {
                 klineTickBean.setOpen(currentlyPrice.add(open));
 
                 // 获取当前时间
-                LocalDateTime currentTime = LocalDateTime.now();
+                //LocalDateTime currentTime = LocalDateTime.now(DateUtils.zoneId());
+                ZonedDateTime currentTime = ZonedDateTime.now(DateUtils.zoneId());
                 // 将秒和毫秒部分设置为零，以获得当前整分的时间
-                LocalDateTime currentMinute = currentTime.withSecond(0).withNano(0);
+                //LocalDateTime currentMinute = currentTime.withSecond(0).withNano(0);
                 //id要为当前分钟的整分 要不k线会混乱
-                klineTickBean.setId(currentMinute.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+                //klineTickBean.setId(currentMinute.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+                klineTickBean.setId(DateUtils.getTimestamp_MINUTES());
                 //获取当前秒数
                 int currentSecond = currentTime.getSecond();
                 int secondsToNextMinute = 60 - currentSecond;
@@ -513,12 +516,12 @@ public class WebSocketUserManager {
         }else {
             Map<String, Object> cacheMap = KLoader.BOT_MAP.get("bot-" + coin);
             if(cacheMap!=null&&cacheMap.size()>0){
-                LocalDateTime currentDateTime = LocalDateTime.now();
-                LocalDateTime lastWholeMinute = currentDateTime.truncatedTo(ChronoUnit.MINUTES);
-                long timestamp = lastWholeMinute.atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli();
+//                LocalDateTime currentDateTime = LocalDateTime.now();
+//                LocalDateTime lastWholeMinute = currentDateTime.truncatedTo(ChronoUnit.MINUTES);
+//                long timestamp = lastWholeMinute.atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli();
                 TBotKlineModelInfo tBotKlineModelInfo = new TBotKlineModelInfo();
                 tBotKlineModelInfo.setModelId((Long)cacheMap.get("id"));
-                tBotKlineModelInfo.setDateTime(timestamp);
+                tBotKlineModelInfo.setDateTime(DateUtils.getTimestamp_MINUTES());
                 TBotKlineModelInfo tBotKlineModelInfo1 = tBotKlineModelInfoMapper.selectOne(new QueryWrapper<>(tBotKlineModelInfo));
                 if(null!=tBotKlineModelInfo1&&!tBotKlineModelInfo1.getY().equals("0")){
                     BigDecimal botPrice = KLoader.BOT_PRICE.get(coin);
@@ -592,7 +595,8 @@ public class WebSocketUserManager {
         klineDTO.setCh("symbol");
         RedisCache redis = SpringContextUtil.getBean(RedisCache.class);
 
-        klineTickBean.setId((currentMinute.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()));
+        //klineTickBean.setId((currentMinute.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()));
+        klineTickBean.setId(DateUtils.getTimestamp_MINUTES());
         klineTickBean.setHigh(new BigDecimal((String) jsonObject.getJSONArray("h").get(0)));
         klineTickBean.setLow(new BigDecimal((String) jsonObject.getJSONArray("l").get(0)));
         klineTickBean.setOpen(new BigDecimal((String) jsonObject.getJSONArray("o").get(0)));
@@ -661,7 +665,8 @@ public class WebSocketUserManager {
         KlineTickBean klineTickBean = new KlineTickBean();
         klineDTO.setTs(Long.parseLong((String) jsonObject.getJSONArray("t").get(0))*1000);
         klineDTO.setCh(symbol);
-        klineTickBean.setId((currentMinute.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()));
+        //klineTickBean.setId((currentMinute.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()));
+        klineTickBean.setId(DateUtils.getTimestamp_MINUTES());
         klineTickBean.setHigh(new BigDecimal((String) jsonObject.getJSONArray("h").get(0)));
         klineTickBean.setLow(new BigDecimal((String) jsonObject.getJSONArray("l").get(0)));
         klineTickBean.setOpen(new BigDecimal((String) jsonObject.getJSONArray("o").get(0)));
@@ -753,12 +758,13 @@ public class WebSocketUserManager {
             return;
         }
         // 获取当前时间 将秒和毫秒部分设置为零，以获得当前整分的时间
-        LocalDateTime currentMinute = LocalDateTime.now().withSecond(0).withNano(0);
+        //LocalDateTime currentMinute = LocalDateTime.now().withSecond(0).withNano(0);
         BinanceDTO klineDTO = new BinanceDTO();
         KlineTickBean klineTickBean = new KlineTickBean();
         klineDTO.setTs(Long.parseLong((String) tArray.get(0)) * 1000);
         klineDTO.setCh(symbol);
-        klineTickBean.setId((currentMinute.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()));
+        //klineTickBean.setId((currentMinute.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()));
+        klineTickBean.setId(DateUtils.getTimestamp_MINUTES());
         klineTickBean.setHigh(new BigDecimal((String) jsonObject.getJSONArray("h").get(0)));
         klineTickBean.setLow(new BigDecimal((String) jsonObject.getJSONArray("l").get(0)));
         klineTickBean.setOpen(new BigDecimal((String) jsonObject.getJSONArray("o").get(0)));
@@ -780,7 +786,7 @@ public class WebSocketUserManager {
 
     private void conTradeKline(TradeDataBean tradeDataBean,BinanceDTO tradeDTO , TradeTickBean tradeTickBean){
         for (String  cacheMapc: KLoader.BOT_MAP.keySet()) {
-            LocalDateTime currentTime = LocalDateTime.now();
+            LocalDateTime currentTime = LocalDateTime.now(DateUtils.zoneId());
             // 将秒和毫秒部分设置为零，以获得当前整分的时间
             LocalDateTime currentMinute = currentTime.withSecond(0).withNano(0);
             //获取当前秒数
@@ -794,12 +800,12 @@ public class WebSocketUserManager {
             wsVO.setType("TRADE");
             ArrayList<TradeDataBean> dataBeans = new ArrayList<>();
             HashMap cacheMap = KLoader.BOT_MAP.get(cacheMapc);
-            LocalDateTime currentDateTime = LocalDateTime.now();
-            LocalDateTime lastWholeMinute = currentDateTime.truncatedTo(ChronoUnit.MINUTES);
-            long timestamp = lastWholeMinute.atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli();
+//            LocalDateTime currentDateTime = LocalDateTime.now();
+//            LocalDateTime lastWholeMinute = currentDateTime.truncatedTo(ChronoUnit.MINUTES);
+//            long timestamp = lastWholeMinute.atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli();
             TBotKlineModelInfo tBotKlineModelInfo = new TBotKlineModelInfo();
             tBotKlineModelInfo.setModelId((Long)cacheMap.get("id"));
-            tBotKlineModelInfo.setDateTime(timestamp);
+            tBotKlineModelInfo.setDateTime(DateUtils.getTimestamp_MINUTES());
             TBotKlineModelInfo info = tBotKlineModelInfoMapper.selectOne(new QueryWrapper<>(tBotKlineModelInfo));
             if(null!=info&&!info.getY().equals("0")) {
                 BigDecimal botPrice = KLoader.BOT_PRICE.get(cacheMapc.replace("bot-",""));
