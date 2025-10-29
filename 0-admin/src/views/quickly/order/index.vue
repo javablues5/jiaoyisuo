@@ -9,8 +9,8 @@
           <el-input v-model="queryParams.orderNo" clearable @keyup.enter.native="handleQuery" />
         </el-form-item>
 
-        <el-form-item label="开盘时间" prop="openTime">
-          <el-date-picker v-model="queryParams.openTime" type="datetime" value-format="yyyy-MM-dd HH:mm:ss"
+        <el-form-item label="创建时间" prop="createTime">
+          <el-date-picker v-model="queryParams.createTime" type="datetime" value-format="yyyy-MM-dd HH:mm:ss"
             format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间（到秒）" style="width: 200px" />
         </el-form-item>
 
@@ -137,11 +137,17 @@
         <el-table-column label="赔偿金额" align="center" prop="compensationAmount" />
         <el-table-column label="开盘价格" align="center" prop="openPrice" />
         <el-table-column label="关盘价格" align="center" prop="closePrice" />
+        <el-table-column label="创建时间" align="center" prop="createTime" width="150px">
+          <template slot-scope="scope">
+            <span>{{scope.row.createTime }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="开盘时间" sortable align="center" prop="openTime" width="150px">
           <template slot-scope="scope">
             <span>{{ parseTime(scope.row.openTime) }}</span>
           </template>
         </el-table-column>
+       
         <el-table-column label="关盘时间" align="center" prop="closeTime" width="150px">
           <template slot-scope="scope">
             <span>{{ parseTime(scope.row.closeTime) }}</span>
@@ -266,7 +272,7 @@ export default {
         compensationAmount: null,
         openPrice: null,
         closePrice: null,
-        openTime: null,
+        createTime: null,
         closeTime: null,
         coinSymbol: null,
         baseSymbol: null,
@@ -394,7 +400,7 @@ export default {
     /** 查询秒合约订单列表 */
     getList() {
       this.loading = true;
-      listOrder({ ...this.queryParams, openTime: this.queryParams.openTime ? new Date(this.queryParams.openTime).getTime() : null }).then((response) => {
+      listOrder(this.queryParams).then((response) => {
         this.orderList = response.rows;
         this.total = response.total;
         this.loading = false;
