@@ -1,38 +1,17 @@
 <template>
   <div class="app-container">
     <SearchFormBox>
-      <el-form
-        :model="queryParams"
-        ref="queryForm"
-        size="small"
-        :inline="true"
-        v-show="showSearch"
-        label-width="68px"
-      >
+      <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
         <el-form-item label="用户ID" prop="userId">
-          <el-input
-            v-model="queryParams.userId"
-            clearable
-            @keyup.enter.native="handleQuery"
-          />
+          <el-input v-model="queryParams.userId" clearable @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item label="订单号" prop="orderNo">
-          <el-input
-            v-model="queryParams.orderNo"
-            clearable
-            @keyup.enter.native="handleQuery"
-          />
+          <el-input v-model="queryParams.orderNo" clearable @keyup.enter.native="handleQuery" />
         </el-form-item>
 
         <el-form-item label="开盘时间" prop="openTime">
-          <el-date-picker
-            v-model="queryParams.openTime"
-            type="datetime"
-            value-format="yyyy-MM-dd HH:mm:ss"
-            format="yyyy-MM-dd HH:mm:ss"
-            placeholder="选择日期时间（到秒）"
-            style="width: 200px"
-          />
+          <el-date-picker v-model="queryParams.openTime" type="datetime" value-format="yyyy-MM-dd HH:mm:ss"
+            format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间（到秒）" style="width: 200px" />
         </el-form-item>
 
         <!-- 
@@ -73,22 +52,9 @@
         </el-form-item> -->
 
         <el-form-item>
-          <el-button
-            type="primary"
-            icon="el-icon-search"
-            size="mini"
-            @click="handleQuery"
-            >搜索</el-button
-          >
-          <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
-            >重置</el-button
-          >
-          <el-button
-            type="default"
-            size="mini"
-            icon="el-icon-setting"
-            @click="toggleInlineReplenish"
-          >一键补仓设置</el-button>
+          <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+          <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+          <el-button type="default" size="mini" icon="el-icon-setting" @click="toggleInlineReplenish">一键补仓设置</el-button>
         </el-form-item>
       </el-form>
       <!-- 内嵌一键补仓设置（默认折叠） -->
@@ -107,15 +73,8 @@
               </el-col>
               <el-col :span="8">
                 <el-form-item label="补偿比例(%)">
-                  <el-input-number
-                    v-model="inlineReplenish.compensationRate"
-                    :min="0"
-                    :max="100"
-                    :precision="2"
-                    :step="1"
-                    controls-position="right"
-                    style="width: 100%"
-                  />
+                  <el-input-number v-model="inlineReplenish.compensationRate" :min="0" :max="100" :precision="2"
+                    :step="1" controls-position="right" style="width: 100%" />
                 </el-form-item>
               </el-col>
               <el-col :span="6">
@@ -136,43 +95,20 @@
     <TableContentBox>
       <el-row :gutter="10" class="mb8">
         <el-col :span="1.5">
-          <el-button
-            type="primary"
-            plain
-            icon="el-icon-plus"
-            size="mini"
-            @click="openReplenish"
-          >一键补仓</el-button>
+          <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="openReplenish">一键补仓</el-button>
         </el-col>
-        <right-toolbar
-          :showSearch.sync="showSearch"
-          @queryTable="getList"
-        ></right-toolbar>
+        <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
       </el-row>
 
-      <el-table
-        height="calc(100vh - 360px)"
-        border
-        @sort-change="sortTableFun"
-        :default-sort="{ prop: 'date', order: 'descending' }"
-        v-loading="loading"
-        :data="orderList"
-        @selection-change="handleSelectionChange"
-      >
+      <el-table height="calc(100vh - 360px)" border @sort-change="sortTableFun"
+        :default-sort="{ prop: 'date', order: 'descending' }" v-loading="loading" :data="orderList"
+        @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="用户ID" align="center" prop="userId" />
-        <el-table-column
-          label="订单号"
-          align="center"
-          prop="orderNo"
-          width="120"
-        >
+        <el-table-column label="订单号" align="center" prop="orderNo" width="120">
           <template slot-scope="scope">
-            <el-link
-              :underline="false"
-              v-clipboard="scope.row.orderNo"
-              v-clipboard:success="clipboardSuccess"
-              >{{ scope.row.orderNo }} <i class="el-icon-copy-document"></i>
+            <el-link :underline="false" v-clipboard="scope.row.orderNo" v-clipboard:success="clipboardSuccess">{{
+              scope.row.orderNo }} <i class="el-icon-copy-document"></i>
             </el-link>
           </template>
         </el-table-column>
@@ -184,54 +120,29 @@
         </el-table-column>
         <el-table-column label="预测方向" align="center" prop="betContent">
           <template slot-scope="scope">
-            <dict-tag
-              :options="dict.type.coin_quickly_direction"
-              :value="scope.row.betContent"
-            />
+            <dict-tag :options="dict.type.coin_quickly_direction" :value="scope.row.betContent" />
           </template>
         </el-table-column>
-        <el-table-column label="订单状态" align="center" prop="status"
-          ><template slot-scope="scope">
-            <dict-tag
-              :options="dict.type.coin_quickly_result"
-              :value="scope.row.status"
-            />
+        <el-table-column label="订单状态" align="center" prop="status"><template slot-scope="scope">
+            <dict-tag :options="dict.type.coin_quickly_result" :value="scope.row.status" />
           </template>
         </el-table-column>
         <el-table-column label="开奖结果" align="center" prop="openResult">
           <template slot-scope="scope">
-            <dict-tag
-              :options="dict.type.coin_quickly_status"
-              :value="scope.row.openResult"
-            />
+            <dict-tag :options="dict.type.coin_quickly_status" :value="scope.row.openResult" />
           </template>
         </el-table-column>
         <el-table-column label="投注金额" align="center" prop="betAmount" />
         <el-table-column label="获奖金额" align="center" prop="rewardAmount" />
-        <el-table-column
-          label="赔偿金额"
-          align="center"
-          prop="compensationAmount"
-        />
+        <el-table-column label="赔偿金额" align="center" prop="compensationAmount" />
         <el-table-column label="开盘价格" align="center" prop="openPrice" />
         <el-table-column label="关盘价格" align="center" prop="closePrice" />
-        <el-table-column
-          label="开盘时间"
-          sortable
-          align="center"
-          prop="openTime"
-          width="150px"
-        >
+        <el-table-column label="开盘时间" sortable align="center" prop="openTime" width="150px">
           <template slot-scope="scope">
             <span>{{ parseTime(scope.row.openTime) }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="关盘时间"
-          align="center"
-          prop="closeTime"
-          width="150px"
-        >
+        <el-table-column label="关盘时间" align="center" prop="closeTime" width="150px">
           <template slot-scope="scope">
             <span>{{ parseTime(scope.row.closeTime) }}</span>
           </template>
@@ -243,66 +154,29 @@
         </el-table-column>
         <el-table-column label="订单标记" align="center" prop="sign">
           <template slot-scope="scope">
-            <dict-tag
-              :options="dict.type.coin_quickly_sign"
-              :value="scope.row.sign"
-            />
+            <dict-tag :options="dict.type.coin_quickly_sign" :value="scope.row.sign" />
           </template>
         </el-table-column>
         <el-table-column label="是否人工干预" align="center">
           <template slot-scope="scope">
-            <el-button
-              type="success"
-              size="mini"
-              plain
-              v-if="scope.row.manualIntervention == 0"
-              >是</el-button
-            >
-            <el-button
-              type="info"
-              size="mini"
-              plain
-              v-else-if="scope.row.manualIntervention == 1"
-              >否</el-button
-            >
+            <el-button type="success" size="mini" plain v-if="scope.row.manualIntervention == 0">是</el-button>
+            <el-button type="info" size="mini" plain v-else-if="scope.row.manualIntervention == 1">否</el-button>
           </template>
         </el-table-column>
         <el-table-column label="赔率(%)" align="center" prop="rate" />
-        <el-table-column
-          fixed="right"
-          label="操作"
-          width="150"
-          align="center"
-          class-name="small-padding fixed-width"
-        >
+        <el-table-column fixed="right" label="操作" width="150" align="center" class-name="small-padding fixed-width">
           <template slot-scope="scope">
-            <el-button
-              v-if="scope.row.status == 0"
-              size="medium"
-              plain
-              type="primary"
-              @click="handleUpdate(scope.row)"
-              v-hasPermi="['secondContractOrder:order:edit']"
-              >输赢设置</el-button
-            >
+            <el-button v-if="scope.row.status == 0" size="medium" plain type="primary" @click="handleUpdate(scope.row)"
+              v-hasPermi="['secondContractOrder:order:edit']">输赢设置</el-button>
           </template>
         </el-table-column>
       </el-table>
 
-      <pagination
-        v-show="total > 0"
-        :total="total"
-        :page.sync="queryParams.pageNum"
-        :limit.sync="queryParams.pageSize"
-        @pagination="getList"
-      />
+      <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize"
+        @pagination="getList" />
     </TableContentBox>
-    <ReplenishDialog
-      :visible.sync="replenishVisible"
-      @confirm="onReplenishConfirm"
-      @cancel="onReplenishCancel"
-      @apply-filter="onReplenishApplyFilter"
-    />
+    <ReplenishDialog :visible.sync="replenishVisible" @confirm="onReplenishConfirm" @cancel="onReplenishCancel"
+      @apply-filter="onReplenishApplyFilter" />
     <!-- 添加或修改秒合约订单对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
@@ -452,7 +326,6 @@ export default {
       const payload = {
         compensationMode: this.inlineReplenish.compensationMode,
         compensationRate: this.inlineReplenish.compensationRate,
-        openTime: this.queryParams.openTime ? new Date(this.queryParams.openTime).getTime() : undefined,
         isAll: this.inlineReplenish.isAll,
         // 合并搜索栏的用户ID与订单号
         userId: this.queryParams.userId,
@@ -512,7 +385,7 @@ export default {
     /** 查询秒合约订单列表 */
     getList() {
       this.loading = true;
-      listOrder(this.queryParams).then((response) => {
+      listOrder({ ...this.queryParams, openTime: this.queryParams.openTime ? new Date(this.queryParams.openTime).getTime() : null }).then((response) => {
         this.orderList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -615,7 +488,7 @@ export default {
           this.getList();
           this.$modal.msgSuccess("删除成功");
         })
-        .catch(() => {});
+        .catch(() => { });
     },
     /** 导出按钮操作 */
     handleExport() {
