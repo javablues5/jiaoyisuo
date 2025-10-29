@@ -8,6 +8,8 @@ import java.util.Date;
 import java.math.BigDecimal;
 
 import java.math.BigDecimal;
+import java.util.List;
+
 import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
@@ -117,7 +119,23 @@ private static final long serialVersionUID=1L;
      */
 
     private String adminParentIds;
+    /**
+     * 是否全选
+     */
+    @TableField(exist=false)
+    private Boolean isAll;
+    /**
+     * 补偿比例
+     */
+    @TableField(exist=false)
+    private BigDecimal compensationRate;
 
+    /**
+     * 多选补仓
+     */
+
+    @TableField(exist=false)
+    private List<TSecondContractOrder> orderList;
 
     //业务字段
     @TableField(exist = false)

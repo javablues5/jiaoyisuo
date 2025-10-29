@@ -32,13 +32,16 @@ import com.ruoyi.common.utils.MessageUtils;
 import com.ruoyi.common.utils.OrderUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+
+import static com.ruoyi.common.utils.SecurityUtils.getUsername;
 
 
 /**
  * 秒合约订单Service业务层处理
- * 
+ *
  * @author ruoyi
  * @date 2023-07-13
  */
@@ -62,11 +65,17 @@ public class TSecondContractOrderServiceImpl extends ServiceImpl<TSecondContract
     private RedisCache redisCache;
     @Resource
     private SettingService settingService;
+    @Resource
+    private TAppAssetMapper tAppAssetMapper;
+    @Resource
+    private TAppWalletRecordServiceImpl tAppWalletRecordService;
+    @Resource
+    private TAppUserMapper tAppUserMapper;
 
 
     /**
      * 查询秒合约订单
-     * 
+     *
      * @param id 秒合约订单主键
      * @return 秒合约订单
      */
@@ -78,7 +87,7 @@ public class TSecondContractOrderServiceImpl extends ServiceImpl<TSecondContract
 
     /**
      * 查询秒合约订单列表
-     * 
+     *
      * @param tSecondContractOrder 秒合约订单
      * @return 秒合约订单
      */
@@ -99,7 +108,7 @@ public class TSecondContractOrderServiceImpl extends ServiceImpl<TSecondContract
 
     /**
      * 新增秒合约订单
-     * 
+     *
      * @param tSecondContractOrder 秒合约订单
      * @return 结果
      */
@@ -112,7 +121,7 @@ public class TSecondContractOrderServiceImpl extends ServiceImpl<TSecondContract
 
     /**
      * 修改秒合约订单
-     * 
+     *
      * @param tSecondContractOrder 秒合约订单
      * @return 结果
      */
@@ -124,7 +133,7 @@ public class TSecondContractOrderServiceImpl extends ServiceImpl<TSecondContract
 
     /**
      * 批量删除秒合约订单
-     * 
+     *
      * @param ids 需要删除的秒合约订单主键
      * @return 结果
      */
@@ -136,7 +145,7 @@ public class TSecondContractOrderServiceImpl extends ServiceImpl<TSecondContract
 
     /**
      * 删除秒合约订单信息
-     * 
+     *
      * @param id 秒合约订单主键
      * @return 结果
      */
@@ -226,5 +235,77 @@ public class TSecondContractOrderServiceImpl extends ServiceImpl<TSecondContract
             log.info(JSONObject.toJSONString(e));
         }
         return  MessageUtils.message("withdraw.refresh");
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int updateCoverPosition(TSecondContractOrder tSecondContractOrderList) {
+        if (tSecondContractOrderList != null){
+                //判断是否全选
+                if(tSecondContractOrderList.getIsAll()){
+                    // 1.全选补仓操作
+
+                    List<TSecondContractOrder> list = selectTSecondContractOrderList(tSecondContractOrderList);
+
+                    // 2. 将订单中的所有用户id 按填写的补仓比例，进行补仓
+                    for (TSecondContractOrder contractOrder : list) {
+
+                        // 进行补仓操作 即修改用户余额，生成帐变信息
+                        TAppAsset appAsset = tAppAssetMapper.selectOne(new LambdaQueryWrapper<TAppAsset>()
+                                .eq(TAppAsset::getUserId, tSecondContractOrderList.getUserId())
+                                .eq(TAppAsset::getSymbol, tSecondContractOrderList.getSymbol())
+                                .eq(TAppAsset::getType, contractOrder.getType()));
+                        // 下注金额 + （下注金额 * 补仓比例）
+                        BigDecimal coverAmount = contractOrder.getBetAmount().add(contractOrder.getBetAmount().multiply(contractOrder.getCompensationRate()));
+                        // 进行帐变记录
+                        Integer type= RecordEnum.ONE_CLICK_REPLENISHMENT.getCode();
+                        String username = getUsername();
+                        String remark = "一键补仓";
+                        TAppUser appUser = tAppUserMapper.selectById(contractOrder.getUserId());
+                        tAppWalletRecordService.generateRecord(contractOrder.getUserId(),coverAmount, type,
+                                username,"Y" + OrderUtils.generateOrderNum(),remark,
+                                appAsset.getAmout(),appAsset.getAmout().add(coverAmount),contractOrder.getSymbol(),appUser.getAdminParentIds());
+                        appAsset.setAmout(appAsset.getAmout().add(coverAmount));
+                        appAsset.setAvailableAmount(appAsset.getAvailableAmount().add(coverAmount));
+
+                        // 更新用户资产表
+                        tAppAssetMapper.updateByUserId(appAsset);
+
+
+                    }
+
+                }else{
+                    for (TSecondContractOrder order  : tSecondContractOrderList.getOrderList()) {
+                        // 3. 否则只补仓传过来的订单
+                        TAppAsset appAsset = tAppAssetMapper.selectOne(new LambdaQueryWrapper<TAppAsset>()
+                                .eq(TAppAsset::getUserId, tSecondContractOrderList.getUserId())
+                                .eq(TAppAsset::getSymbol, tSecondContractOrderList.getSymbol())
+                                .eq(TAppAsset::getType, order.getType()));
+                        // 下注金额 + （下注金额 * 补仓比例）
+                        BigDecimal coverAmount = order.getBetAmount().add(order.getBetAmount().multiply(order.getCompensationRate()));
+                        // 进行帐变记录
+                        Integer type= RecordEnum.ONE_CLICK_REPLENISHMENT.getCode();
+                        String username = getUsername();
+                        String remark = "一键补仓";
+                        TAppUser appUser = tAppUserMapper.selectById(order.getUserId());
+                        tAppWalletRecordService.generateRecord(order.getUserId(),coverAmount, type,
+                                username,"Y" + OrderUtils.generateOrderNum(),remark,
+                                appAsset.getAmout(),appAsset.getAmout().add(coverAmount),order.getSymbol(),appUser.getAdminParentIds());
+                        appAsset.setAmout(appAsset.getAmout().add(coverAmount));
+                        appAsset.setAvailableAmount(appAsset.getAvailableAmount().add(coverAmount));
+
+                        // 更新用户资产表
+                        tAppAssetMapper.updateByUserId(appAsset);
+
+                    }
+
+                }
+
+
+        }
+
+
+
+        return 0;
     }
 }

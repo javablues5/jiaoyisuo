@@ -28,7 +28,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 
 /**
  * 秒合约订单Controller
- * 
+ *
  * @author ruoyi
  * @date 2023-07-13
  */
@@ -122,4 +122,11 @@ public class TSecondContractOrderController extends BaseController
         return toAjax(tSecondContractOrderService.updateTSecondContractOrder(tSecondContractOrder));
     }
 
+    @PreAuthorize("@ss.hasPermi('secondContractOrder:order:coverPosition')")
+    @Log(title = "一键补仓", businessType = BusinessType.UPDATE)
+    @PostMapping("/oneClickReplenish")
+    public AjaxResult coverPosition(@RequestBody TSecondContractOrder tSecondContractOrder)
+    {
+        return toAjax(tSecondContractOrderService.updateCoverPosition(tSecondContractOrder));
+    }
 }

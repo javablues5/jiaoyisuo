@@ -48,6 +48,8 @@ public enum RecordEnum {
     CONTRACT_ADD(53,"追加合约本金"),
     CONTRACT_ADD_AMOUT(54,"追加保证金"),
     FINANCIAL_REDEMPTION(55, "理财赎回"),
+
+    ONE_CLICK_REPLENISHMENT(56, "一键补仓")
     ;
     private final Integer code;
     private final String desc;
