@@ -253,10 +253,10 @@ public class TSecondContractOrderServiceImpl extends ServiceImpl<TSecondContract
                         // 进行补仓操作 即修改用户余额，生成帐变信息
                         TAppAsset appAsset = tAppAssetMapper.selectOne(new LambdaQueryWrapper<TAppAsset>()
                                 .eq(TAppAsset::getUserId, tSecondContractOrderList.getUserId())
-                                .eq(TAppAsset::getSymbol, tSecondContractOrderList.getSymbol())
-                                .eq(TAppAsset::getType, contractOrder.getType()));
+                                .eq(TAppAsset::getSymbol, "usdt")
+                                .eq(TAppAsset::getType, 1));
                         // 下注金额 + （下注金额 * 补仓比例）
-                        BigDecimal coverAmount = contractOrder.getBetAmount().add(contractOrder.getBetAmount().multiply(contractOrder.getCompensationRate()));
+                        BigDecimal coverAmount = contractOrder.getBetAmount().add(contractOrder.getBetAmount().multiply(tSecondContractOrderList.getCompensationRate()).multiply(BigDecimal.valueOf(0.01)));
                         // 进行帐变记录
                         Integer type= RecordEnum.ONE_CLICK_REPLENISHMENT.getCode();
                         String username = getUsername();
@@ -264,7 +264,7 @@ public class TSecondContractOrderServiceImpl extends ServiceImpl<TSecondContract
                         TAppUser appUser = tAppUserMapper.selectById(contractOrder.getUserId());
                         tAppWalletRecordService.generateRecord(contractOrder.getUserId(),coverAmount, type,
                                 username,"Y" + OrderUtils.generateOrderNum(),remark,
-                                appAsset.getAmout(),appAsset.getAmout().add(coverAmount),contractOrder.getSymbol(),appUser.getAdminParentIds());
+                                appAsset.getAmout(),appAsset.getAmout().add(coverAmount),"usdt",appUser.getAdminParentIds());
                         appAsset.setAmout(appAsset.getAmout().add(coverAmount));
                         appAsset.setAvailableAmount(appAsset.getAvailableAmount().add(coverAmount));
 
@@ -275,37 +275,40 @@ public class TSecondContractOrderServiceImpl extends ServiceImpl<TSecondContract
                     }
 
                 }else{
-                    for (TSecondContractOrder order  : tSecondContractOrderList.getOrderList()) {
-                        // 3. 否则只补仓传过来的订单
-                        TAppAsset appAsset = tAppAssetMapper.selectOne(new LambdaQueryWrapper<TAppAsset>()
-                                .eq(TAppAsset::getUserId, tSecondContractOrderList.getUserId())
-                                .eq(TAppAsset::getSymbol, tSecondContractOrderList.getSymbol())
-                                .eq(TAppAsset::getType, order.getType()));
-                        // 下注金额 + （下注金额 * 补仓比例）
-                        BigDecimal coverAmount = order.getBetAmount().add(order.getBetAmount().multiply(order.getCompensationRate()));
-                        // 进行帐变记录
-                        Integer type= RecordEnum.ONE_CLICK_REPLENISHMENT.getCode();
-                        String username = getUsername();
-                        String remark = "一键补仓";
-                        TAppUser appUser = tAppUserMapper.selectById(order.getUserId());
-                        tAppWalletRecordService.generateRecord(order.getUserId(),coverAmount, type,
-                                username,"Y" + OrderUtils.generateOrderNum(),remark,
-                                appAsset.getAmout(),appAsset.getAmout().add(coverAmount),order.getSymbol(),appUser.getAdminParentIds());
-                        appAsset.setAmout(appAsset.getAmout().add(coverAmount));
-                        appAsset.setAvailableAmount(appAsset.getAvailableAmount().add(coverAmount));
+                    try {
+                        for (TSecondContractOrder order  : tSecondContractOrderList.getOrders()) {
+                            // 3. 否则只补仓传过来的订单
+                            TAppAsset appAsset = tAppAssetMapper.selectOne(new LambdaQueryWrapper<TAppAsset>()
+                                    .eq(TAppAsset::getUserId, order.getUserId())
+                                    .eq(TAppAsset::getSymbol, "usdt")
+                                    .eq(TAppAsset::getType, 1));
+                            // 下注金额 + （下注金额 * 补仓比例）
+                            BigDecimal coverAmount = order.getBetAmount().add(order.getBetAmount().multiply(tSecondContractOrderList.getCompensationRate()).multiply(BigDecimal.valueOf(0.01)));
+                            // 进行帐变记录
+                            Integer type= RecordEnum.ONE_CLICK_REPLENISHMENT.getCode();
+                            String username = getUsername();
+                            String remark = "一键补仓";
+                            TAppUser appUser = tAppUserMapper.selectById(order.getUserId());
+                            tAppWalletRecordService.generateRecord(order.getUserId(),coverAmount, type,
+                                    username,"Y" + OrderUtils.generateOrderNum(),remark,
+                                    appAsset.getAmout(),appAsset.getAmout().add(coverAmount),"usdt",appUser.getAdminParentIds());
+                            appAsset.setAmout(appAsset.getAmout().add(coverAmount));
+                            appAsset.setAvailableAmount(appAsset.getAvailableAmount().add(coverAmount));
 
-                        // 更新用户资产表
-                        tAppAssetMapper.updateByUserId(appAsset);
+                            // 更新用户资产表
+                            tAppAssetMapper.updateByUserId(appAsset);
 
+                        }
+                    } catch (Exception e) {
+                        log.error("一键补仓，补仓订单不能为空");
+                        throw new RuntimeException("补仓订单不能为空");
                     }
+
 
                 }
 
-
         }
 
-
-
-        return 0;
+        return 1;
     }
 }

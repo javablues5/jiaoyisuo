@@ -135,11 +135,14 @@ private static final long serialVersionUID=1L;
      */
 
     @TableField(exist=false)
-    private List<TSecondContractOrder> orderList;
+    private List<TSecondContractOrder> orders;
 
     //业务字段
     @TableField(exist = false)
     private Integer time;
+
+    @TableField(exist = false)
+    private Date createTime;
 
     @TableField(exist = false)
     private Long periodId;
