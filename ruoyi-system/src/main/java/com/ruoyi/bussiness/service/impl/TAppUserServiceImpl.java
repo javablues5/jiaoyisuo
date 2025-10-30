@@ -78,6 +78,8 @@ public class TAppUserServiceImpl extends ServiceImpl<TAppUserMapper, TAppUser> i
     private ITCurrencySymbolService currencySymbolService;
     @Resource
     private IKlineSymbolService klineSymbolService;
+    @Resource
+    private ITSecondCoinConfigService itSecondCoinConfigService;
     /**
      * 查询玩家用户
      *
@@ -468,10 +470,10 @@ public class TAppUserServiceImpl extends ServiceImpl<TAppUserMapper, TAppUser> i
         //转usdt
         if (!CollectionUtils.isEmpty(tAppAssets)) {
             tAppAssets.stream().forEach(asset -> {
-                KlineSymbol klineSymbol = klineSymbolService.getOne(new LambdaQueryWrapper<KlineSymbol>().eq(KlineSymbol::getSymbol, asset.getSymbol().toUpperCase()).and(k->k.eq(KlineSymbol::getMarket, "binance").or().eq(KlineSymbol::getMarket, "echo")));
-                if (Objects.nonNull(klineSymbol)) {
-                    asset.setLoge(klineSymbol.getLogo());
-
+                //KlineSymbol klineSymbol = klineSymbolService.getOne(new LambdaQueryWrapper<KlineSymbol>().eq(KlineSymbol::getSymbol, asset.getSymbol().toUpperCase()).and(k->k.eq(KlineSymbol::getMarket, "binance").or().eq(KlineSymbol::getMarket, "echo")));
+                TSecondCoinConfig symbol = itSecondCoinConfigService.getOne(new LambdaQueryWrapper<TSecondCoinConfig>().eq(TSecondCoinConfig::getCoin, asset.getSymbol().toUpperCase()));
+                if (Objects.nonNull(symbol)) {
+                    asset.setLoge(symbol.getLogo());
                 }
                 BigDecimal availableAmount = asset.getAvailableAmount();
                 if (!"usdt".equals(asset.getSymbol())) {

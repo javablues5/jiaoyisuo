@@ -11,7 +11,6 @@ import com.ruoyi.bussiness.mapper.TBotKlineModelInfoMapper;
 import com.ruoyi.bussiness.service.ITBotKlineModelService;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
-import com.ruoyi.bussiness.service.ITBotKlineModelService;
 import com.ruoyi.socket.config.KLoader;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.enums.CachePrefix;
@@ -259,12 +258,12 @@ public class WebSocketUserManager {
                 if(KLoader.BOT_MAP.containsKey("bot-"+coin)){
                     Map<String, Object> cacheMap = KLoader.BOT_MAP.get("bot-"+coin);
                     //因为btc 处理了 别的k先数据 ，如果不等于null  或者 Y不等于0直接返回 不处理
-                    LocalDateTime currentDateTime = LocalDateTime.now();
-                    LocalDateTime lastWholeMinute = currentDateTime.truncatedTo(ChronoUnit.MINUTES);
-                    long timestamp = lastWholeMinute.atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli();
+//                    LocalDateTime currentDateTime = LocalDateTime.now();
+//                    LocalDateTime lastWholeMinute = currentDateTime.truncatedTo(ChronoUnit.MINUTES);
+//                    long timestamp = lastWholeMinute.atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli();
                     TBotKlineModelInfo tBotKlineModelInfo = new TBotKlineModelInfo();
                     tBotKlineModelInfo.setModelId((Long)cacheMap.get("id"));
-                    tBotKlineModelInfo.setDateTime(timestamp);
+                    tBotKlineModelInfo.setDateTime(DateUtils.getTimestamp_MINUTES());
                     TBotKlineModelInfo tBotKlineModelInfo1=tBotKlineModelInfoMapper.selectOne(new QueryWrapper<>(tBotKlineModelInfo));
                     if(tBotKlineModelInfo1!=null&&!tBotKlineModelInfo1.getY().equals("0")){
                         //控线不处理  因为走的btc的  在处理会导致价格不一致

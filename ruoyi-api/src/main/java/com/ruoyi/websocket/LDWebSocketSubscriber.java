@@ -1,6 +1,7 @@
 package com.ruoyi.websocket;
 
 import com.alibaba.fastjson.JSON;
+import com.ruoyi.bussiness.domain.KlineSymbol;
 import com.ruoyi.bussiness.klineDto.KlineData;
 import com.ruoyi.websocket.sevice.LDSevice;
 import lombok.extern.slf4j.Slf4j;
@@ -17,12 +18,14 @@ public class LDWebSocketSubscriber extends WebSocketClient {
     private Timer reconnectTimer;
     private LDSevice ldSevice;
     private String time;
+    private List<KlineSymbol> coinList;  //自发币
 
-    public LDWebSocketSubscriber(URI serverUri, Draft draft, String time, LDSevice ldSevice) {
+    public LDWebSocketSubscriber(URI serverUri, Draft draft, String time, LDSevice ldSevice, List<KlineSymbol> coinList) {
         super(serverUri, draft);
         reconnectTimer = new Timer();
         this.time = time;
         this.ldSevice = ldSevice;
+        this.coinList = coinList;
     }
 
     @Override
@@ -38,11 +41,20 @@ public class LDWebSocketSubscriber extends WebSocketClient {
             send("Pong");
         }
         try {
-            //System.out.println("雷达5分钟message");
+            System.out.println("雷达5分钟message");
             //System.out.println(message);
             KlineData k = JSON.parseObject(message).getObject("k", KlineData.class);
+            k.setS(k.getS().toLowerCase());
             //System.out.println(k.toString());
             ldSevice.checkPriceChange(k,time);
+            //kline 逻辑  分发 和 控币   异步
+            for (KlineSymbol kSymbol : coinList) {
+                if((k.getS().replace("usdt","")).equals(kSymbol.getReferCoin().toLowerCase())) {
+                    KlineData k2 = k;
+                    k2.setS(kSymbol.getSymbol().toLowerCase()+"usdt");
+                    ldSevice.checkPriceChange(k2,time);
+                }
+            }
         } catch (Exception e) {
             log.error("雷达处理消息时错误：",e);
         }

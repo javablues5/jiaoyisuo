@@ -36,17 +36,19 @@ public class WebSocketConfigdd {
     @Resource
     private LDSevice ldSevice;
 
-    private String time = "2m";
+    private String time = "1m";
 
     public LDWebSocketSubscriber lDWebSocketSubscriber() {
-        Set<String> strings = getAllCoin(new ArrayList<>());
+        List<KlineSymbol> list = new ArrayList<>();
+        Set<String> strings = getAllCoin(list);
         StringBuffer  ld_sb = new StringBuffer();
 
         for (String coin: strings) {
             ld_sb=ld_sb.append(coin).append("@kline_"+time+"/");
         }
         String ld_substring = ld_sb.substring(0, ld_sb.length() - 1);
-        return new LDWebSocketSubscriber(URI.create("wss://stream.binance.com:9443/ws/"+ld_substring),new Draft_6455(), time, ldSevice);
+        return new LDWebSocketSubscriber(URI.create("wss://stream.binance.com:9443/ws/"+ld_substring),
+                new Draft_6455(), time, ldSevice,list);
     }
 
     public WebSocketSubscriber webSocketSubscriberKline() {

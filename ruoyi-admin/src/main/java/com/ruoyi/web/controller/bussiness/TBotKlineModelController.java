@@ -122,7 +122,7 @@ public class TBotKlineModelController extends BaseController
         List<TCurrencySymbol> rtn = new ArrayList<>();
         List<SymbolCoinConfigVO> coinList = tSecondCoinConfigService.getSymbolList();
         for (SymbolCoinConfigVO coin: coinList ) {
-            if(coin.getMarket().equals("binance")){
+            if(coin.getMarket().equals("binance") || coin.getMarket().equals("echo")){
             TCurrencySymbol  tCurrencySymbol1 = new TCurrencySymbol();
             tCurrencySymbol1.setSymbol(coin.getSymbol());
             tCurrencySymbol1.setCoin(coin.getCoin());
