@@ -5,7 +5,8 @@
             <li class="item" v-for="item in uniqueDataList" :key="item.name" @click="linkTo(item)">
                 <div class="top">
                     <div class="top-left">
-                        <img src="../../assets/defi/wallet.png" alt="" class="bi">
+                        <img v-if="!item.logo" src="../../assets/defi/wallet.png" alt="" class="bi">
+                        <image-load v-else :filePath="item.logo" class="bi"></image-load>
                         <span>{{ item.name }}</span>
                         <span :style="{ color: item.percentage < 0 ? '#972830' : '#3cbd8e' }">{{ item.percentage
                             }}%</span>
@@ -192,8 +193,9 @@ onUnmounted(() => {
                 justify-content: space-between;
 
                 .bi {
-                    height: 30px;
                     margin-right: 10px;
+                    width: 25px;
+                    height: 25px;
                 }
 
                 .btn {
