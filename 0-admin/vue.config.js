@@ -65,6 +65,7 @@ module.exports = {
         "@": resolve("src"),
       },
     },
+    devtool: 'source-map', // 修复可以debugger
     plugins: [
       // new CompressionPlugin({
       //   cache: false, // 不启用文件缓存
@@ -81,8 +82,8 @@ module.exports = {
               },
               warnings: false, // 禁用警告
               compress: {
-                drop_console: process.env.NODE_ENV === "production",
-                drop_debugger: process.env.NODE_ENV === "production",
+                drop_console: true,
+                drop_debugger: true,
                 // pure_funcs: ["console.log"], // 移除console
               },
             },
