@@ -1,70 +1,33 @@
 <template>
   <div class="app-container">
     <SearchFormBox title="参数设置">
-      <el-form
-        :model="form"
-        :rules="rules"
-        size="small"
-        :inline="true"
-        label-width="100px"
-        :disabled="isPriview || isUpdate"
-      >
+      <el-form :model="form" :rules="rules" size="small" :inline="true" label-width="100px"
+        :disabled="isPriview || isUpdate">
         <el-form-item label="交易对" prop="symbol">
-          <el-select
-            v-model="form.symbol"
-            filterable
-            placeholder="请选择交易对"
-            clearable
-          >
-            <el-option
-              v-for="(item, index) in symbolList"
-              :key="index"
-              :label="item.showSymbol"
-              :value="item.symbol"
-            />
+          <el-select v-model="form.symbol" filterable placeholder="请选择交易对" clearable>
+            <el-option v-for="(item, index) in symbolList" :key="index" :label="item.showSymbol" :value="item.symbol" />
           </el-select>
         </el-form-item>
         <el-form-item label="控盘策略" prop="model">
           <el-radio-group v-model="form.model" @change="onModelChange">
-            <el-radio-button
-              v-for="item in modelList"
-              :key="item.label"
-              :label="item.value"
-            >
+            <el-radio-button v-for="item in modelList" :key="item.label" :label="item.value">
               {{ item.label }}
             </el-radio-button>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="控盘时间" prop="time" v-if="form.model != 0">
-          <el-date-picker
-            v-model="form.time"
-            type="datetime"
-            placeholder="选择控盘时间"
-            format="yyyy-MM-dd HH:mm"
-            :picker-options="pickerOptions"
-            @change="()=>onModelChange(form.model)"
-            
-          >
+          <el-date-picker v-model="form.time" type="datetime" placeholder="选择控盘时间" format="yyyy-MM-dd HH:mm"
+            :picker-options="pickerOptions" @change="() => onModelChange(form.model)">
           </el-date-picker>
         </el-form-item>
 
         <el-form-item label="最大涨幅" prop="increase" v-if="form.model != 0">
-          <el-input
-            v-model="form.increase"
-            type="number"
-            :min="0.001"
-            placeholder="请输入最大涨幅"
-          >
+          <el-input v-model="form.increase" type="number" :min="0.001" placeholder="请输入最大涨幅">
             <template v-slot:append>%</template>
           </el-input>
         </el-form-item>
         <el-form-item label="最大跌幅" prop="decline" v-if="form.model != 0">
-          <el-input
-            v-model="form.decline"
-            type="number"
-            :min="0.001"
-            placeholder="请输入最大跌幅"
-          >
+          <el-input v-model="form.decline" type="number" :min="0.001" placeholder="请输入最大跌幅">
             <template v-slot:append>%</template>
           </el-input>
         </el-form-item>
@@ -81,46 +44,23 @@
             </el-radio-group>
           </el-form-item> -->
           <el-form-item label="浮动比例" prop="pricePencent">
-            <el-input
-              v-model="form.pricePencent"
-              type="number"
-              :min="0.001"
-              :max="100"
-              placeholder="请输入价格浮动比例"
-              @change="KLinePerview"
-              style="width: 250px"
-            >
+            <el-input v-model="form.pricePencent" type="number" :min="0.001" :max="100" placeholder="请输入价格浮动比例"
+              @change="KLinePerview" style="width: 250px">
               <template v-slot:append>%</template>
             </el-input>
           </el-form-item>
-          <el-form-item
-            label="参考价格"
-            prop="conPrice"
-            v-if="isPriview || isUpdate"
-          >
-            <el-input
-              v-model="form.conPrice"
-              :disabled="form.conPrice > 0"
-              type="number"
-              :min="0.001"
-              placeholder="请输入价格浮动比例"
-            >
+          <el-form-item label="参考价格" prop="conPrice" v-if="isPriview || isUpdate">
+            <el-input v-model="form.conPrice" :disabled="form.conPrice > 0" type="number" :min="0.001"
+              placeholder="请输入价格浮动比例">
             </el-input>
           </el-form-item>
           <el-row>
             <el-col :span="24">
               <el-form-item>
-                <el-button
-                  type="warning"
-                  icon="el-icon-edit"
-                  size="mini"
-                  plain
-                  @click="
-                    drawLine();
-                    KLinePerview();
-                  "
-                  v-if="form.model != 0"
-                >
+                <el-button type="warning" icon="el-icon-edit" size="mini" plain @click="
+                  drawLine();
+                KLinePerview();
+                " v-if="form.model != 0">
                   绘制
                 </el-button>
                 <!-- <el-button
@@ -132,13 +72,7 @@
                   预览
                 </el-button> -->
 
-                <el-button
-                  type="primary"
-                  icon="el-icon-check"
-                  size="mini"
-                  @click="submit"
-                  :disabled="isPriview"
-                >
+                <el-button type="primary" icon="el-icon-check" size="mini" @click="submit" :disabled="isPriview">
                   保存
                 </el-button>
               </el-form-item>
@@ -155,19 +89,10 @@
           <el-row>
             <el-col :span="6">
               <el-form-item label="浮动价格" prop="conPrice">
-                <el-tooltip
-                  effect="dark"
-                  placement="bottom-start"
-                  content="当前币种价格 + 浮动价格"
-                >
+                <el-tooltip effect="dark" placement="bottom-start" content="当前币种价格 + 浮动价格">
                   <i class="el-icon-info" />
                 </el-tooltip>
-                <el-input
-                  v-model="form.conPrice"
-                  :min="0"
-                  type="number"
-                  placeholder="请输入浮动价格"
-                >
+                <el-input v-model="form.conPrice" :min="0" type="number" placeholder="请输入浮动价格">
                   <template v-slot:append>USDT</template>
                 </el-input>
               </el-form-item>
@@ -186,13 +111,7 @@
             </el-col> -->
           </el-row>
         </el-form>
-        <el-button
-          type="primary"
-          icon="el-icon-check"
-          size="mini"
-          @click="submit"
-          :disabled="isPriview"
-        >
+        <el-button type="primary" icon="el-icon-check" size="mini" @click="submit" :disabled="isPriview">
           保存
         </el-button>
       </TableContentBox>
@@ -380,10 +299,10 @@ export default {
         this.yRandomList = JSON.parse(tempData.lineChartData);
         this.drawLine();
         this.drawKLine();
-        this.KLinePerview({
-          series: [{ data: this.klineMockYData }],
-          xAxis: this.xTimeScaleList,
-        });
+        // this.KLinePerview({
+        //   series: [{ data: this.klineMockYData }],
+        //   xAxis: this.xTimeScaleList,
+        // });
       }
     },
     /**
@@ -518,6 +437,7 @@ export default {
      * 监听粒度改变
      */
     onModelChange(val) {
+      this.reset(true)
       // console.log("监听粒度改变", val);
       if ([1, 2].includes(val)) {
         this.granularity = this.granularityList[0].value;
@@ -532,18 +452,23 @@ export default {
           this.granularity,
           this.totalMinutes
         );
-        this.drawLine();
-        this.drawKLine();
-        this.KLinePerview();
+
+        this.$nextTick(() => {
+          this.drawLine();
+          this.drawKLine();
+          this.KLinePerview();
+        });
       } else if (val == 1) {
         this.totalMinutes = 1 * 24 * 60;
         this.xTimeScaleList = generateTimeList(
           this.form.time,
           this.granularity
         );
-        this.drawLine();
-        this.drawKLine();
-        this.KLinePerview();
+        this.$nextTick(() => {
+          this.drawLine();
+          this.drawKLine();
+          this.KLinePerview();
+        });
       } else if (val == 0) {
         this.resetForm(() => {
           this.form.model = val;
@@ -556,7 +481,7 @@ export default {
     resetForm(callback) {
       this.form = {
         // 交易对
-        symbol: "",
+        symbol: this.form.symbol,
         // 模式
         model: 2,
         // 模拟时间
@@ -577,7 +502,7 @@ export default {
     /**
      * 重置表单
      */
-    reset() {
+    reset(status) {
       if (this.lineChart) {
         this.lineChart.dispose();
         this.lineChart = null;
@@ -602,6 +527,7 @@ export default {
       this.klineYRandomList = [];
       // K线模拟数据
       this.klineMockYData = [];
+      if(status) return
       this.onModelChange(this.form.model);
     },
     /**
@@ -615,8 +541,10 @@ export default {
           this.form.pricePencent
         );
       }
+      // return
       console.log(option);
       this.klineMockYData = option.series[0].data || [];
+      console.log("🚀 ~ this.klineMockYData:", this.klineMockYData)
       this.KLineChart && this.KLineChart.setOption(option);
     },
     /**
