@@ -485,7 +485,7 @@ export default {
         // 模式
         model: 2,
         // 模拟时间
-        time: new Date(),
+        time: this.form.time || new Date(),
         // 最大涨幅
         increase: 5,
         // 最大跌幅
@@ -527,7 +527,7 @@ export default {
       this.klineYRandomList = [];
       // K线模拟数据
       this.klineMockYData = [];
-      if(status) return
+      if (status) return
       this.onModelChange(this.form.model);
     },
     /**
