@@ -184,6 +184,8 @@ export default {
         pageSize: 10,
         userId: null,
         address: null,
+        isAsc:'desc',
+        orderByColumn:'beginTime'
       },
       // 表单参数
       form: {},
