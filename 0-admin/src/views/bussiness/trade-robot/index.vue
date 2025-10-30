@@ -42,6 +42,8 @@
             placeholder="选择控盘时间"
             format="yyyy-MM-dd HH:mm"
             :picker-options="pickerOptions"
+            @change="()=>onModelChange(form.model)"
+            
           >
           </el-date-picker>
         </el-form-item>
