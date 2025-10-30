@@ -51,7 +51,7 @@
         <i v-else>({{ _t18('optional') }})</i>
       </p>
       <div>
-        <input type="text" :placeholder="_t18('login_please')" v-model="formData3.invitCode" />
+        <input type="text" :placeholder="_t18('login_please')" v-model="formData3.invitCode"  readonly/>
       </div>
     </div>
     <div class="formData">

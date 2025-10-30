@@ -50,7 +50,7 @@
         >
       </p>
       <div>
-        <input type="text" :placeholder="_t18('login_please')" v-model="formData1.invitCode" />
+        <input type="text" :placeholder="_t18('login_please')" v-model="formData1.invitCode" readonly />
       </div>
     </div>
     <div class="formData" v-if="mainStore.getISCode">
