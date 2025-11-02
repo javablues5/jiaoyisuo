@@ -8,6 +8,30 @@ export default [
     name: 'plug',
     component: () => import('@/views/slidebar/plug.vue')
   },
+  // 推广-推荐信息
+  {
+    path: '/plug/recommend',
+    name: 'plugRecommend',
+    component: () => import('@/views/slidebar/plug/Recommend.vue')
+  },
+  // 推广-我的收益
+  {
+    path: '/plug/income',
+    name: 'plugIncome',
+    component: () => import('@/views/slidebar/plug/Income.vue')
+  },
+  // 推广-下级报表
+  {
+    path: '/plug/report',
+    name: 'plugReport',
+    component: () => import('@/views/slidebar/plug/Report.vue')
+  },
+  // 推广-添加会员
+  {
+    path: '/plug/add-member',
+    name: 'plugAddMember',
+    component: () => import('@/views/slidebar/plug/AddMember.vue')
+  },
   // 高级认证
   {
     path: '/certification-advanced',

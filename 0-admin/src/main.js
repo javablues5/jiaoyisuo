@@ -59,7 +59,7 @@ Vue.prototype.selectDictLabel = selectDictLabel;
 Vue.prototype.selectDictLabels = selectDictLabels;
 Vue.prototype.download = download;
 Vue.prototype.handleTree = handleTree;
-
+// Vue.config.devtools = true
 // 全局组件挂载
 Vue.component("DictTag", DictTag);
 Vue.component("Pagination", Pagination);

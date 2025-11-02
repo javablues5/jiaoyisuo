@@ -40,10 +40,12 @@
             :key="index"
           >
             <svg-load
+               v-if="item.iconName"
               :name="item.iconName"
               class="rightIcon"
               @click="handelClick(item.clickTo)"
             ></svg-load>
+            <span v-else-if="item.name"  @click="handelClick(item.clickTo)">{{ item.name }}</span>
           </div>
         </div>
         <slot name="footer"></slot>

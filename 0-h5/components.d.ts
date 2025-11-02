@@ -41,6 +41,7 @@ declare module 'vue' {
     VanActionSheet: typeof import('vant/es')['ActionSheet']
     VanButton: typeof import('vant/es')['Button']
     VanCell: typeof import('vant/es')['Cell']
+    VanCellGroup: typeof import('vant/es')['CellGroup']
     VanCheckbox: typeof import('vant/es')['Checkbox']
     VanCheckboxGroup: typeof import('vant/es')['CheckboxGroup']
     VanCircle: typeof import('vant/es')['Circle']

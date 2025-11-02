@@ -61,9 +61,6 @@ watch(
       return item.coin === val
     })[0]
   },
-  {
-    deep: true
-  }
 )
 // 初始化展示币种信息
 const init = () => {

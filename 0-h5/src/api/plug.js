@@ -7,3 +7,5 @@ import { post, get } from '@/utils/request'
 export const getAgentInfo = () => post('/api/agentActivityInfo/getAgentInfo')
 //根据等级获取对应列表
 export const getAgentList = (params) => post('/api/agentActivityInfo/getAgentList',params)
+//添加会员
+export const addMember = (params) => post('/api/user/addMember', params)
