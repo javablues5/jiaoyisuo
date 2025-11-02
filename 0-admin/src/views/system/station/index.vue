@@ -174,7 +174,7 @@
             style="width: 100%; margin-right: 10px"
           >
             <el-option label="普通消息" value="1"></el-option>
-            <el-option label="全站消息" value="2"></el-option>
+            <!-- <el-option label="全站消息" value="2"></el-option> -->
           </el-select>
         </el-form-item>
         <el-form-item label="用户ID" prop="userId" v-if="form.type != 2">
