@@ -178,7 +178,7 @@ import TrendLineChart from './components/TrendLineChart.vue'
 import BarChart from './components/BarChart.vue'
 import { _t18, _timeFormat } from '@/utils/public'
 import { _toFixed } from '@/utils/decimal'
-import { getAgentInfo } from '@/api/plug.js'
+import { getAgentInfo, getAgentList } from '@/api/plug.js'
 
 // HeaderBar 右侧筛选图标配置
 // 如果 'shaixuan' 图标不存在，可以尝试使用其他图标如 'sousuo'（搜索）或其他合适图标
@@ -360,45 +360,41 @@ const onLoad = () => {
   getList()
 }
 
-// 获取列表数据
-const getList = () => {
-  // TODO: 调用实际API获取数据
-  // 模拟数据
-  setTimeout(() => {
+// 获取列表数据（使用接口 getAgentList）
+const getList = async () => {
+  try {
     if (pageNum.value === 1) {
       list.value = []
     }
-    
-    // 模拟加载数据
-    const newData = Array.from({ length: pageSize.value }, (_, i) => {
-      const id = pageNum.value * pageSize.value + i
-      const now = new Date()
-      now.setDate(now.getDate() - Math.floor(Math.random() * 30)) // 随机30天内的注册时间
-      
+    const res = await getAgentList({ params: { leve: 1, pageNum: pageNum.value, pageSize: pageSize.value } })
+    const dataList = Array.isArray(res?.data) ? res.data : []
+    // 将接口数据映射到页面展示所需字段，尽量保持原展示结构
+    const mapped = dataList.map((item, index) => {
+      const id = item.id || item.fromId || `${pageNum.value}-${index}`
       return {
-        id: id,
-        username: `user${String(id).padStart(6, '0')}`,
-        nickname: `用户${id}`,
-        registerTime: now.getTime(),
-        rechargeAmount: Math.random() * 10000,
-        withdrawAmount: Math.random() * 5000,
-        totalProfit: Math.random() * 5000 - 1000, // 可能有负数
-        status: Math.random() > 0.5 ? 'active' : 'inactive' // 活跃或不活跃
+        id,
+        username: item.loginName || item.username || `user_${id}`,
+        nickname: item.nickname || item.username || `用户${id}`,
+        registerTime: item.createTime || item.registerTime || Date.now(),
+        rechargeAmount: item.rechargeAmount,
+        withdrawAmount: item.withdrawAmount,
+        totalProfit: item.totalProfit ?? item.sumAmount,
+        status: item.status || 'active'
       }
     })
-    
-    // 模拟数据为空的情况
-    if (pageNum.value > 3) {
+    list.value = [...list.value, ...mapped]
+    // 结束条件：当返回数量小于请求的 pageSize 时认为已无更多
+    if (mapped.length < pageSize.value) {
       finished.value = true
-      list.value = []
     } else {
-      list.value = [...list.value, ...newData]
       pageNum.value++
     }
-    
+  } catch (e) {
+    finished.value = true
+  } finally {
     loading.value = false
     showLoading.value = false
-  }, 500)
+  }
 }
 
 // 日期选择器状态
