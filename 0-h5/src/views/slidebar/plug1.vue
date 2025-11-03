@@ -304,7 +304,7 @@ const filteredMembers = computed(() => {
 const teamRecords = ref([])
 const getTeamInfo = async () => {
   const res = await getAgentInfo()
-  if (res.code === '200') {
+  if (res.code == 200) {
     teamInfo.value = res.data
     
     // 更新团队统计数据

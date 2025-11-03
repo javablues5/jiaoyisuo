@@ -7,14 +7,14 @@
     </div>
     <svg-load name="userImg" class="userMessImg" v-else></svg-load>
     <div class="messRight">
-      <Copy :data="userId">
+      <div class="rightTop fw-bold">UID：{{ userId }}</div>
+      <!-- 邀请码 -->
+      <div class="rightBot">
+        <Copy :data="userStore.userInfo.user?.activeCode">
         <template #copyMsg>
-          <div class="rightTop fw-bold">UID：{{ userId }}</div>
+          {{ _t18('invitationCode') }}：{{ userStore.userInfo.user?.activeCode }}
         </template>
       </Copy>
-      <!-- 信用分 -->
-      <div class="rightBot">
-        {{ _t18('invitationCode') }}：{{ userStore.userInfo.user?.activeCode }}
       </div>
     </div>
   </div>

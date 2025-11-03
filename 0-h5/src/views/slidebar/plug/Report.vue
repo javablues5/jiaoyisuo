@@ -178,6 +178,7 @@ import TrendLineChart from './components/TrendLineChart.vue'
 import BarChart from './components/BarChart.vue'
 import { _t18, _timeFormat } from '@/utils/public'
 import { _toFixed } from '@/utils/decimal'
+import { getAgentInfo } from '@/api/plug.js'
 
 // HeaderBar 右侧筛选图标配置
 // 如果 'shaixuan' 图标不存在，可以尝试使用其他图标如 'sousuo'（搜索）或其他合适图标
@@ -200,6 +201,43 @@ const statsList = ref([
   { title: '团队人数', value: '0' },
   { title: '今日新增人数', value: '0' }
 ])
+
+// 从推广中心的团队核心数据填充统计区域
+const populateStatsFromTeamCore = (teamCore) => {
+  const oneCount = teamCore?.oneCount || 0
+  const twoCount = teamCore?.twoCount || 0
+  const threeCount = teamCore?.threeCount || 0
+  const totalMembers = oneCount + twoCount + threeCount
+  const sumAmount = Number(teamCore?.sumAmount || 0)
+
+  // 与 plug1.vue 保持一致的推导字段
+  const todayProfit = sumAmount * 0.08
+  const todayInflow = sumAmount * 0.15
+  const todayOutflow = sumAmount * 0.07
+
+  const setStat = (title, val) => {
+    const item = statsList.value.find((i) => i.title === title)
+    if (item) item.value = val
+  }
+
+  setStat('团队余额', _toFixed(sumAmount, 2))
+  setStat('团队充值', _toFixed(todayInflow, 2))
+  setStat('团队提款', _toFixed(todayOutflow, 2))
+  setStat('团队返点', _toFixed(todayProfit, 2))
+  setStat('团队人数', String(totalMembers))
+  // 今日新增人数：接口未提供，保持 0，待有真实字段再替换
+}
+
+const fetchAndPopulateStats = async () => {
+  try {
+    const res = await getAgentInfo()
+    if (res && (res.code === 200 || res.code === '200')) {
+      populateStatsFromTeamCore(res.data)
+    }
+  } catch (e) {
+    // 静默失败，保留默认值
+  }
+}
 
 // 筛选弹窗
 const showFilterPopup = ref(false)
@@ -474,6 +512,7 @@ const getStatusClass = (status) => {
 onMounted(() => {
   initChartData()
   getList()
+  fetchAndPopulateStats()
 })
 </script>
 

@@ -495,14 +495,14 @@ const submit = () => {
   }
   .svgImg {
     text-align: right;
-    // width: 30px;
-    // height: 30px;
     .icon {
       text-align: right;
-      font-size: 30px;
+      font-size: 20px;
     }
     .iconImg {
-      width: 30px;
+      width: 20px;
+      height: 20px;
+      object-fit: cover;
     }
   }
   p {

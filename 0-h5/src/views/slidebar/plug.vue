@@ -38,7 +38,7 @@
         <van-cell title="推荐信息" is-link @click="go('/plug/recommend')" />
         <van-cell title="我的收益" is-link @click="go('/plug/income')" />
         <van-cell title="下级报表" is-link @click="go('/plug/report')" />
-        <van-cell title="添加会员" is-link @click="go('/plug/add-member')" />
+        <van-cell title="添加会员" is-link @click="goSignUp()" />
       </van-cell-group>
     </div>
   </div>
@@ -47,10 +47,17 @@
 <script setup>
 import HeaderBar from '@/components/HeaderBar/index.vue'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/store/user/index'
 const router = useRouter()
+const userStore = useUserStore()
 
 const go = (path) => {
   router.push(path)
+}
+
+const goSignUp = () => {
+  const inviteCode = userStore.userInfo?.user?.activeCode || ''
+  router.push(`/sign-up?invite_code=${inviteCode}`)
 }
 </script>
 

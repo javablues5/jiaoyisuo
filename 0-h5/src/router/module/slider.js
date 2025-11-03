@@ -26,12 +26,7 @@ export default [
     name: 'plugReport',
     component: () => import('@/views/slidebar/plug/Report.vue')
   },
-  // 推广-添加会员
-  {
-    path: '/plug/add-member',
-    name: 'plugAddMember',
-    component: () => import('@/views/slidebar/plug/AddMember.vue')
-  },
+  
   // 高级认证
   {
     path: '/certification-advanced',

@@ -133,6 +133,11 @@ onMounted(() => {
   background: var(--ex-passive-background-color);
   color: var(--ex-default-font-color);
 }
+:deep(.van-button) {
+  background: var(--ex-primary-color);
+  color: var(--ex-default-font-color);
+  margin-left: 10px;
+}
 .qr-box {
   display: flex;
   flex-direction: column;
