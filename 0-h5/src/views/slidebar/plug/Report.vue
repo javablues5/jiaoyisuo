@@ -14,7 +14,11 @@
           <div class="stats-title">{{ item.title }}</div>
         </div>
       </div>
-      <div class="report-tip">
+      <div class="report-tip" style="display: flex; align-items: flex-start;">
+        <svg width="16" height="16" style="margin-right: 6px; flex-shrink: 0;" viewBox="0 0 16 16" fill="none">
+          <circle cx="8" cy="8" r="8" fill="#FBBF24"/>
+          <text x="8" y="12" text-anchor="middle" font-size="10" font-family="Arial" fill="#fff" font-weight="bold">!</text>
+        </svg>
         数据每 1 分钟自动刷新，团队数据仅供参考，实际以系统结算为准
       </div>
       
@@ -360,7 +364,6 @@ const onLoad = () => {
   getList()
 }
 
-// 获取列表数据（使用接口 getAgentList）
 const getList = async () => {
   try {
     if (pageNum.value === 1) {

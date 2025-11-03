@@ -10,6 +10,7 @@
 <script setup>
 import QRCode from 'qrcode'
 import { watch } from 'vue'
+const emit = defineEmits(['generated'])
 const props = defineProps({
   address: {
     type: String,
@@ -39,6 +40,7 @@ const createQRImage = (address) => {
       }
     }).then((url) => {
       qrCodeImg.value = url
+      emit('generated', url)
     })
   }
 }

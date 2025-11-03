@@ -13,7 +13,7 @@
 
         <van-cell title="我的推荐码" :value="sharkCode || '-'" is-link>
           <template #right-icon>
-            <van-button size="small" type="primary" plain @click.stop="copyText(sharkCode)">复制</van-button>
+            <Copy :data="sharkCode"></Copy>
           </template>
         </van-cell>
 
@@ -25,13 +25,13 @@
 
         <van-cell title="推荐地址" :value="shareFullLink" is-link>
           <template #right-icon>
-            <van-button size="small" type="primary" plain @click.stop="copyText(shareFullLink)">复制</van-button>
+            <Copy :data="shareFullLink"></Copy>
           </template>
         </van-cell>
 
         <van-cell title="加密地址" :value="encryptLink" is-link>
           <template #right-icon>
-            <van-button size="small" type="primary" plain @click.stop="copyText(encryptLink)">复制</van-button>
+            <Copy :data="encryptLink"></Copy>
           </template>
         </van-cell>
 
@@ -43,26 +43,28 @@
     <!-- 二维码弹窗 -->
     <van-popup v-model:show="showQr" round :style="{ padding: '16px' }">
       <div class="qr-box">
-        <QRCode :address="sharkCode" />
+        <QRCode :address="sharkCode" @generated="onQrGenerated" />
         <div class="qr-link">{{ shareFullLink }}</div>
+        <div class="qr-tip">长按二维码可保存，或点击下方按钮下载到本地</div>
+        <van-button size="small" type="primary" @click="downloadQr" style="margin-top: 8px;">下载二维码</van-button>
       </div>
     </van-popup>
   </div>
-  
+
 </template>
 
 <script setup>
 import HeaderBar from '@/components/HeaderBar/index.vue'
 import QRCode from '@/components/common/QRCode/index.vue'
+import Copy from '@/components/common/Copy/index.vue'
 import { useUserStore } from '@/store/user/index'
 import { getAgentInfo } from '@/api/plug.js'
 import { onMounted, ref, computed } from 'vue'
-import { showToast } from 'vant'
 
 const userStore = useUserStore()
 const userInfo = userStore.userInfo
 const sharkCode = userInfo?.user?.activeCode
-const usernameDisplay = computed(() => userInfo?.user?.loginName|| '-')
+const usernameDisplay = computed(() => userInfo?.user?.loginName || '-')
 
 const shareLink = `${location.origin}/#/i&`
 const shareFullLink = computed(() => `${shareLink}${sharkCode || ''}`)
@@ -72,24 +74,21 @@ const encryptLink = computed(() => shareFullLink.value)
 const memberTotal = ref(0)
 const monthCommission = ref('0')
 const showQr = ref(false)
+const qrDataUrl = ref('')
 
-const copyText = async (text) => {
-  if (!text) return
-  try {
-    const textarea = document.createElement('textarea')
-    textarea.value = text
-    textarea.setAttribute('readonly', '')
-    textarea.style.position = 'absolute'
-    textarea.style.left = '-9999px'
-    document.body.appendChild(textarea)
-    textarea.select()
-    textarea.setSelectionRange(0, text.length)
-    const ok = document.execCommand('copy')
-    document.body.removeChild(textarea)
-    showToast(ok ? '复制成功' + text : '复制失败，请手动复制')
-  } catch (err) {
-    showToast('复制失败，请手动复制' + text)
-  }
+const onQrGenerated = (url) => {
+  qrDataUrl.value = url || ''
+}
+
+const downloadQr = () => {
+  const url = qrDataUrl.value
+  if (!url) return
+  const link = document.createElement('a')
+  link.href = url
+  link.download = `qrcode-${sharkCode || 'share'}.png`
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
 }
 
 const fetchAgentInfo = async () => {
@@ -125,24 +124,29 @@ onMounted(() => {
   line-height: 1.5;
   margin-bottom: 12px;
 }
+
 ::v-deep(.van-cell-group--inset) {
   margin: 0;
   background: transparent;
 }
+
 ::v-deep(.van-cell) {
   background: var(--ex-passive-background-color);
   color: var(--ex-default-font-color);
 }
+
 :deep(.van-button) {
   background: var(--ex-primary-color);
   color: var(--ex-default-font-color);
   margin-left: 10px;
 }
+
 .qr-box {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
   .qr-link {
     margin-top: 8px;
     font-size: 12px;
@@ -151,7 +155,12 @@ onMounted(() => {
     max-width: 260px;
     text-align: center;
   }
+
+  .qr-tip {
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--ex-passive-font-color);
+    text-align: center;
+  }
 }
 </style>
-
-
