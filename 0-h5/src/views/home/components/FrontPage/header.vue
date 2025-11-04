@@ -214,8 +214,8 @@ onMounted(async () => {
     flex: 1;
     display: flex;
     flex-direction: column;
-    border: 1px solid #2e2e2e;
-    background-color: #262626;
+    border: 1px solid var(--ex-home-box-border-color);
+    background-color: var(--ex-home-box-background-color);
     padding: 10px;
     border-radius: 8px;
 

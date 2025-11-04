@@ -66,11 +66,12 @@ class Datafeeds {
     }
 
     if (this.barList.length) {
-      // noData true 无数据 false有历史数据
-      onHistoryCallback(this.barList, { noData: false, nextTime: this.barList[0].time })
+      // 返回数据时不应包含 nextTime，避免告警
+      onHistoryCallback(this.barList, { noData: false })
     } else {
-      // 改分辨率无数据
-      onHistoryCallback([], { noData: true })
+      // 改分辨率无数据，应提供 nextTime（下一个可用时间）
+      const nextTime = this.barList && this.barList[0] ? this.barList[0].time : undefined
+      onHistoryCallback([], { noData: true, nextTime })
     }
   }
 

@@ -313,7 +313,8 @@ dataFeedInstance.resolveSymbol = async () => {
     // 最小波动
     minmov: 1 / priceScale.value,
     // 分辨率数组
-    supported_resolutions: supportedResolutions
+    supported_resolutions: supportedResolutions,
+    timezone: mainStore.timezone || 'Etc/UTC'
   }
 }
 
@@ -337,7 +338,7 @@ const initWidget = () => {
     custom_css_url: `../tradingview_${theme}.css`,
     locale: 'en',
 
-    timezone: mainStore.timezone,
+    timezone: mainStore.timezone || 'Etc/UTC',
     // 自定义日期格式化
     customFormatters: {
       dateFormatter: {
