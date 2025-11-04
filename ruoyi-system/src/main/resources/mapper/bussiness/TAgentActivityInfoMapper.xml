@@ -70,6 +70,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
         SELECT
             MAX(b.user_id) fromId,
+            MAX(b.login_name) loginName,
             MAX(i.user_id) userId,
             MAX(i.coin_type) coinType,
             MAX(i.id) id,
@@ -77,12 +78,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             MAX(i.type) type,
             MAX(i.serial_id) serialId,
             MAX(b.create_time) createTime,
+            MAX(b.update_time) updateTime,
             sum( i.amount ) sumAmount
         FROM
             (
                 SELECT
                     a.user_id,
-                    a.create_time
+                    a.login_name,
+                    a.create_time,
+                    a.update_time
                 FROM
                     t_app_user a
                 WHERE
