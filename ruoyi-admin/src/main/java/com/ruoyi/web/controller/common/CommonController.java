@@ -46,7 +46,7 @@ import java.util.*;
 public class CommonController
 {
     private static final Logger log = LoggerFactory.getLogger(CommonController.class);
-    private static final List<String> SUFFIX_LIST = Arrays.asList("png","jpg","ico");
+    private static final List<String> SUFFIX_LIST = Arrays.asList("png","jpg","jpeg","ico");
 
     @Resource
     private ServerConfig serverConfig;

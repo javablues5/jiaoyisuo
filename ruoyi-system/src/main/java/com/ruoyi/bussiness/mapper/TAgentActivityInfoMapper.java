@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.ruoyi.bussiness.domain.TAgentActivityInfo;
+import com.ruoyi.bussiness.domain.TAppUser;
 import com.ruoyi.bussiness.domain.vo.TAgentActivityInfoVo;
 
 /**
@@ -65,6 +66,7 @@ public interface TAgentActivityInfoMapper extends BaseMapper<TAgentActivityInfo>
     public int deleteTAgentActivityInfoByIds(String[] ids);
 
     int selectListByLeve(TAgentActivityInfo tAgentActivityInfo);
+    public List<TAppUser> selectByCommaSeparatedIds(TAppUser tAppUser);
 
     BigDecimal selectAmountCountByUserId(TAgentActivityInfo tAgentActivityInfo);
 

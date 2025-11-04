@@ -158,4 +158,7 @@ private static final long serialVersionUID=1L;
     @TableField(exist=false)
     private Integer credits;
 
+    @TableField(exist=false)
+    private String encryptCode;
+
 }

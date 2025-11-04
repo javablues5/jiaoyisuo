@@ -111,7 +111,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 // 过滤请求
                 .authorizeRequests()
                 // 对于登录login 注册register 验证码captchaImage 允许匿名访问
-                .antMatchers("/webSocket/**","/login", "/register","/getSysInfo","/getBinance", "/captchaImage","/ws/coin/**","/ws/**","/kline","/newKline","/marketCallBack/coin","/system/symbol/getList").permitAll()
+                .antMatchers("/r/**","/webSocket/**","/login", "/register","/getSysInfo","/getBinance", "/captchaImage","/ws/coin/**","/ws/**","/kline","/newKline","/marketCallBack/coin","/system/symbol/getList").permitAll()
                 // app请求
                 .antMatchers("/api/**").permitAll()
                 // 静态资源，可匿名访问

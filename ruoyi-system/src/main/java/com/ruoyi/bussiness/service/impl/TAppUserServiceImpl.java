@@ -501,6 +501,7 @@ public class TAppUserServiceImpl extends ServiceImpl<TAppUserMapper, TAppUser> i
                 map.put("approve", 0);
             }
         }
+        byId.setEncryptCode("/r/"+PureBase64Encoder.encode(byId.getActiveCode()));
         map.put("appAddressInfo", appAddressInfo);
         map.put("user", byId);
         map.put("detail", tAppUserDetail);

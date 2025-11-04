@@ -69,14 +69,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="getAgentList" resultType="com.ruoyi.bussiness.domain.vo.TAgentActivityInfoVo">
 
         SELECT
-            b.user_id fromId,
-            i.user_id userId,
-            i.coin_type coinType,
-            i.id,
-            i.`status`,
-            i.type,
-            i.serial_id serialId,
-            b.create_time createTime,
+            MAX(b.user_id) fromId,
+            MAX(i.user_id) userId,
+            MAX(i.coin_type) coinType,
+            MAX(i.id) id,
+            MAX(i.`status`) `status`,
+            MAX(i.type) type,
+            MAX(i.serial_id) serialId,
+            MAX(b.create_time) createTime,
             sum( i.amount ) sumAmount
         FROM
             (
@@ -90,6 +90,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             ) b
          LEFT JOIN t_agent_activity_info i ON b.user_id = i.from_id
         GROUP BY b.user_id
+    </select>
+
+    <select id="selectByCommaSeparatedIds" resultType="com.ruoyi.bussiness.domain.TAppUser">
+        SELECT *
+        FROM t_app_user
+        WHERE FIND_IN_SET(#{appParentIds}, app_parent_ids) > 0
     </select>
 
     <insert id="insertTAgentActivityInfo" parameterType="TAgentActivityInfo" useGeneratedKeys="true" keyProperty="id">

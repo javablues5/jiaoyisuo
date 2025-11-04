@@ -41,7 +41,7 @@ public class LDWebSocketSubscriber extends WebSocketClient {
             send("Pong");
         }
         try {
-            System.out.println("雷达5分钟message");
+            //System.out.println("雷达5分钟message");
             //System.out.println(message);
             KlineData k = JSON.parseObject(message).getObject("k", KlineData.class);
             k.setS(k.getS().toLowerCase());
