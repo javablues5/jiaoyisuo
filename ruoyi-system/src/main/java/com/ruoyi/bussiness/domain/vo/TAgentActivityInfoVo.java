@@ -50,6 +50,11 @@ public class TAgentActivityInfoVo {
 
     private BigDecimal sumAmount;
 
+    @TableField(exist = false)
+    private BigDecimal czAmount;
+    @TableField(exist = false)
+    private BigDecimal txAmount;
+
     @CreatedDate
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
