@@ -10,6 +10,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.ruoyi.bussiness.domain.TAgentActivityInfo;
+import com.ruoyi.bussiness.domain.TAppAsset;
 import com.ruoyi.bussiness.domain.TAppUser;
 import com.ruoyi.bussiness.domain.TAppWalletRecord;
 import com.ruoyi.bussiness.domain.vo.TAgentActivityInfoVo;
@@ -34,6 +35,8 @@ public class TAgentActivityInfoServiceImpl extends ServiceImpl<TAgentActivityInf
     private TAgentActivityInfoMapper tAgentActivityInfoMapper;
     @Autowired
     private TAppWalletRecordServiceImpl tAppWalletRecordService;
+    @Autowired
+    private TAppAssetServiceImpl tAppAssetService;
 
     /**
      * 查询返利活动明细
@@ -134,9 +137,6 @@ public class TAgentActivityInfoServiceImpl extends ServiceImpl<TAgentActivityInf
 //        resultMap.put("sumCount",oneCount+twoCount+threeCount);
 
 
-
-
-
         TAppUser u = new TAppUser();
         //u.setAppParentIds(tAgentActivityInfo.getUserId().toString());
         //List<TAppUser> tAppUsers = tAgentActivityInfoMapper.selectByCommaSeparatedIds(u);
@@ -158,7 +158,25 @@ public class TAgentActivityInfoServiceImpl extends ServiceImpl<TAgentActivityInf
                 // 计数
                 .count();
 
+        List<Long> ids = tAppUsers1.stream().map(TAppUser::getUserId).collect(Collectors.toList());
+        List<Integer> types = new ArrayList<>();
+        types.add(1);
+        types.add(51);
+        //提现
+        List<Integer> types2 = new ArrayList<>();
+        types2.add(2);
+        types2.add(4);
+        types2.add(8);
+        BigDecimal cz = extracted(ids, types, "SUM(u_amount) as u_amount")
+                .stream().filter(Objects::nonNull).map(TAppWalletRecord::getUAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal tx = extracted(ids, types2, "SUM(u_amount) as u_amount")
+                .stream().filter(Objects::nonNull).map(TAppWalletRecord::getUAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal teamSum = extracted(ids).stream().filter(Objects::nonNull)
+                .map(TAppAsset::getAmout).reduce(BigDecimal.ZERO, BigDecimal::add);
 
+        resultMap.put("teamSum",teamSum);
+        resultMap.put("czSum",cz);
+        resultMap.put("txSum",tx);
         resultMap.put("todayCount",todayCount);
         resultMap.put("sumCount",tAppUsers1.size());
         BigDecimal sumAmount = tAgentActivityInfoMapper.selectAmountCountByUserId(tAgentActivityInfo);
@@ -207,9 +225,12 @@ public class TAgentActivityInfoServiceImpl extends ServiceImpl<TAgentActivityInf
         List<Integer> types3 = new ArrayList<>();
         types3.add(9);
 
-        Map<Long, List<TAppWalletRecord>> cz = extracted(ids, types, "SUM(u_amount) as u_amount");
-        Map<Long, List<TAppWalletRecord>> tx = extracted(ids, types2, "SUM(u_amount) as u_amount");
-        Map<Long, List<TAppWalletRecord>> sy = extracted(ids, types3, "SUM(u_amount) as u_amount");
+        Map<Long, List<TAppWalletRecord>> cz = extracted(ids, types, "SUM(u_amount) as u_amount")
+                .stream().collect(Collectors.groupingBy(TAppWalletRecord::getUserId));
+        Map<Long, List<TAppWalletRecord>> tx = extracted(ids, types2, "SUM(u_amount) as u_amount")
+                .stream().collect(Collectors.groupingBy(TAppWalletRecord::getUserId));;
+        Map<Long, List<TAppWalletRecord>> sy = extracted(ids, types3, "SUM(u_amount) as u_amount")
+                .stream().collect(Collectors.groupingBy(TAppWalletRecord::getUserId));;
         agentList
                 .forEach(agentVo -> {
                     List<TAppWalletRecord> records = cz.get(agentVo.getFromId());
@@ -230,7 +251,7 @@ public class TAgentActivityInfoServiceImpl extends ServiceImpl<TAgentActivityInf
         return agentList;
     }
 
-    private Map<Long, List<TAppWalletRecord>> extracted(List<Long> ids, List<Integer> types, String sum) {
+    private List<TAppWalletRecord> extracted(List<Long> ids, List<Integer> types, String sum) {
         QueryWrapper<TAppWalletRecord> wrapper = new QueryWrapper<>();
         // 这里的参数 "wallet_amount" 是数据库的字段名
         wrapper.select("user_id","symbol", sum);
@@ -241,11 +262,21 @@ public class TAgentActivityInfoServiceImpl extends ServiceImpl<TAgentActivityInf
         wrapper.in("type", types); // 使用 List 传入多个值
         wrapper.eq("symbol","usdt");
         wrapper.groupBy("user_id", "symbol");
-        List<TAppWalletRecord> list = tAppWalletRecordService.list(wrapper);
-        return list.stream()
-                .collect(Collectors.groupingBy(
-                        TAppWalletRecord::getUserId  // Key: 使用 getUserId() 作为分组键
-                ));
+        return tAppWalletRecordService.list(wrapper);
+    }
+
+    private List<TAppAsset> extracted(List<Long> ids) {
+        QueryWrapper<TAppAsset> wrapper = new QueryWrapper<>();
+        // 这里的参数 "wallet_amount" 是数据库的字段名
+        wrapper.select("user_id","symbol", "SUM(amout) as amout");
+
+        // 3. 使用 IN 条件进行批量过滤
+        // 这里的参数 "user_id" 是数据库的字段名
+        wrapper.in("user_id", ids);
+        wrapper.eq("symbol","usdt");
+        wrapper.eq("type",1);
+        wrapper.groupBy("user_id", "symbol");
+        return tAppAssetService.list(wrapper);
     }
 
 }
