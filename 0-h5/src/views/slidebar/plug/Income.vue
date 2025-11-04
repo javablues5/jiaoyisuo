@@ -1,36 +1,36 @@
 <template>
   <div class="page-wrap">
-    <HeaderBar :currentName="'我的收益'" />
+    <HeaderBar :currentName="_t18('my_invest')" />
     <div class="content columnFlex">
       <!-- 汇总统计 -->
       <div class="summary">
         <div class="summary-item">
-          <div class="label">总投入价值</div>
+          <div class="label">{{ _t18('sum_bet_value') }}</div>
           <div class="value fw-num">{{ headerObj.sumAmount || 0 }} USDT</div>
         </div>
         <div class="summary-item">
-          <div class="label">当日赚取奖励</div>
+          <div class="label">{{ _t18('earn_rewards') }}</div>
           <div class="value fw-num">{{ headerObj.commission || 0 }} USDT</div>
         </div>
         <div class="summary-item">
-          <div class="label">累计收益</div>
+          <div class="label">{{ _t18('Cumulative_income') }}</div>
           <div class="value fw-num highlight">{{ headerObj.sumEarn || 0 }} USDT</div>
         </div>
         <div class="summary-item">
-          <div class="label">持仓数量</div>
+          <div class="label">{{ _t18('number_of_positions') }}</div>
           <div class="value fw-num">{{ headerObj.position || 0 }}</div>
         </div>
       </div>
 
       <!-- 交易记录 -->
-      <div class="record-title">交易记录</div>
+      <div class="record-title">{{ _t18('transaction_record') }}</div>
       <div class="record-list">
         <van-list
           v-if="list.length > 0 && !isShow"
           v-model:loading="loading"
           :finished="finished"
-          finished-text="没有更多数据了"
-          loading-text="加载中..."
+          :finished-text="_t18('no_more_data')"
+          :loading-text="_t18('loading')"
           @load="onLoad"
         >
           <RecordItem v-for="item in list" :key="item.id || JSON.stringify(item)" :itemObj="item" />
@@ -46,6 +46,7 @@ import HeaderBar from '@/components/HeaderBar/index.vue'
 import RecordItem from '@/views/financial/components/recordItem.vue'
 import { ref, onMounted } from 'vue'
 import { investmentList, personalIncome } from '@/api/financial/index'
+import { _t18 } from '@/utils/public'
 
 const headerObj = ref({})
 const list = ref([])

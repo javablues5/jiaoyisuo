@@ -3,33 +3,10 @@
     <HeaderBar :currentName="'代理中心'" :border_bottom="false" />
 
     <div class="page-body">
-      <!-- 顶部横幅：根据主题切换样式，高190px，100%宽度，文案中英文 -->
-      <div
-        :class="['agent-banner', { dark: __theme === 'dark' }]"
-        :style="__theme === 'dark'
-          ? { color: '#fff', boxShadow: '0 4px 21px 0 rgba(11,18,32,0.28)' }
-          : { color: '#233454', boxShadow: '0 4px 17px 0 rgba(74,93,154,0.09)' }
-        "
-      >
+      <div class="agent-banner">
         <div class="banner-text">
-          <div
-            class="title-cn"
-            :style="{
-              fontWeight: 700,
-              fontSize: '22px',
-              color: __theme === 'dark' ? '#fff' : '#223468',
-              textShadow: __theme === 'dark' ? '0 2px 16px rgba(33,89,237,0.22)' : '0 2px 10px #e6edff'
-            }"
-          >代理连接一切</div>
-          <div
-            class="title-en"
-            :style="{
-              marginTop: '6px',
-              fontSize: '14px',
-              color: __theme === 'dark' ? '#C3CCE5' : '#7490D8',
-              letterSpacing: '0.02em'
-            }"
-          >Agent connects everything</div>
+          <div class="title-cn">代理连接一切</div>
+          <div class="title-en">Agent connects everything</div>
         </div>
       </div>
 
@@ -77,10 +54,6 @@ const goSignUp = () => {
   margin-bottom: 12px;
   margin: 0 12px 12px;
 
-  &.dark {
-    background: linear-gradient(135deg, #0b1220 0%, #121a2b 100%);
-  }
-
   .banner-text {
     position: absolute;
     inset: 0;
@@ -92,16 +65,39 @@ const goSignUp = () => {
     padding: 0 16px;
 
     .title-cn {
-      font-size: 20px;
+      font-size: 22px;
       font-weight: 700;
-      color: var(--ex-font-color6);
+      color: #223468;
       margin-bottom: 6px;
+      text-shadow: 0 2px 10px #e6edff;
     }
     .title-en {
-      font-size: 12px;
-      color: var(--ex-passive-font-color);
+      font-size: 14px;
+      margin-top: 6px;
+      color: #7490D8;
+      letter-spacing: 0.02em;
     }
   }
+}
+
+/* 主题：dark 覆盖 */
+[theme='dark'] .agent-banner {
+  background: linear-gradient(135deg, #0b1220 0%, #121a2b 100%);
+  color: #fff;
+  box-shadow: 0 4px 21px 0 rgba(11, 18, 32, 0.28);
+}
+[theme='dark'] .agent-banner .title-cn {
+  color: #fff;
+  text-shadow: 0 2px 16px rgba(33, 89, 237, 0.22);
+}
+[theme='dark'] .agent-banner .title-en {
+  color: #C3CCE5;
+}
+
+/* 主题：light 覆盖（确保与原内联一致的投影效果） */
+[theme='light'] .agent-banner {
+  color: #233454;
+  box-shadow: 0 4px 17px 0 rgba(74, 93, 154, 0.09);
 }
 
 ::v-deep(.van-cell-group--inset) {
