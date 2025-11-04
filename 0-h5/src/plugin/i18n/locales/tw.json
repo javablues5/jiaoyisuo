@@ -1146,5 +1146,7 @@
   "radar_minutes_ago": "分鐘內",
   "radar_hours_ago": "小時內",
   "radar_just_now": "剛剛",
-  "radar_minutes_ago_relative": "分鐘前"
+  "radar_minutes_ago_relative": "分鐘前",
+  "代理中心": "代理中心",
+  "交易雷达": "交易雷達"
 }

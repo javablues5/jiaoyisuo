@@ -1146,5 +1146,7 @@
   "radar_minutes_ago": " minutes ago",
   "radar_hours_ago": " hours ago",
   "radar_just_now": "Just now",
-  "radar_minutes_ago_relative": " minutes ago"
+  "radar_minutes_ago_relative": " minutes ago",
+  "代理中心": "Agent Center",
+  "交易雷达": "Trading Radar"
 }
