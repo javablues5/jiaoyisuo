@@ -20,7 +20,7 @@
       </div>
 
       <!-- 图表区域 -->
-      <div class="charts-section">
+      <div class="charts-section" v-if="false">
         <!-- 折线图：团队充值/提现趋势 -->
         <TrendLineChart title="团队充值/提现趋势（近7天）" :data="trendChartData" :legend="trendLegend" />
 
@@ -321,9 +321,6 @@ const getList = async () => {
       list.value = []
     }
     const res = await getAgentList({ params: { leve: 1, pageNum: pageNum.value, pageSize: pageSize.value,begin_time: begin_time.value,end_time: end_time.value } })
-    if (res && (res.code === 200 || res.code === '200')) {
-      populateStatsFromTeamCore(res.data)
-    }
     const dataList = Array.isArray(res?.data) ? res.data : []
     // 将接口数据映射到页面展示所需字段，尽量保持原展示结构
     const mapped = dataList.map((item, index) => {
@@ -444,10 +441,7 @@ const confirmFilter = () => {
     const monthEnd = dayjs().endOf('month').format('YYYY-MM-DD')
     begin_time.value = monthStart
     end_time.value = monthEnd
-  } else if (dateFilter.value === 'custom') {
-    // 保持当前自定义输入
-    // begin_time.value 和 end_time.value 已通过选择器选择
-  } else {
+  }  else {
     begin_time.value = ''
     end_time.value = ''
   }
