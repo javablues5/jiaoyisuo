@@ -3,7 +3,6 @@ package com.ruoyi.common.crud;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -164,22 +163,23 @@ public class MpCrudTool implements ApplicationContextAware {
      * @param entityClass 实体类 Class
      * @return 实体列表
      */
-    public static <T> List<T> selectList(T t, Class<T> entityClass) {
-        BaseMapper<T> mapper = getMapper(entityClass);
-        // 查询所有
-        return mapper.selectList(Wrappers.lambdaQuery(t));
-    }
+//    public static <T> List<T> selectList(T t, Class<T> entityClass) {
+//        BaseMapper<T> mapper = getMapper(entityClass);
+//        // 查询所有
+//        return mapper.selectList(Wrappers.lambdaQuery(t));
+//    }
 
-    //private static final List<String> excludeFields = Arrays.asList("password","search_value", "params", "update_by","create_by","update_time","remark");
+    private static final List<String> excludeFields = Arrays.asList("update_by","create_by","update_time","remark");
 
-    public static <T> List<T> selectList(T t, Class<T> entityClass, List<String> excludeFields,Map<String,Object> params) {
+    public static <T> List<T> selectList(T t, Class<T> entityClass,Map<String,Object> params) {
+        if (params==null) params = new HashMap<>();
         BaseMapper<T> mapper = getMapper(entityClass);
         // 查询所有
         return mapper.selectList(Wrappers.query(t)
                 .select(entityClass, info -> !excludeFields.contains(info.getColumn())) // 排除 searchValue);
-                .between(params!=null && StringUtils.isNotEmpty((String)params.get("begin_time")),
-                        params!=null?(String) params.get("column"):null,
-                        params!=null?params.get("begin_time"):null,params!=null?params.get("end_time"):null));
+                        .ge(params.get("begin_time")!=null,(String) params.get("column"),params.get("begin_time"))
+                        .le(params.get("end_time")!=null,(String) params.get("column"),params.get("end_time")));
+
     }
 
 
@@ -197,6 +197,13 @@ public class MpCrudTool implements ApplicationContextAware {
                 .between(Objects.nonNull(params.get("begin_time")),
                         (String) params.get("column"),
                         params.get("begin_time"),params.get("end_time")));
+    }
+
+    public static <T> List<T> selectList(T t, Class<T> entityClass) {
+        BaseMapper<T> mapper = getMapper(entityClass);
+        // 查询所有
+        return mapper.selectList(Wrappers.lambdaQuery(t)
+                .select(entityClass, info -> !excludeFields.contains(info.getColumn()))); // 排除 searchValue);
     }
 
     public static <T> List<T> selectList(T t, Class<T> entityClass, List<String> excludeFields) {

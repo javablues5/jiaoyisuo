@@ -5,12 +5,12 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import com.ruoyi.bussiness.domain.TAgentActivityInfo;
+import com.ruoyi.bussiness.domain.TAppAsset;
 import com.ruoyi.bussiness.domain.TAppUser;
 import com.ruoyi.bussiness.domain.TAppWalletRecord;
 import com.ruoyi.bussiness.domain.vo.TAgentActivityInfoVo;
@@ -35,6 +35,8 @@ public class TAgentActivityInfoServiceImpl extends ServiceImpl<TAgentActivityInf
     private TAgentActivityInfoMapper tAgentActivityInfoMapper;
     @Autowired
     private TAppWalletRecordServiceImpl tAppWalletRecordService;
+    @Autowired
+    private TAppAssetServiceImpl tAppAssetService;
 
     /**
      * 查询返利活动明细
@@ -135,9 +137,6 @@ public class TAgentActivityInfoServiceImpl extends ServiceImpl<TAgentActivityInf
 //        resultMap.put("sumCount",oneCount+twoCount+threeCount);
 
 
-
-
-
         TAppUser u = new TAppUser();
         //u.setAppParentIds(tAgentActivityInfo.getUserId().toString());
         //List<TAppUser> tAppUsers = tAgentActivityInfoMapper.selectByCommaSeparatedIds(u);
@@ -148,6 +147,7 @@ public class TAgentActivityInfoServiceImpl extends ServiceImpl<TAgentActivityInf
 
         u.setParams(params1);
 
+        //所有下级
         List<TAppUser> tAppUsers1 = MpCrudTool.select_apply_List(u, TAppUser.class, excludeFields, params1);
         // 1. 获取今天的日期部分
         final LocalDate today = LocalDate.now();
@@ -159,7 +159,31 @@ public class TAgentActivityInfoServiceImpl extends ServiceImpl<TAgentActivityInf
                 // 计数
                 .count();
 
+        List<Long> ids = tAppUsers1.stream().map(TAppUser::getUserId).collect(Collectors.toList());
 
+        BigDecimal cz = BigDecimal.ZERO;
+        BigDecimal tx = BigDecimal.ZERO;
+        BigDecimal teamSum = BigDecimal.ZERO;
+        if (!ids.isEmpty()) {
+            List<Integer> types = new ArrayList<>();
+            types.add(1);
+            types.add(51);
+            //提现
+            List<Integer> types2 = new ArrayList<>();
+            types2.add(2);
+            types2.add(4);
+            types2.add(8);
+            cz = extracted(ids, types, "SUM(u_amount) as u_amount")
+                    .stream().filter(Objects::nonNull).map(TAppWalletRecord::getUAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+            tx = extracted(ids, types2, "SUM(u_amount) as u_amount")
+                    .stream().filter(Objects::nonNull).map(TAppWalletRecord::getUAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+            teamSum = extracted(ids).stream().filter(Objects::nonNull)
+                    .map(TAppAsset::getAmout).reduce(BigDecimal.ZERO, BigDecimal::add);
+        }
+
+        resultMap.put("teamSum",teamSum);
+        resultMap.put("czSum",cz);
+        resultMap.put("txSum",tx);
         resultMap.put("todayCount",todayCount);
         resultMap.put("sumCount",tAppUsers1.size());
         BigDecimal sumAmount = tAgentActivityInfoMapper.selectAmountCountByUserId(tAgentActivityInfo);
@@ -195,19 +219,92 @@ public class TAgentActivityInfoServiceImpl extends ServiceImpl<TAgentActivityInf
     public List<TAgentActivityInfoVo> getAgentList(TAgentActivityInfo tAgentActivityInfo) {
         List<TAgentActivityInfoVo> agentList = tAgentActivityInfoMapper.getAgentList(tAgentActivityInfo);
         List<Long> ids = agentList.stream().map(TAgentActivityInfoVo::getFromId).collect(Collectors.toList());
-        List<TAppWalletRecord> tAppWalletRecords = tAppWalletRecordService.listByIds(ids);
+        if (ids.isEmpty()) return agentList;
+        // 要查询的 type 列表
+        List<Integer> types = new ArrayList<>();
+        types.add(1);
+        types.add(51);
+        //提现
+        List<Integer> types2 = new ArrayList<>();
+        types2.add(2);
+        types2.add(4);
+        types2.add(8);
+        //秒合约下注
+        List<Integer> types3 = new ArrayList<>();
+        types3.add(9);
 
-        QueryWrapper<TAppWalletRecord> wrapper = new QueryWrapper<>();
-        // 2. 指定只查询 SUM(wallet_amount)
-        // 这里的参数 "wallet_amount" 是数据库的字段名
-        wrapper.select("SUM(wallet_amount)");
+        Map<Long, List<TAppWalletRecord>> cz = extracted(ids, types, "SUM(u_amount) as u_amount")
+                .stream().collect(Collectors.groupingBy(TAppWalletRecord::getUserId));
+        Map<Long, List<TAppWalletRecord>> tx = extracted(ids, types2, "SUM(u_amount) as u_amount")
+                .stream().collect(Collectors.groupingBy(TAppWalletRecord::getUserId));;
+        Map<Long, List<TAppWalletRecord>> sy = extracted(ids, types3, "SUM(u_amount) as u_amount")
+                .stream().collect(Collectors.groupingBy(TAppWalletRecord::getUserId));;
+        agentList
+                .forEach(agentVo -> {
+                    boolean withinSevenCalendarDays = isWithinSevenCalendarDays(agentVo.getUpdateTime());
+                    agentVo.setStatus(!withinSevenCalendarDays?0:null);
 
-        // 3. 使用 IN 条件进行批量过滤
-        // 这里的参数 "user_id" 是数据库的字段名
-        wrapper.in("user_id", ids);
+                    List<TAppWalletRecord> records = cz.get(agentVo.getFromId());
+                    BigDecimal u = records!=null?records.get(0).getUAmount():BigDecimal.ZERO;
+                    agentVo.setCzAmount(u);
+
+                    List<TAppWalletRecord> re = tx.get(agentVo.getFromId());
+                    BigDecimal u2 = re!=null?re.get(0).getUAmount():BigDecimal.ZERO;
+                    agentVo.setTxAmount(u2);
+
+                    //收益
+                    List<TAppWalletRecord> re3 = sy.get(agentVo.getFromId());
+                    BigDecimal u3 = re3!=null?re3.get(0).getUAmount():BigDecimal.ZERO;
+                    agentVo.setSumAmount(u3);
+                });
 
 
         return agentList;
+    }
+
+    private List<TAppWalletRecord> extracted(List<Long> ids, List<Integer> types, String sum) {
+        QueryWrapper<TAppWalletRecord> wrapper = new QueryWrapper<>();
+        // 这里的参数 "wallet_amount" 是数据库的字段名
+        wrapper.select("user_id","symbol", sum);
+
+        // 3. 使用 IN 条件进行批量过滤
+        // 这里的参数 "user_id" 是数据库的字段名
+        if (ids != null && !ids.isEmpty()) {
+            wrapper.in("user_id", ids);
+        }
+        //wrapper.in("user_id", ids);
+        wrapper.in("type", types); // 使用 List 传入多个值
+        wrapper.eq("symbol","usdt");
+        wrapper.groupBy("user_id", "symbol");
+        return tAppWalletRecordService.list(wrapper);
+    }
+
+    private List<TAppAsset> extracted(List<Long> ids) {
+        QueryWrapper<TAppAsset> wrapper = new QueryWrapper<>();
+        // 这里的参数 "wallet_amount" 是数据库的字段名
+        wrapper.select("user_id","symbol", "SUM(amout) as amout");
+
+        // 3. 使用 IN 条件进行批量过滤
+        // 这里的参数 "user_id" 是数据库的字段名
+        if (ids != null && !ids.isEmpty()) {
+            wrapper.in("user_id", ids);
+        }
+        wrapper.eq("symbol","usdt");
+        wrapper.eq("type",1);
+        wrapper.groupBy("user_id", "symbol");
+        return tAppAssetService.list(wrapper);
+    }
+
+    public static boolean isWithinSevenCalendarDays(Date dateToCheck) {
+        // 转换为本地日期（假设使用系统默认时区）
+        LocalDate checkDate = dateToCheck.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate today = LocalDate.now();
+
+        // 计算天数差
+        long daysDifference = java.time.temporal.ChronoUnit.DAYS.between(checkDate, today);
+
+        // 绝对值小于7天（例如，从今天算起，差值可以是 0 到 6）
+        return Math.abs(daysDifference) < 7;
     }
 
 }
