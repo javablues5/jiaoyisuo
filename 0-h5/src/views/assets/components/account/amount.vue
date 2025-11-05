@@ -109,7 +109,7 @@ const currencyAbout = computed(() => {
         }, //提币
         { icon: 'dui', title: _t18('asset_swap'), url: '/swap', isShow: true }, //闪兑
         { icon: 'daikuai', title: _t18('asset_loan'), url: '/loan', isShow: false }, //助力贷
-        { icon: 'huazhuan', title: _t18('asset_transfer'), url: '/transfer', isShow: true } //划转
+        { icon: 'huazhuan', title: _t18('asset_transfer'), url: '/transfer', isShow: false } //划转
       ]
     }
   } else {
