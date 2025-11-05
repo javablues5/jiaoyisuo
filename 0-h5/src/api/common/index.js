@@ -47,7 +47,7 @@ export const uploadImg = (data) => {
 export const upload = (data) => {
   let userStore = useUserStore()
   return axios({
-    url: baseURL + '/api/common/upload',
+    url: baseURL + '/api/common/upload/OSS',
     method: 'post',
     headers: {
       'content-type': 'multipart/form-data;charset=UTF-8',
