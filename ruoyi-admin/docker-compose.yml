@@ -1,0 +1,97 @@
+# version: '3.8'
+
+services:
+  # ------------------------------------
+  # 1. Spring Boot 后端服务
+  # ------------------------------------
+  app-backend:
+    build:
+      context: . # Dockerfile 所在目录
+      dockerfile: Dockerfile
+    image: admin2:latest # 自定义镜像名称
+    container_name: admin2
+    ports:
+      - "8080:8080" # 映射端口到宿主机
+    environment:
+      # 可选：如果需要覆盖 application.yml 中的变量
+      - SPRING_PROFILES_ACTIVE=prod
+    depends_on:
+      - mysql # 确保在启动前，mysql 和 redis 服务可用
+      - redis
+    # 挂载日志，方便查看（可选）
+    volumes:
+      - ./logs:/app/logs
+
+  # ------------------------------------
+  # 2. MySQL 数据库服务
+  # ------------------------------------
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword # ROOT 密码
+      MYSQL_DATABASE: mydatabase        # Spring Boot 使用的数据库名
+      MYSQL_USER: myuser                # Spring Boot 使用的用户名
+      MYSQL_PASSWORD: mypassword        # Spring Boot 使用的密码
+      TZ: Asia/Shanghai               # 设置时区，避免时间问题
+    volumes:
+      - mysql_data:/var/lib/mysql # 数据卷持久化数据
+    ports:
+      - "3306:3306" # 映射端口到宿主机（可选，用于外部连接工具）
+
+  # ------------------------------------
+  # 3. Redis 缓存服务
+  # ------------------------------------
+  redis:
+    image: redis:6-alpine
+    container_name: redis-container
+    restart: always
+    volumes:
+      - redis_data:/data # 数据卷持久化数据
+    ports:
+      - "6378:6379" # 映射端口到宿主机（可选）
+
+  # ------------------------------------
+  # 4. Nginx 反向代理/Web 服务器 (示例)
+  # ------------------------------------
+#  nginx:
+#    image: nginx:latest
+#    container_name: nginx-container
+#    restart: always
+#    ports:
+#      - "80:80" # 将宿主机 80 端口映射到 Nginx
+#    volumes:
+#      # 挂载 Nginx 配置文件，用于反向代理到 app-backend:8080
+#      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+#      # 挂载静态资源（可选）
+#      - ./nginx/html:/usr/share/nginx/html:ro
+#    depends_on:
+#      - app-backend # 确保后端服务启动后，Nginx 再启动代理
+
+  # ------------------------------------
+  # 5. Minio 文件储存
+  # ------------------------------------
+  minio:
+    image: minio/minio:latest
+    container_name: minio-server
+    restart: always
+    ports:
+      - "9009:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data   # 持久化数据
+      - minio_config:/root/.minio # 持久化配置
+    environment:
+      # 必须设置自定义的密钥和密码，不要使用默认的 minioadmin
+      MINIO_ROOT_USER: myaccesskey
+      MINIO_ROOT_PASSWORD: mysecretkey123
+      MINIO_SERVER_URL: http://localhost:9000 # 如果需要，设置外部可访问的URL
+    command: server /data --console-address ":9001"
+
+# 定义数据卷
+volumes:
+  mysql_data:
+  redis_data:
+  minio_data:
+  minio_config:

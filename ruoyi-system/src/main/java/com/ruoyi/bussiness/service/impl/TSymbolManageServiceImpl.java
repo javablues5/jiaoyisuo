@@ -78,10 +78,10 @@ public class TSymbolManageServiceImpl extends ServiceImpl<TSymbolManageMapper, T
         tSymbolManage.setCreateTime(DateUtils.getNowDate());
         tSymbolManage.setDelFlag("0");
         tSymbolManage.setSymbol(tSymbolManage.getSymbol().toLowerCase());
-        List<KlineSymbol> kList = klineSymbolMapper.selectList(new LambdaQueryWrapper<KlineSymbol>().eq(KlineSymbol::getSymbol, tSymbolManage.getSymbol().toUpperCase()));
-        if (!CollectionUtils.isEmpty(kList)){
-            tSymbolManage.setLogo(kList.get(0).getLogo());
-        }
+//        List<KlineSymbol> kList = klineSymbolMapper.selectList(new LambdaQueryWrapper<KlineSymbol>().eq(KlineSymbol::getSymbol, tSymbolManage.getSymbol().toUpperCase()));
+//        if (!CollectionUtils.isEmpty(kList)){
+//            tSymbolManage.setLogo(kList.get(0).getLogo());
+//        }
         int i = tSymbolManageMapper.insertTSymbolManage(tSymbolManage);
         HashMap<String, Object> object = new HashMap<>();
         object.put("add_coin",tSymbolManage.getSymbol());
