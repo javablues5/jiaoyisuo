@@ -241,6 +241,9 @@ public class TAgentActivityInfoServiceImpl extends ServiceImpl<TAgentActivityInf
                 .stream().collect(Collectors.groupingBy(TAppWalletRecord::getUserId));;
         agentList
                 .forEach(agentVo -> {
+                    boolean withinSevenCalendarDays = isWithinSevenCalendarDays(agentVo.getUpdateTime());
+                    agentVo.setStatus(!withinSevenCalendarDays?0:null);
+
                     List<TAppWalletRecord> records = cz.get(agentVo.getFromId());
                     BigDecimal u = records!=null?records.get(0).getUAmount():BigDecimal.ZERO;
                     agentVo.setCzAmount(u);
@@ -290,6 +293,18 @@ public class TAgentActivityInfoServiceImpl extends ServiceImpl<TAgentActivityInf
         wrapper.eq("type",1);
         wrapper.groupBy("user_id", "symbol");
         return tAppAssetService.list(wrapper);
+    }
+
+    public static boolean isWithinSevenCalendarDays(Date dateToCheck) {
+        // 转换为本地日期（假设使用系统默认时区）
+        LocalDate checkDate = dateToCheck.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate today = LocalDate.now();
+
+        // 计算天数差
+        long daysDifference = java.time.temporal.ChronoUnit.DAYS.between(checkDate, today);
+
+        // 绝对值小于7天（例如，从今天算起，差值可以是 0 到 6）
+        return Math.abs(daysDifference) < 7;
     }
 
 }
