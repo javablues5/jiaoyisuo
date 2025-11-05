@@ -31,6 +31,7 @@ import com.ruoyi.common.enums.CachePrefix;
 import com.ruoyi.common.enums.SettingEnum;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.TranslatorUtil;
+import com.ruoyi.common.utils.file.FileUtils;
 import com.ruoyi.framework.web.domain.server.Sys;
 import com.ruoyi.socket.config.KLoader;
 import com.ruoyi.socket.service.MarketThread;
@@ -47,7 +48,7 @@ import com.ruoyi.framework.config.ServerConfig;
 
 /**
  * 通用请求处理
- * 
+ *
  * @author ruoyi
  */
 @RestController
@@ -94,6 +95,31 @@ public class CommonController
             ajax.put("fileName", name);
             ajax.put("url", url);
             return   AjaxResult.success(ajax);
+        } catch (Exception e) {
+            e.getMessage();
+            return AjaxResult.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 通用上传请求（单个）
+     */
+    @PostMapping("/upload")
+    public AjaxResult uploadFile(MultipartFile file) throws Exception
+    {
+
+        try {
+            String filename = file.getResource().getFilename();
+            //这里文件名用了uuid 防止重复，可以根据自己的需要来写
+            String name = UUID.randomUUID() + filename.substring(filename.lastIndexOf("."), filename.length());
+            name = name.replace("-", "");
+            String url = fileService.uploadFileOSS(file,name);
+            AjaxResult ajax = AjaxResult.success();
+            ajax.put("url", url);
+            ajax.put("fileName", name);
+            ajax.put("newFileName", FileUtils.getName(name));
+            ajax.put("originalFilename", file.getOriginalFilename());
+            return ajax;
         } catch (Exception e) {
             e.getMessage();
             return AjaxResult.error(e.getMessage());
