@@ -642,16 +642,22 @@ export default {
     },
     /**币种交易所 */
     changeCoin(e) {
-      let list = this.filter((item) => {
-        if (item.coin == e) {
-          return item;
-        }
-      });
+      const list = (this.coinList || []).filter((item) => item.coin === e);
+      if (!list.length) {
+        this.currentMarket = {};
+        this.form.referMarket = "";
+        this.amountAvailable = "";
+        this.form.price = "";
+        this.sliderValue = 0;
+        this.form.proportion = null;
+        return;
+      }
       this.currentMarket = list[0];
-      console.log("🚀 ~ this.currentMarket:", this.currentMarket)
       this.form.referMarket = this.currentMarket?.market; //交易所
       this.amountAvailable = this.currentMarket?.price;
       this.form.price = this.currentMarket?.price; //初始价格
+      this.sliderValue = 0;
+      this.form.proportion = 100;
     },
 
     formatTooltip(val) {},
