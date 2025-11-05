@@ -136,3 +136,7 @@ admin-redis-stream:
   names: notice_key
   #stream 群组名称
   groups: notice
+
+#图片上传路径
+upload:
+  path: /var/uploads/
