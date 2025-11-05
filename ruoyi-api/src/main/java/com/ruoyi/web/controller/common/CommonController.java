@@ -1,5 +1,6 @@
 package com.ruoyi.web.controller.common;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.*;
@@ -39,6 +40,7 @@ import com.ruoyi.system.service.ISysDictTypeService;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -57,6 +59,7 @@ public class CommonController
 {
     private static final Logger log = LoggerFactory.getLogger(CommonController.class);
     private final ExecutorService executorService = Executors.newFixedThreadPool(10);
+    private static final List<String> SUFFIX_LIST = Arrays.asList("png","jpg","jpeg","ico");
 
     @Resource
     private RedisCache redisCache;
@@ -79,6 +82,9 @@ public class CommonController
 
 
     private static final String FILE_DELIMETER = ",";
+    // **重要：** 请修改为您希望保存文件的实际路径
+    @Value("${upload.path}")
+    private String uploadPath = "/var/uploads/";
 
     /**
      * oss通用上传请求
@@ -123,6 +129,51 @@ public class CommonController
         } catch (Exception e) {
             e.getMessage();
             return AjaxResult.error(e.getMessage());
+        }
+    }
+
+
+    @PostMapping("/upload/OSS")
+    public AjaxResult uploadImage(MultipartFile file) {
+        try {
+            String suffix = Objects.requireNonNull(file.getOriginalFilename()).substring(file.getOriginalFilename().lastIndexOf('.')+1);
+            System.out.println(suffix);
+            if (!SUFFIX_LIST.contains(suffix.toLowerCase())){
+                return AjaxResult.error("类型错误！");
+            }
+
+            // 3. 检查并创建保存目录
+            File destDir = new File(uploadPath);
+            if (!destDir.exists()) {
+                destDir.mkdirs();
+            }
+            String filename = file.getResource().getFilename();
+            //这里文件名用了uuid 防止重复，可以根据自己的需要来写
+            String name = UUID.randomUUID() + filename.substring(filename.lastIndexOf("."), filename.length());
+            name = name.replace("-", "");
+            name = "local-oss"+name;
+
+            // 4. 定义完整保存路径
+            File destFile = new File(uploadPath + name);
+            System.out.println("Final target path: " + destFile.getAbsolutePath());
+            // 5. 核心操作：将上传的文件内容传输到目标文件
+            file.transferTo(destFile);
+
+//            byte[] bytes = file.getBytes();
+//            Path filePath = Paths.get(uploadPath, name);
+//            System.out.println("filePath:"+filePath);
+//            Path filePath1 = Files.write(filePath, bytes);
+//            System.out.println("1111");
+//            System.out.println(filePath1);
+
+            AjaxResult ajax = AjaxResult.success();
+            ajax.put("fileName", name);
+            ajax.put("url", "123");
+            return ajax;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return AjaxResult.error("上传失败！");
         }
     }
 
