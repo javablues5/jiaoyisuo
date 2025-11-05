@@ -85,7 +85,7 @@
                 <el-form-item label="计算方式">
                   <el-radio-group v-model="inlineReplenish.compensationMode">
                     <el-radio label="fixed">固定比率</el-radio>
-                    <el-radio label="ladder">阶梯比率</el-radio>
+                    <!-- <el-radio label="ladder">阶梯比率</el-radio> -->
                   </el-radio-group>
                 </el-form-item>
               </el-col>
@@ -350,6 +350,23 @@ export default {
     this.loadPeriodOptions();
   },
   methods: {
+    // 生成一键补仓所需的搜索筛选参数（含时间范围映射）
+    buildSearchFilters() {
+      const filters = { ...this.queryParams };
+      if (Array.isArray(this.createTimeRange) && this.createTimeRange.length === 2) {
+        filters.createTime = this.createTimeRange[0];
+        filters.createTimeEnd = this.createTimeRange[1];
+      } else {
+        filters.createTime = null;
+        filters.createTimeEnd = null;
+      }
+      delete filters.pageNum;
+      delete filters.pageSize;
+      Object.keys(filters).forEach((k) => {
+        if (filters[k] === null || filters[k] === '') delete filters[k];
+      });
+      return filters;
+    },
     // 加载周期选项（与 H5 一致，来源于周期配置表去重 period）
     loadPeriodOptions() {
       const params = { pageNum: 1, pageSize: 1000 };
@@ -377,9 +394,8 @@ export default {
         compensationMode: this.inlineReplenish.compensationMode,
         compensationRate: this.inlineReplenish.compensationRate,
         isAll,
-        // 合并搜索栏的用户ID与订单号
-        userId: this.queryParams.userId,
-        orderNo: this.queryParams.orderNo,
+        // 合并当前搜索条件
+        ...this.buildSearchFilters(),
         // 勾选全部则提交空数组，否则提交勾选的对象数组
         orders: isAll ? [] : this.selectedRows,
       };
@@ -395,7 +411,8 @@ export default {
       this.replenishVisible = false;
     },
     onReplenishConfirm(payload) {
-      oneClickReplenish(payload).then(() => {
+      const merged = { ...this.buildSearchFilters(), ...payload };
+      oneClickReplenish(merged).then(() => {
         this.$modal.msgSuccess("已提交补仓配置");
         this.replenishVisible = false;
         // 可选：刷新列表
