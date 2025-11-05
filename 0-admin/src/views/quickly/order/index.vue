@@ -9,9 +9,27 @@
           <el-input v-model="queryParams.orderNo" clearable @keyup.enter.native="handleQuery" />
         </el-form-item>
 
+        <el-form-item label="周期" prop="type">
+          <el-select v-model="queryParams.type" placeholder="选择周期" clearable style="width: 150px">
+            <el-option v-for="item in periodOptions" :key="item" :label="item + ' S'" :value="item" />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="投注金额" prop="betAmount">
+          <el-input v-model="queryParams.betAmount" clearable @keyup.enter.native="handleQuery" />
+        </el-form-item>
+
         <el-form-item label="创建时间" prop="createTime">
-          <el-date-picker v-model="queryParams.createTime" type="datetime" value-format="yyyy-MM-dd HH:mm:ss"
-            format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间（到秒）" style="width: 200px" />
+          <el-date-picker
+            v-model="createTimeRange"
+            type="datetimerange"
+            range-separator="至"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            format="yyyy-MM-dd HH:mm:ss"
+            style="width: 360px"
+          />
         </el-form-item>
 
         <!-- 
@@ -101,9 +119,7 @@
       </el-row>
 
       <el-table height="calc(100vh - 360px)" border @sort-change="sortTableFun"
-        :default-sort="{ prop: 'date', order: 'descending' }" v-loading="loading" :data="orderList"
-        @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55" align="center" />
+        :default-sort="{ prop: 'date', order: 'descending' }" v-loading="loading" :data="orderList">
         <el-table-column label="用户ID" align="center" prop="userId" />
         <el-table-column label="订单号" align="center" prop="orderNo" width="120">
           <template slot-scope="scope">
@@ -212,6 +228,7 @@ import {
   addOrder,
   updateOrder,
 } from "@/api/bussiness/quicklyOrder";
+import { listConfig as listPeriodConfig } from "@/api/system/configrution.js";
 
 export default {
   name: "Order",
@@ -255,6 +272,10 @@ export default {
         openTime: '',
         isAll: false,
       },
+      // 周期下拉选项（单位秒）
+      periodOptions: [],
+      // 创建时间范围（起止）
+      createTimeRange: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -273,6 +294,7 @@ export default {
         openPrice: null,
         closePrice: null,
         createTime: null,
+        createTimeEnd: null,
         closeTime: null,
         coinSymbol: null,
         baseSymbol: null,
@@ -325,8 +347,23 @@ export default {
   },
   created() {
     this.getList();
+    this.loadPeriodOptions();
   },
   methods: {
+    // 加载周期选项（与 H5 一致，来源于周期配置表去重 period）
+    loadPeriodOptions() {
+      const params = { pageNum: 1, pageSize: 1000 };
+      listPeriodConfig(params).then((res) => {
+        const rows = res?.rows || [];
+        const set = new Set();
+        rows.forEach((r) => {
+          if (r && r.period != null) {
+            set.add(Number(r.period));
+          }
+        });
+        this.periodOptions = Array.from(set).sort((a, b) => a - b);
+      });
+    },
     toggleInlineReplenish() {
       this.showInlineReplenish = !this.showInlineReplenish;
     },
@@ -390,6 +427,13 @@ export default {
       //发起后端请求的接口
       this.queryParams["orderByColumn"] = "createTime";
       this.queryParams["isAsc"] = this.order;
+      if (Array.isArray(this.createTimeRange) && this.createTimeRange.length === 2) {
+        this.queryParams.createTime = this.createTimeRange[0];
+        this.queryParams.createTimeEnd = this.createTimeRange[1];
+      } else {
+        this.queryParams.createTime = null;
+        this.queryParams.createTimeEnd = null;
+      }
       listOrder(this.queryParams).then((response) => {
         this.rechargeList = response.rows;
         this.total = response.total;
@@ -400,6 +444,13 @@ export default {
     /** 查询秒合约订单列表 */
     getList() {
       this.loading = true;
+      if (Array.isArray(this.createTimeRange) && this.createTimeRange.length === 2) {
+        this.queryParams.createTime = this.createTimeRange[0];
+        this.queryParams.createTimeEnd = this.createTimeRange[1];
+      } else {
+        this.queryParams.createTime = null;
+        this.queryParams.createTimeEnd = null;
+      }
       listOrder(this.queryParams).then((response) => {
         this.orderList = response.rows;
         this.total = response.total;
@@ -447,6 +498,7 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
+      this.createTimeRange = [];
       this.handleQuery();
     },
     // 多选框选中数据
