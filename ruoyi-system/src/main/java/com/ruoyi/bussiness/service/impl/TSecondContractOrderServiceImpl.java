@@ -253,7 +253,7 @@ public class TSecondContractOrderServiceImpl extends ServiceImpl<TSecondContract
                         if(contractOrder.getOpenResult().equals("2")){
                             // 进行补仓操作 即修改用户余额，生成帐变信息
                             TAppAsset appAsset = tAppAssetMapper.selectOne(new LambdaQueryWrapper<TAppAsset>()
-                                    .eq(TAppAsset::getUserId, tSecondContractOrderList.getUserId())
+                                    .eq(TAppAsset::getUserId, contractOrder.getUserId())
                                     .eq(TAppAsset::getSymbol, "usdt")
                                     .eq(TAppAsset::getType, 1));
                             // 下注金额 + （下注金额 * 补仓比例）
