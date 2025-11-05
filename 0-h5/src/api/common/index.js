@@ -42,6 +42,22 @@ export const uploadImg = (data) => {
   })
 }
 /**
+ * 上传图片（新接口）
+ */
+export const upload = (data) => {
+  let userStore = useUserStore()
+  return axios({
+    url: baseURL + '/api/common/upload',
+    method: 'post',
+    headers: {
+      'content-type': 'multipart/form-data;charset=UTF-8',
+      authorization: userStore.token,
+      satoken: userStore.token
+    },
+    data
+  })
+}
+/**
  * 字典查询
  */
 export const dict = (dictType) => post(`/api/common/type/${dictType}`)

@@ -7,7 +7,7 @@ import { nation } from './components/nation.js'
 import HeaderBar from '@/components/HeaderBar/index.vue'
 import { uploadKYC } from '@/api/user'
 import Success from './components/success.vue'
-import { uploadImg } from '@/api/common/index.js'
+import { upload } from '@/api/common/index.js'
 import { useUserStore } from '@/store/user/index'
 import { storeToRefs } from 'pinia'
 import { showToast } from 'vant'
@@ -74,7 +74,7 @@ const afterRead1 = (file) => {
   // console.log(file)
   let formData = new FormData()
   formData.append('file', file.file)
-  uploadImg(formData).then((res) => {
+  upload(formData).then((res) => {
     res = res.data
     if (res.code == '200') {
       file.res = res.data.url
@@ -91,7 +91,7 @@ const afterRead2 = (file) => {
   // console.log(file)
   let formData = new FormData()
   formData.append('file', file.file)
-  uploadImg(formData).then((res) => {
+  upload(formData).then((res) => {
     res = res.data
     if (res.code == '200') {
       file.res = res.data.url
@@ -108,7 +108,7 @@ const afterRead3 = (file) => {
   // console.log(file)
   let formData = new FormData()
   formData.append('file', file.file)
-  uploadImg(formData).then((res) => {
+  upload(formData).then((res) => {
     res = res.data
     if (res.code == '200') {
       file.res = res.data.url

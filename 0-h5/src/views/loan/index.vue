@@ -6,7 +6,7 @@ import { reactive, ref, onMounted, computed } from 'vue'
 import { _div, _mul, priceFormat } from '@/utils/decimal.js'
 import { getLoanProductList, getLoan } from '@/api/loan.js'
 import { dict } from '@/api/common/index'
-import { uploadImg } from '@/api/common/index.js'
+import { upload } from '@/api/common/index.js'
 import { showToast } from 'vant'
 import { useToast } from '@/hook/useToast'
 const { _toast } = useToast()
@@ -30,7 +30,7 @@ const afterRead1 = (file) => {
   // console.log(file)
   let formData = new FormData()
   formData.append('file', file.file)
-  uploadImg(formData).then((res) => {
+  upload(formData).then((res) => {
     res = res.data
     if (res.code == '200') {
       file.res = res.data.url
@@ -47,7 +47,7 @@ const afterRead2 = (file) => {
   // console.log(file)
   let formData = new FormData()
   formData.append('file', file.file)
-  uploadImg(formData).then((res) => {
+  upload(formData).then((res) => {
     res = res.data
     if (res.code == '200') {
       file.res = res.data.url
@@ -64,7 +64,7 @@ const afterRead3 = (file) => {
   // console.log(file)
   let formData = new FormData()
   formData.append('file', file.file)
-  uploadImg(formData).then((res) => {
+  upload(formData).then((res) => {
     res = res.data
     if (res.code == '200') {
       file.res = res.data.url

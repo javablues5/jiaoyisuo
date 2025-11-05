@@ -75,7 +75,7 @@
 </template>
 
 <script setup>
-import { uploadImg } from '@/api/common/index.js'
+import { upload } from '@/api/common/index.js'
 import { rechargeSubmit, getUserRechageNewApi } from '@/api/account.js'
 import { _toView, _hideAddress, _t18, _getConfig } from '@/utils/public'
 import { priceFormat } from '@/utils/decimal'
@@ -113,7 +113,7 @@ const afterRead = (file) => {
   // 此时可以自行将文件上传至服务器
   let formData = new FormData()
   formData.append('file', file.file)
-  uploadImg(formData).then((res) => {
+  upload(formData).then((res) => {
     res = res.data
     if (res.code == '200') {
       file.res = res.data.url

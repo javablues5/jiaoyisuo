@@ -50,7 +50,6 @@ const headerList = computed(() => {
   let tempList = mainStore.getTradeHeaderList.filter((item, index) => {
     return item.componentName != 'Optional'
   })
-  console.log("🚀 ~ tempList:", tempList)
   return tempList
 })
 const currentIndex = ref(
