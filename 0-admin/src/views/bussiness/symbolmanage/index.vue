@@ -257,6 +257,9 @@
         <el-form-item label="排序" prop="sort">
           <el-input v-model="form.sort" />
         </el-form-item>
+        <el-form-item label="图标" prop="logo">
+          <ImageUpload v-model="form.logo" :limit="1" :file-size="5" :file-type="['png','jpg','jpeg']" />
+        </el-form-item>
         <el-form-item label="状态" prop="enable">
           <el-select v-model="form.enable" style="width: 100%">
             <el-option label="启用" value="1"></el-option>
@@ -331,9 +334,11 @@ import {
   getCoinList,
   addCoin,
 } from "@/api/bussiness/manage";
+import ImageUpload from "@/components/ImageUpload/index.vue";
 
 export default {
   name: "Manage",
+  components: { ImageUpload },
   data() {
     return {
       addCoinForm: { coin: undefined },
@@ -430,6 +435,7 @@ export default {
         commission: null,
         sort: null,
         enable: null,
+        logo: null,
         remark: null,
         createBy: null,
         createTime: null,
