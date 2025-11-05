@@ -145,5 +145,8 @@ private static final long serialVersionUID=1L;
     private Date createTime;
 
     @TableField(exist = false)
+    private Date createTimeEnd;
+
+    @TableField(exist = false)
     private Long periodId;
 }

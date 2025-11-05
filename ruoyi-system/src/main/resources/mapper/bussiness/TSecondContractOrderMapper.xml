@@ -66,6 +66,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">
                 AND create_time &gt;= #{createTime}
             </if>
+            <if test="createTimeEnd != null">
+                AND create_time &lt;= #{createTimeEnd}
+            </if>
         </where>
         order by create_time desc
     </select>
