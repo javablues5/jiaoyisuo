@@ -1,11 +1,7 @@
 <template>
   <div class="page-wrap">
-    <HeaderBar 
-      :currentName="'代理报表'" 
-      :cuttentRight="cuttentRight"
-      @showPopup="showFilterPopup = true"
-    />
-    
+    <HeaderBar :currentName="'代理报表'" :cuttentRight="cuttentRight" @showPopup="showFilterPopup = true" />
+
     <div class="content">
       <!-- 头部统计区域 -->
       <div class="stats-grid">
@@ -16,47 +12,31 @@
       </div>
       <div class="report-tip" style="display: flex; align-items: flex-start;">
         <svg width="16" height="16" style="margin-right: 6px; flex-shrink: 0;" viewBox="0 0 16 16" fill="none">
-          <circle cx="8" cy="8" r="8" fill="#FBBF24"/>
-          <text x="8" y="12" text-anchor="middle" font-size="10" font-family="Arial" fill="#fff" font-weight="bold">!</text>
+          <circle cx="8" cy="8" r="8" fill="#FBBF24" />
+          <text x="8" y="12" text-anchor="middle" font-size="10" font-family="Arial" fill="#fff"
+            font-weight="bold">!</text>
         </svg>
         数据每 1 分钟自动刷新，团队数据仅供参考，实际以系统结算为准
       </div>
-      
+
       <!-- 图表区域 -->
       <div class="charts-section">
         <!-- 折线图：团队充值/提现趋势 -->
-        <TrendLineChart
-          title="团队充值/提现趋势（近7天）"
-          :data="trendChartData"
-          :legend="trendLegend"
-        />
-        
+        <TrendLineChart title="团队充值/提现趋势（近7天）" :data="trendChartData" :legend="trendLegend" />
+
         <!-- 柱状图：每日新增人数 -->
-        <BarChart
-          title="每日新增人数（近7天）"
-          :data="memberChartData"
-        />
+        <BarChart title="每日新增人数（近7天）" :data="memberChartData" />
       </div>
-      
+
       <!-- 下拉刷新和上拉加载列表 -->
-      <van-pull-refresh
-        v-model="refreshing"
-        @refresh="onRefresh"
-        :loading-text="_t18('loading')"
-        :loosing-text="_t18('release_refresh')"
-      >
+      <van-pull-refresh v-model="refreshing" @refresh="onRefresh" :loading-text="_t18('loading')"
+        :loosing-text="_t18('release_refresh')">
         <!-- 加载中动画 -->
         <van-loading v-if="showLoading" />
         <!-- 数据列表 -->
         <div v-else>
-          <van-list
-            v-if="list.length > 0"
-            v-model:loading="loading"
-            :finished="finished"
-            :finished-text="_t18('no_more_data')"
-            :loading-text="_t18('loading')"
-            @load="onLoad"
-          >
+          <van-list v-if="list.length > 0" v-model:loading="loading" :finished="finished"
+            :finished-text="_t18('no_more_data')" :loading-text="_t18('loading')" @load="onLoad">
             <van-cell v-for="(item, index) in list" :key="index">
               <div class="list-item">
                 <!-- 顶部：成员昵称和状态 -->
@@ -66,7 +46,7 @@
                     {{ getStatusText(item.status) }}
                   </div>
                 </div>
-                
+
                 <!-- 信息列表 -->
                 <div class="item-info">
                   <div class="info-row">
@@ -96,12 +76,7 @@
     </div>
 
     <!-- 筛选弹窗 -->
-    <van-popup
-      v-model:show="showFilterPopup"
-      position="bottom"
-      round
-      :style="{ height: '60%' }"
-    >
+    <van-popup v-model:show="showFilterPopup" position="bottom" round :style="{ height: '60%' }">
       <div class="filter-popup">
         <div class="filter-header">
           <div class="filter-title">筛选</div>
@@ -111,13 +86,8 @@
           <div class="filter-section" v-for="(section, index) in filterSections" :key="index">
             <div class="section-title">{{ section.title }}</div>
             <div class="section-items">
-              <div
-                class="filter-item"
-                v-for="(item, itemIndex) in section.items"
-                :key="itemIndex"
-                :class="{ active: item.active }"
-                @click="toggleFilter(section, item, index)"
-              >
+              <div class="filter-item" v-for="(item, itemIndex) in section.items" :key="itemIndex"
+                :class="{ active: item.active }" @click="toggleFilter(section, item, index)">
                 {{ item.label }}
               </div>
             </div>
@@ -127,43 +97,31 @@
                 <div class="date-input-item">
                   <div class="date-label">开始日期</div>
                   <div class="date-input" @click="showStartDatePicker = true">
-                    {{ dateRange[0] || '请选择' }}
+                    {{ begin_time || '请选择' }}
                   </div>
                 </div>
                 <div class="date-input-item">
                   <div class="date-label">结束日期</div>
                   <div class="date-input" @click="showEndDatePicker = true">
-                    {{ dateRange[1] || '请选择' }}
+                    {{ end_time || '请选择' }}
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        
+
         <!-- 日期选择器 -->
         <van-popup v-model:show="showStartDatePicker" position="bottom">
-          <van-date-picker
-            v-model="currentStartDate"
-            title="选择开始日期"
-            :cancel-button-text="'取消'"
-            :confirm-button-text="'确认'"
-            @confirm="confirmStartDate"
-            @cancel="showStartDatePicker = false"
-            :columns-type="['year', 'month', 'day']"
-          />
+          <van-date-picker v-model="currentStartDate" title="选择开始日期" :cancel-button-text="'取消'"
+            :confirm-button-text="'确认'" @confirm="confirmStartDate" @cancel="showStartDatePicker = false"
+            :columns-type="['year', 'month', 'day']" />
         </van-popup>
-        
+
         <van-popup v-model:show="showEndDatePicker" position="bottom">
-          <van-date-picker
-            v-model="currentEndDate"
-            title="选择结束日期"
-            :cancel-button-text="'取消'"
-            :confirm-button-text="'确认'"
-            @confirm="confirmEndDate"
-            @cancel="showEndDatePicker = false"
-            :columns-type="['year', 'month', 'day']"
-          />
+          <van-date-picker v-model="currentEndDate" title="选择结束日期" :cancel-button-text="'取消'"
+            :confirm-button-text="'确认'" @confirm="confirmEndDate" @cancel="showEndDatePicker = false"
+            :columns-type="['year', 'month', 'day']" />
         </van-popup>
         <div class="filter-footer">
           <div class="footer-btn reset-btn" @click="resetFilter">重置</div>
@@ -183,13 +141,16 @@ import BarChart from './components/BarChart.vue'
 import { _t18, _timeFormat } from '@/utils/public'
 import { _toFixed } from '@/utils/decimal'
 import { getAgentInfo, getAgentList } from '@/api/plug.js'
+import dayjs from 'dayjs'
+import isoWeek from 'dayjs/plugin/isoWeek'
+dayjs.extend(isoWeek)
 
 // HeaderBar 右侧筛选图标配置
 // 如果 'shaixuan' 图标不存在，可以尝试使用其他图标如 'sousuo'（搜索）或其他合适图标
 const cuttentRight = ref({
   iconRight: [
     {
-      name:"筛选",
+      name: "筛选",
       iconName: '', // 筛选图标名称，可根据项目实际图标调整
       clickTo: '' // 空字符串会触发 showPopup 事件
     }
@@ -262,8 +223,8 @@ const filterSections = ref([
 const dateFilter = ref('all')
 const activeStatusFilter = ref('all')
 
-// 自定义日期范围
-const dateRange = ref(['', ''])
+const begin_time = ref('')
+const end_time = ref('')
 
 // 图表数据 - 折线图
 const trendChartData = ref({
@@ -289,20 +250,20 @@ const initChartData = () => {
   const recharge = []
   const withdraw = []
   const counts = []
-  
+
   const now = new Date()
   for (let i = 6; i >= 0; i--) {
     const date = new Date(now)
     date.setDate(date.getDate() - i)
     const dateStr = `${date.getMonth() + 1}/${date.getDate()}`
     dates.push(dateStr)
-    
+
     // 生成模拟数据
     recharge.push(Math.random() * 50000 + 10000)
     withdraw.push(Math.random() * 30000 + 5000)
     counts.push(Math.floor(Math.random() * 20 + 5))
   }
-  
+
   // 折线图数据格式
   trendChartData.value = {
     dates,
@@ -319,7 +280,7 @@ const initChartData = () => {
       }
     ]
   }
-  
+
   // 柱状图数据格式
   memberChartData.value = {
     dates,
@@ -359,7 +320,10 @@ const getList = async () => {
     if (pageNum.value === 1) {
       list.value = []
     }
-    const res = await getAgentList({ params: { leve: 1, pageNum: pageNum.value, pageSize: pageSize.value } })
+    const res = await getAgentList({ params: { leve: 1, pageNum: pageNum.value, pageSize: pageSize.value,begin_time: begin_time.value,end_time: end_time.value } })
+    if (res && (res.code === 200 || res.code === '200')) {
+      populateStatsFromTeamCore(res.data)
+    }
     const dataList = Array.isArray(res?.data) ? res.data : []
     // 将接口数据映射到页面展示所需字段，尽量保持原展示结构
     const mapped = dataList.map((item, index) => {
@@ -371,7 +335,7 @@ const getList = async () => {
         registerTime: item.createTime,
         rechargeAmount: item.czAmount,
         withdrawAmount: item.txAmount,
-        totalProfit:  item.sumAmount,
+        totalProfit: item.sumAmount,
         status: item.status || 'active'
       }
     })
@@ -415,13 +379,13 @@ const formatDate = (dateArray) => {
 
 // 确认开始日期
 const confirmStartDate = () => {
-  dateRange.value[0] = formatDate(currentStartDate.value)
+  begin_time.value = formatDate(currentStartDate.value)
   showStartDatePicker.value = false
 }
 
 // 确认结束日期
 const confirmEndDate = () => {
-  dateRange.value[1] = formatDate(currentEndDate.value)
+  end_time.value = formatDate(currentEndDate.value)
   showEndDatePicker.value = false
 }
 
@@ -431,12 +395,13 @@ const toggleFilter = (section, item, sectionIndex) => {
     i.active = false
   })
   item.active = true
-  
+
   // 更新对应的筛选值
   if (sectionIndex === 0) {
     dateFilter.value = item.value
     if (item.value !== 'custom') {
-      dateRange.value = ['', '']
+      begin_time.value = ''
+      end_time.value = ''
     }
   } else if (sectionIndex === 1) {
     activeStatusFilter.value = item.value
@@ -449,10 +414,11 @@ const resetFilter = () => {
     section.items.forEach(item => {
       item.active = item.value === 'all'
     })
-    
+
     if (sectionIndex === 0) {
       dateFilter.value = 'all'
-      dateRange.value = ['', '']
+      begin_time.value = ''
+      end_time.value = ''
     } else if (sectionIndex === 1) {
       activeStatusFilter.value = 'all'
     }
@@ -460,15 +426,39 @@ const resetFilter = () => {
 }
 
 // 确认筛选
+
+
 const confirmFilter = () => {
+  // 1. 处理日期筛选
+  if (dateFilter.value === 'today') {
+    const today = dayjs().format('YYYY-MM-DD')
+    begin_time.value = today
+    end_time.value = today
+  } else if (dateFilter.value === 'week') {
+    const weekStart = dayjs().startOf('week').add(1, 'day').format('YYYY-MM-DD') // 周一
+    const weekEnd = dayjs().endOf('week').add(1, 'day').format('YYYY-MM-DD') // 周日
+    begin_time.value = weekStart
+    end_time.value = weekEnd
+  } else if (dateFilter.value === 'month') {
+    const monthStart = dayjs().startOf('month').format('YYYY-MM-DD')
+    const monthEnd = dayjs().endOf('month').format('YYYY-MM-DD')
+    begin_time.value = monthStart
+    end_time.value = monthEnd
+  } else if (dateFilter.value === 'custom') {
+    // 保持当前自定义输入
+    // begin_time.value 和 end_time.value 已通过选择器选择
+  } else {
+    begin_time.value = ''
+    end_time.value = ''
+  }
   showFilterPopup.value = false
   // 重置列表并重新加载
   onRefresh()
-  // TODO: 这里可以根据 dateFilter 和 activeStatusFilter 以及 dateRange 的值来筛选数据
   console.log('筛选条件:', {
     dateFilter: dateFilter.value,
     activeStatusFilter: activeStatusFilter.value,
-    dateRange: dateRange.value
+    begin_time: begin_time.value,
+    end_time: end_time.value
   })
 }
 
@@ -537,20 +527,20 @@ onMounted(() => {
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
   margin-bottom: 16px;
-  
+
   .stats-item {
     background: var(--ex-passive-background-color);
     border-radius: 8px;
     padding: 16px 12px;
     text-align: center;
-    
+
     .stats-value {
       font-size: 18px;
       font-weight: bold;
       color: var(--ex-default-font-color);
       margin-bottom: 8px;
     }
-    
+
     .stats-title {
       font-size: 12px;
       color: var(--ex-passive-font-color);
@@ -572,7 +562,7 @@ onMounted(() => {
 
 .list-item {
   padding: 16px;
-  
+
   .item-header {
     display: flex;
     justify-content: space-between;
@@ -580,46 +570,46 @@ onMounted(() => {
     margin-bottom: 16px;
     padding-bottom: 12px;
     border-bottom: 1px solid var(--ex-border-color);
-    
+
     .member-name {
       font-size: 16px;
       font-weight: bold;
       color: var(--ex-default-font-color);
     }
-    
+
     .status-badge {
       padding: 4px 12px;
       border-radius: 12px;
       font-size: 12px;
-      
+
       &.status-active {
         background: rgba(60, 188, 140, 0.1);
         color: #3CBC8C;
       }
-      
+
       &.status-inactive {
         background: rgba(153, 153, 153, 0.1);
         color: #999999;
       }
     }
   }
-  
+
   .item-info {
     .info-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 8px 0;
-      
+
       .info-label {
         font-size: 14px;
         color: var(--ex-passive-font-color);
       }
-      
+
       .info-value {
         font-size: 14px;
         color: var(--ex-default-font-color);
-        
+
         &.highlight {
           color: var(--ex-primary-color, #3CBC8C);
           font-weight: bold;
@@ -635,47 +625,47 @@ onMounted(() => {
   flex-direction: column;
   height: 100%;
   background: var(--ex-default-background-color);
-  
+
   .filter-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 20px 15px;
     border-bottom: 1px solid var(--ex-border-color);
-    
+
     .filter-title {
       font-size: 18px;
       font-weight: bold;
       color: var(--ex-default-font-color);
     }
-    
+
     .close-icon {
       width: 24px;
       height: 24px;
       cursor: pointer;
     }
   }
-  
+
   .filter-content {
     flex: 1;
     overflow-y: auto;
     padding: 15px;
-    
+
     .filter-section {
       margin-bottom: 24px;
-      
+
       .section-title {
         font-size: 16px;
         font-weight: bold;
         color: var(--ex-default-font-color);
         margin-bottom: 12px;
       }
-      
+
       .section-items {
         display: flex;
         flex-wrap: wrap;
         gap: 10px;
-        
+
         .filter-item {
           padding: 8px 16px;
           background: var(--ex-passive-background-color);
@@ -685,7 +675,7 @@ onMounted(() => {
           cursor: pointer;
           border: 1px solid transparent;
           transition: all 0.3s;
-          
+
           &.active {
             background: var(--ex-primary-color, #3CBC8C);
             color: #fff;
@@ -693,24 +683,24 @@ onMounted(() => {
           }
         }
       }
-      
+
       // 自定义日期范围选择器
       .date-range-picker {
         margin-top: 16px;
-        
+
         .date-input-group {
           display: flex;
           gap: 12px;
-          
+
           .date-input-item {
             flex: 1;
-            
+
             .date-label {
               font-size: 12px;
               color: var(--ex-passive-font-color);
               margin-bottom: 8px;
             }
-            
+
             .date-input {
               padding: 10px 12px;
               background: var(--ex-passive-background-color);
@@ -725,13 +715,13 @@ onMounted(() => {
       }
     }
   }
-  
+
   .filter-footer {
     display: flex;
     gap: 12px;
     padding: 15px;
     border-top: 1px solid var(--ex-border-color);
-    
+
     .footer-btn {
       flex: 1;
       height: 44px;
@@ -740,12 +730,12 @@ onMounted(() => {
       border-radius: 8px;
       font-size: 16px;
       cursor: pointer;
-      
+
       &.reset-btn {
         background: var(--ex-passive-background-color);
         color: var(--ex-default-font-color);
       }
-      
+
       &.confirm-btn {
         background: var(--ex-primary-color, #3CBC8C);
         color: #fff;
