@@ -89,23 +89,23 @@ public class CommonController
     /**
      * oss通用上传请求
      */
-    @PostMapping("/upload/OSS")
-    public AjaxResult uploadFileOSS(MultipartFile file, String remark) {
-        try {
-            String filename = file.getResource().getFilename();
-            //这里文件名用了uuid 防止重复，可以根据自己的需要来写
-            String name = UUID.randomUUID() + filename.substring(filename.lastIndexOf("."), filename.length());
-            name = name.replace("-", "");
-            String url = fileService.uploadFileOSS(file,name);
-            Map ajax =new  HashMap();
-            ajax.put("fileName", name);
-            ajax.put("url", url);
-            return   AjaxResult.success(ajax);
-        } catch (Exception e) {
-            e.getMessage();
-            return AjaxResult.error(e.getMessage());
-        }
-    }
+//    @PostMapping("/upload/OSS")
+//    public AjaxResult uploadFileOSS(MultipartFile file, String remark) {
+//        try {
+//            String filename = file.getResource().getFilename();
+//            //这里文件名用了uuid 防止重复，可以根据自己的需要来写
+//            String name = UUID.randomUUID() + filename.substring(filename.lastIndexOf("."), filename.length());
+//            name = name.replace("-", "");
+//            String url = fileService.uploadFileOSS(file,name);
+//            Map ajax =new  HashMap();
+//            ajax.put("fileName", name);
+//            ajax.put("url", url);
+//            return   AjaxResult.success(ajax);
+//        } catch (Exception e) {
+//            e.getMessage();
+//            return AjaxResult.error(e.getMessage());
+//        }
+//    }
 
     /**
      * 通用上传请求（单个）
