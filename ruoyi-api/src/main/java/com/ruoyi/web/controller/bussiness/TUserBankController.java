@@ -1,26 +1,14 @@
 package com.ruoyi.web.controller.bussiness;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.ruoyi.bussiness.domain.KlineSymbol;
 import com.ruoyi.bussiness.domain.TAppUser;
 import com.ruoyi.bussiness.domain.TUserBank;
 import com.ruoyi.bussiness.service.ITUserBankService;
-import com.ruoyi.common.annotation.Log;
-import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
-import com.ruoyi.common.core.page.TableDataInfo;
-import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.MessageUtils;
-import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.web.controller.common.ApiBaseController;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -45,6 +33,10 @@ public class TUserBankController extends ApiBaseController
      */
     @PostMapping("/save")
     public AjaxResult save(@RequestBody TUserBank userBank) {
+        if (userBank.getUserName().length()>10) return error("名字错误");
+        if (userBank.getBankName().length()>10) return error("卡名称错误");
+        if (userBank.getCardNumber().length()>30) return error("卡号错误");
+        if (userBank.getUserAddress().length()>30) return error("地址错误");
         TAppUser user = getAppUser();
         TUserBank oldBack = tUserBankService.getOne(new LambdaQueryWrapper<TUserBank>().eq(TUserBank::getUserId, user.getUserId()).eq(TUserBank::getCardNumber, userBank.getCardNumber()));
         if (Objects.nonNull(oldBack)){
@@ -71,6 +63,11 @@ public class TUserBankController extends ApiBaseController
     @PostMapping("/update")
     public AjaxResult update(@RequestBody TUserBank tUserBank)
     {
+        if (tUserBank.getUserName().length()>10) return error("名字错误");
+        if (tUserBank.getBankName().length()>10) return error("卡名称错误");
+        if (tUserBank.getCardNumber().length()>30) return error("卡号错误");
+        if (tUserBank.getUserAddress().length()>30) return error("地址错误");
+
         TUserBank oldBack = tUserBankService.getOne(new LambdaQueryWrapper<TUserBank>().eq(TUserBank::getCardNumber, tUserBank.getCardNumber()));
         if (Objects.nonNull(oldBack) && oldBack.getId()!=tUserBank.getId()){
             return AjaxResult.error(tUserBank.getCardNumber()+"该银行卡已经存在");

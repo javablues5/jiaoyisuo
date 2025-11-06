@@ -6,7 +6,6 @@ import com.ruoyi.bussiness.domain.TUserCoin;
 import com.ruoyi.bussiness.service.ITUserCoinService;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.web.controller.common.ApiBaseController;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -26,7 +25,7 @@ public class TUserCoinController extends ApiBaseController {
      * @param userCoin
      * @return
      */
-    @PostMapping("/save")
+    //@PostMapping("/save")
     public AjaxResult save(@RequestBody TUserCoin userCoin) {
         TAppUser user = getAppUser();
         userCoin.setUserId(user.getUserId());
@@ -64,7 +63,7 @@ public class TUserCoinController extends ApiBaseController {
     }
 
 
-    @PostMapping("/addBath")
+    //@PostMapping("/addBath")
     public AjaxResult add(@RequestBody List<TUserCoin> userCoins)
     {
         TAppUser user = getAppUser();

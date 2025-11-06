@@ -90,8 +90,8 @@ public class TOwnCoinController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody TOwnCoin tOwnCoin)
     {
-        if (tOwnCoin.getCoin().trim().isEmpty()||tOwnCoin.getCoin().matches("^[a-zA-Z]+$")) return error("币种不能为空，纯字母！");
-        if (tOwnCoin.getShowSymbol().trim().isEmpty()||tOwnCoin.getShowSymbol().matches("^[a-zA-Z]+/[-a-zA-Z]+$")) return error("展示名称不能为空，【字母/字母】组合！");
+        if (!tOwnCoin.getCoin().trim().isEmpty()||tOwnCoin.getCoin().matches("^[a-zA-Z]+$")) return error("币种不能为空，纯字母！");
+        if (!tOwnCoin.getShowSymbol().trim().isEmpty()||tOwnCoin.getShowSymbol().matches("^[a-zA-Z]+/[-a-zA-Z]+$")) return error("展示名称不能为空，【字母/字母】组合！");
 
         tOwnCoin.setCoin(tOwnCoin.getCoin().toLowerCase());
         TSpontaneousCoin oldSpontaneousCoin = tSpontaneousCoinService.getOne(new LambdaQueryWrapper<TSpontaneousCoin>().eq(TSpontaneousCoin::getCoin, tOwnCoin.getCoin()));

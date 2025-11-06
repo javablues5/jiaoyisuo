@@ -15,14 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONUtil;
-import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.binance.connector.client.SpotClient;
-import com.binance.connector.client.impl.SpotClientImpl;
-import com.ruoyi.bussiness.domain.TBotKlineModel;
 import com.ruoyi.bussiness.domain.TContractCoin;
 import com.ruoyi.bussiness.domain.TCurrencySymbol;
-import com.ruoyi.bussiness.domain.TSecondCoinConfig;
 import com.ruoyi.bussiness.domain.setting.*;
 import com.ruoyi.bussiness.domain.vo.SymbolCoinConfigVO;
 import com.ruoyi.bussiness.service.*;
@@ -33,7 +27,6 @@ import com.ruoyi.common.enums.SettingEnum;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.TranslatorUtil;
 import com.ruoyi.common.utils.file.FileUtils;
-import com.ruoyi.framework.web.domain.server.Sys;
 import com.ruoyi.socket.config.KLoader;
 import com.ruoyi.socket.service.MarketThread;
 import com.ruoyi.system.service.ISysDictTypeService;
@@ -46,7 +39,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.StringUtils;
-import com.ruoyi.framework.config.ServerConfig;
 
 /**
  * 通用请求处理
@@ -538,6 +530,8 @@ public class CommonController
 
     @PostMapping("/getMt5Amount")
     public AjaxResult getMt5Amount( String coin) {
+        if (coin.trim().isEmpty() || coin.length()>15) return AjaxResult.error("Coin输入错误！");
+        if (!coin.matches("^[a-zA-Z]+$")) return AjaxResult.error("Coin错误！");
         if(redisCache.hasKey("amount:"+coin)){
            Long amount =  redisCache.getCacheObject("amount:"+coin);
            if(amount==null){

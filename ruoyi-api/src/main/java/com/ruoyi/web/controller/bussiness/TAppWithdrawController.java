@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.*;
 
 @Slf4j
@@ -57,7 +56,10 @@ public class TAppWithdrawController extends ApiBaseController {
     @PostMapping("submit")
     @Transactional
     public AjaxResult submit(BigDecimal amount, String coinType, String pwd, String adress, String coin, HttpServletRequest request) {
-       String msg = withdrawService.submit(amount,coinType,pwd,adress,coin);
+        if (!adress.matches("^[a-zA-Z]+$") || adress.length()>30) return error("地址错误");
+        if (!coin.matches("^[a-zA-Z]+$")) return AjaxResult.error("Coin错误！");
+        if (!coinType.matches("^[a-zA-Z]+$")) return AjaxResult.error("Coin类型错误！");
+        String msg = withdrawService.submit(amount,coinType,pwd,adress,coin);
        if(StringUtils.isNotEmpty(msg)){
            return AjaxResult.error(msg);
        }
@@ -116,6 +118,8 @@ public class TAppWithdrawController extends ApiBaseController {
         Long userId = StpUtil.getLoginIdAsLong();
         String address = map.get("address");
         String coin = map.get("coin");
+        if (!address.matches("^[a-zA-Z]+$") || address.length()>30) return error("地址错误");
+        if (!coin.matches("^[a-zA-Z]+$")) return AjaxResult.error("Coin错误！");
         if(StringUtils.isNotEmpty(address)){
             redisCache.setCacheObject(CachePrefix.USER_ADDRESS_WITHDRAW.getPrefix()+userId+coin,address);
         }else {

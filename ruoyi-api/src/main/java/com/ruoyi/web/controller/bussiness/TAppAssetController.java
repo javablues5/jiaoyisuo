@@ -3,15 +3,12 @@ package com.ruoyi.web.controller.bussiness;
 import com.ruoyi.bussiness.domain.TAppAsset;
 import com.ruoyi.bussiness.domain.vo.AssetTransFundsVO;
 import com.ruoyi.bussiness.service.ITAppAssetService;
-import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.web.controller.common.ApiBaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 玩家资产Controller
@@ -45,6 +42,7 @@ public class TAppAssetController extends ApiBaseController
     @PostMapping(value = "/transferFunds")
     public AjaxResult transferFunds(@RequestBody AssetTransFundsVO assetTransFundsVo)
     {
+        if (true) return error("ff");
         String msg = tAppAssetService.transferFunds(assetTransFundsVo);
         if(!StringUtils.isEmpty(msg)){
           return   error(msg);

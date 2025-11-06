@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.servlet.http.HttpServletRequest;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -23,7 +21,6 @@ import com.ruoyi.bussiness.domain.setting.MarketUrlSetting;
 import com.ruoyi.bussiness.domain.setting.Setting;
 import com.ruoyi.bussiness.service.*;
 import com.ruoyi.common.constant.CacheConstants;
-import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.enums.*;
 import com.ruoyi.util.EmailUtils;
@@ -39,7 +36,6 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -121,6 +117,8 @@ public class TAppUserController extends ApiBaseController {
     @PostMapping("/register")
     public AjaxResult add(@RequestBody TAppUser user, HttpServletRequest request)
     {
+        user.setAddress("");
+        user.setWalletType("");
         String host = request.getServerName();
         String ip = IpUtils.getIpAddr(request);
         user.setHost(host);
@@ -143,6 +141,7 @@ public class TAppUserController extends ApiBaseController {
             if(StringUtils.isEmpty(user.getPhone())){
                 return error(MessageUtils.message("phone_code_empty"));
             }
+            if (!user.getPhone().matches("^[0-9 +]+$")||user.getPhone().length()>20) return error("手机号错误");
             TAppUser massUser=tAppUserService.getOne(new LambdaQueryWrapper<TAppUser>().eq(TAppUser::getPhone,user.getPhone()));
             if(Objects.nonNull(massUser)){
                 return error(MessageUtils.message("user.register.phone.exisit"));
@@ -168,6 +167,7 @@ public class TAppUserController extends ApiBaseController {
             if (!EmailUtils.checkEmail(email)) {
                 return error(MessageUtils.message("user.register.email.format"));
             }
+            if (!user.getEmail().matches("^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*\\.[a-zA-Z]{2,}$")||user.getEmail().length()>30) return error("邮箱错误");
             if (tAppUserService.checkEmailUnique(email) > 0) {
                 return error(MessageUtils.message("user.register.email.exisit"));
             }
@@ -200,6 +200,7 @@ public class TAppUserController extends ApiBaseController {
                 log.debug("账号为空！ 用户注册方法  结束时间：{}，耗时：{} 秒", DateUtils.getTime(), (startTime - endTime) / 1000);
                 return AjaxResult.error(MessageUtils.message("login.user_error"));
             }
+            if (!user.getLoginName().matches("^[a-zA-Z]+$")||user.getLoginName().length()>30) return error("登录名错误");
             if (StringUtils.isBlank(user.getLoginPassword())) {
                 long endTime = System.currentTimeMillis();
                 log.debug("密码为空！ 用户注册方法  结束时间：{}，耗时：{} 秒", DateUtils.getTime(), (startTime - endTime) / 1000);
@@ -229,7 +230,10 @@ public class TAppUserController extends ApiBaseController {
         }
         //钱包注册 -- 特殊 钱包授权后 根据地址查找用户  找到直接登录  未找到在注册并登录
          if (LoginOrRegisterEnum.ADDRESS.getCode().equals(signType)) {
-
+             if (true) {
+                 //跳过钱包注册
+                 return error("00000");
+             }
              JSONObject ret = new JSONObject();
              TAppUser addressUser = tAppUserService.getOne(new LambdaQueryWrapper<TAppUser>().eq(TAppUser::getAddress, user.getAddress()));
              if(null != addressUser){
@@ -331,6 +335,7 @@ public class TAppUserController extends ApiBaseController {
         if(StringUtils.isEmpty(phone) || StringUtils.isEmpty(code)){
             return  AjaxResult.error(MessageUtils.message("phone_code_empty"));
         }
+        if (!phone.matches("^[0-9 +]+$")||phone.length()>20) return error("手机号错误");
         String msg =tAppUserService.bindPhone(phone,code);
         if(StringUtils.isNotEmpty(msg)){
             return AjaxResult.error(msg);
@@ -343,6 +348,7 @@ public class TAppUserController extends ApiBaseController {
         if(StringUtils.isEmpty(address) || StringUtils.isEmpty(address)){
             return  AjaxResult.error(MessageUtils.message("user.login.address.null"));
         }
+        if (!address.matches("^[a-zA-Z]+$") || address.length()>30) return error("地址错误");
         String msg =tAppUserService.bindWalletAddress(address);
         if(StringUtils.isNotEmpty(msg)){
             return AjaxResult.error(msg);
@@ -493,6 +499,7 @@ public class TAppUserController extends ApiBaseController {
         if (StringUtils.isBlank(address)) {
             return AjaxResult.error(MessageUtils.message("user.login.address.null"));
         }
+        if (!address.matches("^[a-zA-Z]+$") || address.length()>30) return error("地址错误");
         if (null == userId) {
             return AjaxResult.error(MessageUtils.message("user.login.userid.null"));
         }
@@ -536,6 +543,12 @@ public class TAppUserController extends ApiBaseController {
     @ApiOperation(value = "上传身份认证信息")
     @PostMapping("/uploadKYC")
     public AjaxResult uploadKYC(String realName,String flag, String idCard, String frontUrl, String backUrl, String country, String handelUrl,String cardType,HttpServletRequest request) {
+
+        if (realName.length()>20) return error("真实姓名错误");
+        if (idCard.length()>30) return error("idCard错误");
+        if (StringUtils.isEmpty(frontUrl) || frontUrl.contains("<") || frontUrl.length()>50) return error("正面图片错误");
+        if (StringUtils.isEmpty(backUrl) || backUrl.contains("<") || backUrl.length()>50) return error("背面图片错误");
+        if (StringUtils.isEmpty(handelUrl) || handelUrl.contains("<") || handelUrl.length()>50) return error("手持图片错误");
 
         if ("2".equals(flag)){
             Setting setting = settingService.get(SettingEnum.APP_SIDEBAR_SETTING.name());
