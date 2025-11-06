@@ -33,7 +33,7 @@ const afterRead1 = (file) => {
   upload(formData).then((res) => {
     res = res.data
     if (res.code == '200') {
-      file.res = res.data.url
+      file.res = res.data.fileName
       file.status = 'success'
     } else {
       showToast(res.msg)
@@ -50,7 +50,7 @@ const afterRead2 = (file) => {
   upload(formData).then((res) => {
     res = res.data
     if (res.code == '200') {
-      file.res = res.data.url
+      file.res = res.data.fileName
       file.status = 'success'
     } else {
       showToast(res.msg)
@@ -67,7 +67,7 @@ const afterRead3 = (file) => {
   upload(formData).then((res) => {
     res = res.data
     if (res.code == '200') {
-      file.res = res.data.url
+      file.res = res.data.fileName
       file.status = 'success'
     } else {
       showToast(res.msg)
