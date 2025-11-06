@@ -5,7 +5,7 @@
       <div class="title">{{ questionDetail.question }}</div>
       <div class="time">{{ questionDetail.createTime }}</div>
 
-      <div class="itemDetailObj" v-html="currentHtml"></div>
+      <div class="itemDetailObj" v-html="sanitizeHtml(currentHtml)"></div>
       <Nodata v-if="!currentHtml"></Nodata>
     </div>
   </div>
@@ -15,6 +15,7 @@ import { _t18 } from '@/utils/public'
 import { getHelpcenterDetail } from '@/api/help/index'
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import { sanitizeHtml } from '@/utils/sanitizeHtml'
 const Route = useRoute()
 const currentHtml = ref('')
 const questionDetail = ref({})

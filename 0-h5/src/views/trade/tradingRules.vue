@@ -7,7 +7,7 @@
 <!-- 合约规则 -->
 <template>
   <HeaderBar :currentName="currentName" />
-  <div class="itemDetailObj" v-html="currentHtml"></div>
+  <div class="itemDetailObj" v-html="sanitizeHtml(currentHtml)"></div>
   <Nodata v-if="!currentHtml"></Nodata>
 </template>
 <script setup>
@@ -17,6 +17,7 @@ import { computed, onMounted, ref } from 'vue'
 import { rulesList } from '@/api/common/index'
 import { useRoute } from 'vue-router'
 import { _t18 } from '@/utils/public'
+import { sanitizeHtml } from '@/utils/sanitizeHtml'
 onMounted(()=>{
   mainStore.setTradeFlag(mainStore.tradeFlag + mainStore.isOption)
 })

@@ -23,7 +23,7 @@
                                         <van-icon :name="item.expanded ? 'arrow-up' : 'arrow-down'" />
                                     </div>
                                     <div class="detail" v-show="item.expanded">
-                                        <div v-html="item.content?.replace(/\n/g, '<br>')"></div>
+                                        <div v-html="sanitizeHtml(item.content?.replace(/\n/g, '<br>'))"></div>
                                     </div>
                                     <div class="badge" v-if="item.status === 0"></div>
                                 </div>
@@ -45,6 +45,7 @@ import { getMessages, haveRead } from '@/api/info.js'
 import { onMounted, computed, ref, watch } from 'vue'
 import { useUserStore } from '@/store/user/index'
 import { _t18 } from '@/utils/public'
+import { sanitizeHtml } from '@/utils/sanitizeHtml'
 
 const tabs = computed(() => [ { label: _t18('all'), value: 1, name: "b" },{ label: _t18('unread'), value: 0, name: 'a' },])
 const userStore = useUserStore()

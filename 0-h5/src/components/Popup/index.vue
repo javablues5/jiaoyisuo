@@ -1,5 +1,6 @@
 <!-- 弹窗 -->
 <script setup>
+import { sanitizeHtml } from '@/utils/sanitizeHtml'
 let props = defineProps({
   show: {
     type: Boolean,
@@ -44,7 +45,7 @@ const handelClose = () => {
         <!-- 内容 仅适用于规则/说明-->
         <div v-if="props.content">
           <div v-for="(item, index) in content" :key="index" class="popupContent">
-            <div v-if="item.content" class="content1" v-html="item.content"></div>
+            <div v-if="item.content" class="content1" v-html="sanitizeHtml(item.content)"></div>
           </div>
         </div>
         <slot name="content2"></slot>

@@ -1,7 +1,7 @@
 <template>
   <div>
     <HeaderBar :currentName="currentName" />
-    <div class="itemDetailObj" v-html="currentHtml"></div>
+    <div class="itemDetailObj" v-html="sanitizeHtml(currentHtml)"></div>
     <Nodata v-if="!currentHtml"></Nodata>
   </div>
 </template>
@@ -10,6 +10,7 @@
 import { publiceNotice } from '@/api/common/index'
 import { _t18 } from '@/utils/public'
 import { rulesList } from '@/api/common/index'
+import { sanitizeHtml } from '@/utils/sanitizeHtml'
 import { onMounted } from 'vue'
 const currentHtml = ref(null)
 const currentName =ref(_t18('activity'))

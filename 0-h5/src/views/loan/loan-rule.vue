@@ -1,6 +1,7 @@
 <!-- 质押挖矿 -->
 <script setup>
 import { _t18 } from '@/utils/public'
+import { sanitizeHtml } from '@/utils/sanitizeHtml'
 import { onMounted } from 'vue'
 import HeaderBar from '@/components/HeaderBar/index.vue'
 import { rulesList } from '@/api/common/index'
@@ -17,7 +18,7 @@ onMounted(async () => {
 </script>
 <template>
   <HeaderBar :currentName="_t18('loan_rule')" :cuttentRight="cuttentRight"></HeaderBar>
-  <div class="itemDetailObj" v-html="currentHtml"></div>
+  <div class="itemDetailObj" v-html="sanitizeHtml(currentHtml)"></div>
   <Nodata v-if="!currentHtml"></Nodata>
 </template>
 <style lang="scss" scoped>

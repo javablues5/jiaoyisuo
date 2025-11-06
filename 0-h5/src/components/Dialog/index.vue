@@ -7,12 +7,13 @@
     @cancel="cancelBtn"
     @confirm="confirmBtn"
   >
-    <div v-if="props.content" class="dialog-content" v-html="props.content"></div>
+    <div v-if="props.content" class="dialog-content" v-html="sanitizeHtml(props.content)"></div>
     <slot name="content"></slot>
   </van-dialog>
 </template>
 
 <script setup>
+import { sanitizeHtml } from '@/utils/sanitizeHtml'
 const emits = defineEmits(['update:value', 'confirmBtn', 'cancelBtn'])
 
 const props = defineProps({

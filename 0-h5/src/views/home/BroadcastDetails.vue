@@ -1,11 +1,12 @@
 <template>
   <HeaderBar :currentName="currentName" />
-  <div class="itemDetailObj" v-html="currentHtml"></div>
+  <div class="itemDetailObj" v-html="sanitizeHtml(currentHtml)"></div>
 </template>
 <script setup>
 import { onMounted } from 'vue'
 import { noticeDetail } from '@/api/common/index'
 import { useRoute } from 'vue-router'
+import { sanitizeHtml } from '@/utils/sanitizeHtml'
 const $route = useRoute()
 const currentName = ref('')
 const currentHtml = ref(null)

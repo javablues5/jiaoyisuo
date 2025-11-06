@@ -4,13 +4,14 @@
     <!-- 导航条 -->
     <HeaderBar :currentName="`VIP`" :border_bottom="true"></HeaderBar>
     <!--内容-->
-    <div class="itemDetailObj" v-html="currentHtml"></div>
+    <div class="itemDetailObj" v-html="sanitizeHtml(currentHtml)"></div>
     <Nodata v-if="!currentHtml"></Nodata>
   </div>
 </template>
 <script setup>
 import { useMainStore } from '@/store/index'
 import { _t18 } from '@/utils/public'
+import { sanitizeHtml } from '@/utils/sanitizeHtml'
 // const cuttentRight = { iconRight: [{ iconName: 'kefu', clickTo: 'event_serviceChange' }] }
 const currentHtml = ref(null)
 const mainStore = useMainStore()

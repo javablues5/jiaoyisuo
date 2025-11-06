@@ -1,12 +1,13 @@
 <template>
   <!-- 隐私条约 -->
   <HeaderBar :currentName="_t18(`register_private`)"></HeaderBar>
-  <div class="itemDetailObj" v-html="currentHtml"></div>
+  <div class="itemDetailObj" v-html="sanitizeHtml(currentHtml)"></div>
   <Nodata v-if="!currentHtml"></Nodata>
 </template>
 <script setup>
 import { rulesList } from '@/api/common/index'
 import { _t18 } from '@/utils/public'
+import { sanitizeHtml } from '@/utils/sanitizeHtml'
 const currentHtml = ref(null)
 onMounted(async () => {
   try {
