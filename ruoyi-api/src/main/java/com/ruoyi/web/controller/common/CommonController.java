@@ -166,10 +166,14 @@ public class CommonController
 //            System.out.println("1111");
 //            System.out.println(filePath1);
 
-            AjaxResult ajax = AjaxResult.success();
+//            AjaxResult ajax = AjaxResult.success();
+//            ajax.put("fileName", name);
+//            ajax.put("url", "123");
+
+            Map ajax =new  HashMap();
             ajax.put("fileName", name);
             ajax.put("url", "123");
-            return ajax;
+            return AjaxResult.success(ajax);
 
         } catch (Exception e) {
             e.printStackTrace();
