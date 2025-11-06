@@ -130,14 +130,14 @@ const headerList = computed(() => {
       name: _t18(`coinbase_h_l_hot`, ['latcoin']),
       show: true
     },
-    {
-      name: _t18(`coinbase_h_l_out`, ['latcoin']),
-      show: true
-    },
-    {
-      name: _t18(`coinbase_h_l_gold`),
-      show: ['latcoin'].includes(__config._APP_ENV) ? false : true
-    }
+    // {
+    //   name: _t18(`coinbase_h_l_out`, ['latcoin']),
+    //   show: true
+    // },
+    // {
+    //   name: _t18(`coinbase_h_l_gold`),
+    //   show: ['latcoin'].includes(__config._APP_ENV) ? false : true
+    // }
   ]
 })
 const currentCoinList0 = ref(
