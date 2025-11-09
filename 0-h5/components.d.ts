@@ -9,7 +9,6 @@ declare module 'vue' {
   export interface GlobalComponents {
     ActivityPopup: typeof import('./src/components/Defi/ActivityPopup.vue')['default']
     ButtonBar: typeof import('./src/components/common/ButtonBar/index.vue')['default']
-    copy: typeof import('./src/components/common/SvgLoad/index copy.vue')['default']
     Copy: typeof import('./src/components/common/Copy/index.vue')['default']
     CurrencyItem: typeof import('./src/components/CurrencyList/currencyItem.vue')['default']
     CurrencyList: typeof import('./src/components/CurrencyList/index.vue')['default']
@@ -20,7 +19,6 @@ declare module 'vue' {
     FreezePopup: typeof import('./src/components/Freeze/FreezePopup.vue')['default']
     HeaderBar: typeof import('./src/components/HeaderBar/index.vue')['default']
     ImageLoad: typeof import('./src/components/common/ImageLoad/index.vue')['default']
-    Index1: typeof import('./src/components/common/SvgLoad/index1.vue')['default']
     Left: typeof import('./src/components/CurrencyList/left.vue')['default']
     Loading: typeof import('./src/components/common/Loading/index.vue')['default']
     Logo: typeof import('./src/components/common/Logo/index.vue')['default']
@@ -34,7 +32,6 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ServicePopup: typeof import('./src/components/CustomerService/ServicePopup.vue')['default']
-    SvgIcon: typeof import('./src/components/common/SvgIcon.vue')['default']
     SvgLoad: typeof import('./src/components/common/SvgLoad/index.vue')['default']
     Tab: typeof import('./src/components/Tab/index.vue')['default']
     Tabbar: typeof import('./src/components/Tabbar/index.vue')['default']

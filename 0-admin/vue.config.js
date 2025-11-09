@@ -50,7 +50,13 @@ module.exports = {
     before() {
       watchConfigRestart();
     },
-    // proxy: {...},
+    proxy: {
+      "^/local-oss": {
+        target: "http://47.76.27.203:81/", // 测试
+        changeOrigin: true, // 开启跨域
+        // rewrite: (path) => path.replace(/^\/api/, ''), // 路径重写，去掉 /api 前缀
+      },
+    },
   },
   css: {
     loaderOptions: {
@@ -65,7 +71,7 @@ module.exports = {
         "@": resolve("src"),
       },
     },
-    devtool: 'source-map', // 修复可以debugger
+    devtool: "source-map", // 修复可以debugger
     plugins: [
       // new CompressionPlugin({
       //   cache: false, // 不启用文件缓存
