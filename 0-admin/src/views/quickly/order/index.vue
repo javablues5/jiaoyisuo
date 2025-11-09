@@ -9,9 +9,9 @@
           <el-input v-model="queryParams.orderNo" clearable @keyup.enter.native="handleQuery" />
         </el-form-item>
 
-        <el-form-item label="币种" prop="coinSymbol">
+        <el-form-item label="币种" prop="symbol">
           <el-input
-            v-model="queryParams.coinSymbol"
+            v-model="queryParams.symbol"
             clearable
             placeholder="请输入币种"
             @keyup.enter.native="handleQuery"
@@ -321,7 +321,6 @@ export default {
         createTime: null,
         createTimeEnd: null,
         closeTime: null,
-        coinSymbol: null,
         baseSymbol: null,
         sign: null,
         manualIntervention: null,
@@ -422,7 +421,7 @@ export default {
         isAll,
         // 合并当前搜索条件
         ...this.buildSearchFilters(),
-        coinSymbol: this.queryParams.coinSymbol,
+        symbol: this.queryParams.symbol,
         // 勾选全部则提交空数组，否则提交勾选的对象数组
         orders: isAll ? [] : this.selectedRows,
       };
