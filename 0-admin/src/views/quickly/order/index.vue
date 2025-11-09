@@ -25,7 +25,23 @@
         </el-form-item>
 
         <el-form-item label="投注金额" prop="betAmount">
-          <el-input v-model="queryParams.betAmount" clearable @keyup.enter.native="handleQuery" />
+          <div class="range-input">
+            <el-input-number
+              v-model="queryParams.betAmount"
+              :min="0"
+              :precision="2"
+              :step="1"
+              controls-position="right"
+            />
+            <span class="range-separator">至</span>
+            <el-input-number
+              v-model="queryParams.betAmountEnd"
+              :min="0"
+              :precision="2"
+              :step="1"
+              controls-position="right"
+            />
+          </div>
         </el-form-item>
 
         <el-form-item label="创建时间" prop="createTime">
@@ -316,6 +332,7 @@ export default {
         sign: null,
         manualIntervention: null,
         rate: null,
+        betAmountEnd: null,
       },
       // 表单参数
       form: {},
@@ -610,3 +627,20 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.range-input {
+  display: flex;
+  align-items: center;
+}
+
+.range-input .range-separator {
+  margin: 0 8px;
+  color: #606266;
+  white-space: nowrap;
+}
+
+.range-input .el-input-number {
+  width: 140px;
+}
+</style>
