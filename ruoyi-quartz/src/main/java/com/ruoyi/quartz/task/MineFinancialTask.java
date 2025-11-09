@@ -73,7 +73,8 @@ public class MineFinancialTask {
             TAppUser appUser = appUserService.getById(order.getUserId());
             BigDecimal amount = order.getAmount();
             //资产
-            TAppAsset asset = tAppAssetService.getAssetByUserIdAndType(order.getUserId(), AssetEnum.FINANCIAL_ASSETS.getCode());
+            //TAppAsset asset = tAppAssetService.getAssetByUserIdAndType(order.getUserId(), AssetEnum.FINANCIAL_ASSETS.getCode());
+            TAppAsset asset = tAppAssetService.getAssetByUserIdAndType(order.getUserId(), AssetEnum.PLATFORM_ASSETS.getCode());
             //获取利率  最大 最小 中间 随机
             BigDecimal dayRatio=getRatio(order.getMinOdds(),order.getMaxOdds());
             //获取对应产品的日收益
@@ -175,7 +176,8 @@ public class MineFinancialTask {
                 TMineOrder order = orderService.getOne(new LambdaQueryWrapper<TMineOrder>().eq(TMineOrder::getOrderNo, orderNo));
                 TAppUser appUser = appUserService.getById(order.getUserId());
                 if(CommonEnum.ONE.getCode().equals(order.getStatus().intValue())){
-                    TAppAsset asset = tAppAssetService.getAssetByUserIdAndType(order.getUserId(), AssetEnum.FINANCIAL_ASSETS.getCode());
+                    //TAppAsset asset = tAppAssetService.getAssetByUserIdAndType(order.getUserId(), AssetEnum.FINANCIAL_ASSETS.getCode());
+                    TAppAsset asset = tAppAssetService.getAssetByUserIdAndType(order.getUserId(), AssetEnum.PLATFORM_ASSETS.getCode());
                     mineOrderDay.setStatus(CommonEnum.TWO.getCode());
                     mineOrderDayService.saveOrUpdate(mineOrderDay);
                     BigDecimal earn = mineOrderDay.getEarn();
