@@ -46,7 +46,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="betContent != null  and betContent != ''"> and bet_content = #{betContent}</if>
             <if test="openResult != null  and openResult != ''"> and open_result = #{openResult}</if>
             <if test="status != null "> and status = #{status}</if>
-            <if test="betAmount != null ">  and bet_amount BETWEEN #{betAmount} AND #{betAmountEnd}</if>
+            <if test="betAmount != null and betAmount != ''">  and bet_amount BETWEEN #{betAmount} AND #{betAmountEnd}</if>
             <if test="rewardAmount != null "> and reward_amount = #{rewardAmount}</if>
             <if test="compensationAmount != null "> and compensation_amount = #{compensationAmount}</if>
             <if test="openPrice != null "> and open_price = #{openPrice}</if>
