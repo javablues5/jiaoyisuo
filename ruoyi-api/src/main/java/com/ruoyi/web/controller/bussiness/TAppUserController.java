@@ -200,7 +200,7 @@ public class TAppUserController extends ApiBaseController {
                 log.debug("账号为空！ 用户注册方法  结束时间：{}，耗时：{} 秒", DateUtils.getTime(), (startTime - endTime) / 1000);
                 return AjaxResult.error(MessageUtils.message("login.user_error"));
             }
-            if (!user.getLoginName().matches("^[a-zA-Z]+$")||user.getLoginName().length()>30) return error("登录名错误");
+            if (!user.getLoginName().matches("^[a-zA-Z0-9]+$")||user.getLoginName().length()>30) return error("登录名错误，字母或数字");
             if (StringUtils.isBlank(user.getLoginPassword())) {
                 long endTime = System.currentTimeMillis();
                 log.debug("密码为空！ 用户注册方法  结束时间：{}，耗时：{} 秒", DateUtils.getTime(), (startTime - endTime) / 1000);
@@ -348,7 +348,7 @@ public class TAppUserController extends ApiBaseController {
         if(StringUtils.isEmpty(address) || StringUtils.isEmpty(address)){
             return  AjaxResult.error(MessageUtils.message("user.login.address.null"));
         }
-        if (!address.matches("^[a-zA-Z]+$") || address.length()>30) return error("地址错误");
+        if (!address.matches("^[a-zA-Z0-9]+$") || address.length()>100) return error("地址错误");
         String msg =tAppUserService.bindWalletAddress(address);
         if(StringUtils.isNotEmpty(msg)){
             return AjaxResult.error(msg);
@@ -499,7 +499,7 @@ public class TAppUserController extends ApiBaseController {
         if (StringUtils.isBlank(address)) {
             return AjaxResult.error(MessageUtils.message("user.login.address.null"));
         }
-        if (!address.matches("^[a-zA-Z]+$") || address.length()>30) return error("地址错误");
+        if (!address.matches("^[a-zA-Z0-9]+$") || address.length()>100) return error("地址错误");
         if (null == userId) {
             return AjaxResult.error(MessageUtils.message("user.login.userid.null"));
         }

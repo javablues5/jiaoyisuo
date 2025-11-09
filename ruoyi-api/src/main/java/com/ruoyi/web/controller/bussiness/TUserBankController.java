@@ -33,10 +33,10 @@ public class TUserBankController extends ApiBaseController
      */
     @PostMapping("/save")
     public AjaxResult save(@RequestBody TUserBank userBank) {
-        if (userBank.getUserName().length()>10) return error("名字错误");
-        if (userBank.getBankName().length()>10) return error("卡名称错误");
-        if (userBank.getCardNumber().length()>30) return error("卡号错误");
-        if (userBank.getUserAddress().length()>30) return error("地址错误");
+        if (userBank.getUserName().length()>50) return error("名字错误");
+        if (userBank.getBankName().length()>100) return error("卡名称错误");
+        if (userBank.getCardNumber().length()>50) return error("卡号错误");
+        if (userBank.getUserAddress().length()>100) return error("地址错误");
         TAppUser user = getAppUser();
         TUserBank oldBack = tUserBankService.getOne(new LambdaQueryWrapper<TUserBank>().eq(TUserBank::getUserId, user.getUserId()).eq(TUserBank::getCardNumber, userBank.getCardNumber()));
         if (Objects.nonNull(oldBack)){
@@ -63,10 +63,10 @@ public class TUserBankController extends ApiBaseController
     @PostMapping("/update")
     public AjaxResult update(@RequestBody TUserBank tUserBank)
     {
-        if (tUserBank.getUserName().length()>10) return error("名字错误");
-        if (tUserBank.getBankName().length()>10) return error("卡名称错误");
-        if (tUserBank.getCardNumber().length()>30) return error("卡号错误");
-        if (tUserBank.getUserAddress().length()>30) return error("地址错误");
+        if (tUserBank.getUserName().length()>50) return error("名字错误");
+        if (tUserBank.getBankName().length()>100) return error("卡名称错误");
+        if (tUserBank.getCardNumber().length()>50) return error("卡号错误");
+        if (tUserBank.getUserAddress().length()>100) return error("地址错误");
 
         TUserBank oldBack = tUserBankService.getOne(new LambdaQueryWrapper<TUserBank>().eq(TUserBank::getCardNumber, tUserBank.getCardNumber()));
         if (Objects.nonNull(oldBack) && oldBack.getId()!=tUserBank.getId()){
