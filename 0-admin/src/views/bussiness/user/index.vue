@@ -331,14 +331,14 @@
                 v-hasPermi="['bussiness:user:edit']"
                 >修改</el-button
               >
-              <el-button
+              <!-- <el-button
                 size="mini"
                 plain
                 type="success"
                 v-hasPermi="['bussiness:user:sendBous']"
                 @click="openDialogKey('showWinningsDialog', scope.row)"
                 >彩金</el-button
-              >
+              > -->
               <el-button
                 size="mini"
                 plain
@@ -355,14 +355,14 @@
                 @click="resetPwd(scope.row)"
                 >重置密码</el-button
               >
-              <el-button
+              <!-- <el-button
                 size="mini"
                 plain
                 type="warning"
                 v-hasPermi="['bussiness:user:updatePwd']"
                 @click="recharge(scope.row)"
                 >充值地址配置</el-button
-              >
+              > -->
               <el-button
                 size="mini"
                 plain
