@@ -150,6 +150,12 @@ private static final long serialVersionUID=1L;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTimeEnd;
 
+    /**
+     * 投注金额
+     */
+    @TableField(exist = false)
+    private BigDecimal betAmountEnd;
+
     @TableField(exist = false)
     private Long periodId;
 }
