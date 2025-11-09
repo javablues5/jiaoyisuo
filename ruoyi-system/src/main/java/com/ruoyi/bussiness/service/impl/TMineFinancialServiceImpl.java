@@ -163,7 +163,8 @@ public class TMineFinancialServiceImpl extends ServiceImpl<TMineFinancialMapper,
                 return MessageUtils.message("order.10s_retry");
             }
             //资产
-            TAppAsset tAppAsset = tAppAssetService.getAssetByUserIdAndType(user.getUserId(), AssetEnum.FINANCIAL_ASSETS.getCode());
+            //TAppAsset tAppAsset = tAppAssetService.getAssetByUserIdAndType(user.getUserId(), AssetEnum.FINANCIAL_ASSETS.getCode());
+            TAppAsset tAppAsset = tAppAssetService.getAssetByUserIdAndType(user.getUserId(), AssetEnum.PLATFORM_ASSETS.getCode());
             // 2. 金额判断
             if (Objects.isNull(tAppAsset)) {
                 return MessageUtils.message("order.amount_error");
@@ -308,7 +309,8 @@ public class TMineFinancialServiceImpl extends ServiceImpl<TMineFinancialMapper,
         BigDecimal bigDecimal=amout.multiply(odds).multiply(new BigDecimal(days));
         //减去违约金
         BigDecimal result=amout.subtract(bigDecimal).setScale(6, RoundingMode.UP);
-        TAppAsset asset = tAppAssetService.getAssetByUserIdAndType(mineOrder.getUserId(), AssetEnum.FINANCIAL_ASSETS.getCode());
+        //TAppAsset asset = tAppAssetService.getAssetByUserIdAndType(mineOrder.getUserId(), AssetEnum.FINANCIAL_ASSETS.getCode());
+        TAppAsset asset = tAppAssetService.getAssetByUserIdAndType(mineOrder.getUserId(), AssetEnum.PLATFORM_ASSETS.getCode());
         //减去违约金
         BigDecimal availableAmount = asset.getAvailableAmount();
         asset.setAvailableAmount(availableAmount.add(result));

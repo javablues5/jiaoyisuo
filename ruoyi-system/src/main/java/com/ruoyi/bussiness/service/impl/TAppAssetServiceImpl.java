@@ -139,7 +139,7 @@ public class TAppAssetServiceImpl extends ServiceImpl<TAppAssetMapper, TAppAsset
 
     @Override
     public TAppAsset getAssetByUserIdAndType(Long userId, Integer type) {
-        return tAppAssetMapper.selectOne(new LambdaQueryWrapper<TAppAsset>().eq(TAppAsset::getUserId,userId).eq(TAppAsset::getType,type));
+        return tAppAssetMapper.selectOne(new LambdaQueryWrapper<TAppAsset>().eq(TAppAsset::getUserId,userId).eq(TAppAsset::getType,type).eq(TAppAsset::getSymbol,"usdt"));
     }
 
     @Override
