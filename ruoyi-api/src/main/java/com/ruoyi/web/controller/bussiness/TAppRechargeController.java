@@ -93,6 +93,10 @@ public class TAppRechargeController extends ApiBaseController
 
     @PostMapping("/submit")
     public AjaxResult submit(@RequestBody Map<String, Object> params) {
+
+        if (!String.valueOf(params.get("address")).matches("^[a-zA-Z0-9]+$")) return error("地址错误");
+        if (!String.valueOf(params.get("filePath")).matches("^[a-zA-Z0-9.-]+$")) return error("Path错误");
+
         TAppUser user = getAppUser();
         if (null!=user&&user.getStatus() != 0) {
             log.debug("userid:{}, 非正常用户，不可充值", user.getUserId());

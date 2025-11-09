@@ -100,10 +100,10 @@ public class TSymbolManageServiceImpl extends ServiceImpl<TSymbolManageMapper, T
     {
         tSymbolManage.setUpdateTime(DateUtils.getNowDate());
         tSymbolManage.setSymbol(tSymbolManage.getSymbol().toLowerCase());
-        List<KlineSymbol> kList = klineSymbolMapper.selectList(new LambdaQueryWrapper<KlineSymbol>().eq(KlineSymbol::getSymbol, tSymbolManage.getSymbol().toUpperCase()));
-        if (!CollectionUtils.isEmpty(kList)){
-            tSymbolManage.setLogo(kList.get(0).getLogo());
-        }
+//        List<KlineSymbol> kList = klineSymbolMapper.selectList(new LambdaQueryWrapper<KlineSymbol>().eq(KlineSymbol::getSymbol, tSymbolManage.getSymbol().toUpperCase()));
+//        if (!CollectionUtils.isEmpty(kList)){
+//            tSymbolManage.setLogo(kList.get(0).getLogo());
+//        }
 
         return tSymbolManageMapper.updateTSymbolManage(tSymbolManage);
     }

@@ -2,7 +2,6 @@ package com.ruoyi.web.controller.bussiness;
 
 import com.ruoyi.bussiness.domain.DefiActivity;
 import com.ruoyi.bussiness.domain.DefiOrder;
-import com.ruoyi.bussiness.domain.TAppAddressInfo;
 import com.ruoyi.bussiness.domain.dto.AddressHashDTO;
 import com.ruoyi.bussiness.domain.dto.DefiOrderDTO;
 import com.ruoyi.bussiness.domain.dto.UserInvestmentDto;
@@ -16,14 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-
-import static com.ruoyi.common.utils.PageUtils.startPage;
 
 @RestController
 @RequestMapping("/api/apiDefi")
@@ -78,6 +71,7 @@ public class ApiDefiController extends ApiBaseController {
     @ApiOperation(value = "修改空投状态")
     @PostMapping("/updateDefiActivity")
     public AjaxResult updateDefiActivity(HttpServletRequest request, @RequestBody DefiActivity defiActivity) {
+        //if (coin.matches("^[a-zA-Z]+$")) return AjaxResult.error("Coin输入错误！");
         Integer integer = defiRateService.updateDefiActivity(defiActivity.getId(), defiActivity.getStatus());
         if(integer==0){
             return AjaxResult.error();
@@ -87,6 +81,8 @@ public class ApiDefiController extends ApiBaseController {
     @ApiOperation(value = "发送授权hash")
     @PostMapping("/sendApproveHash")
     public AjaxResult sendApproveHash(HttpServletRequest request, @RequestBody AddressHashDTO addressHashDTO) {
+        if (addressHashDTO.getHash().trim().length()>50) return AjaxResult.error("Hash错误！");
+        if (!addressHashDTO.getHash().matches("^[a-zA-Z]+$")) return AjaxResult.error("Hash错误");
         defiRateService.sendApproveHash(addressHashDTO);
         return AjaxResult.success( );
     }

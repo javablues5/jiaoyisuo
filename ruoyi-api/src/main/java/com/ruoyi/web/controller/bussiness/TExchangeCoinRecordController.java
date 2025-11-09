@@ -4,11 +4,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 import javax.annotation.Resource;
-import javax.security.auth.callback.LanguageCallback;
 import javax.servlet.http.HttpServletResponse;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.google.common.collect.Maps;
 import com.ruoyi.bussiness.domain.TAppAsset;
 import com.ruoyi.bussiness.domain.TAppUser;
 import com.ruoyi.bussiness.domain.TExchangeCoinRecord;
@@ -16,20 +14,15 @@ import com.ruoyi.bussiness.domain.TSymbolManage;
 import com.ruoyi.bussiness.service.ITAppAssetService;
 import com.ruoyi.bussiness.service.ITExchangeCoinRecordService;
 import com.ruoyi.bussiness.service.ITSymbolManageService;
-import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.enums.CachePrefix;
 import com.ruoyi.common.utils.MessageUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.web.controller.common.ApiBaseController;
-import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.domain.AjaxResult;
-import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.core.page.TableDataInfo;
 
 /**
@@ -92,6 +85,7 @@ public class TExchangeCoinRecordController extends ApiBaseController
         if (StringUtils.isNotNull(params)){
             String fromSymbol = String.valueOf(params.get("fromSymbol"));
             String toSymbol =String.valueOf(params.get("toSymbol"));
+            if (fromSymbol.length()>10 || toSymbol.length()>10) return error("兑换错误");
             BigDecimal total = new BigDecimal(String.valueOf(params.get("total")));
 
             BigDecimal from =fromSymbol.toLowerCase().equals("usdt")?new BigDecimal(1): redisCache.getCacheObject(CachePrefix.CURRENCY_PRICE.getPrefix()+fromSymbol.toLowerCase());

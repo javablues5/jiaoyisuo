@@ -1,36 +1,24 @@
 package com.ruoyi.web.controller.bussiness;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.*;
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import cn.hutool.json.JSONUtil;
 import com.ruoyi.bussiness.domain.TAppUser;
-import com.ruoyi.bussiness.domain.TLoadProduct;
 import com.ruoyi.bussiness.domain.setting.LoadSetting;
 import com.ruoyi.bussiness.domain.setting.Setting;
 import com.ruoyi.bussiness.service.ITLoadProductService;
 import com.ruoyi.bussiness.service.SettingService;
 import com.ruoyi.common.enums.SettingEnum;
 import com.ruoyi.common.utils.DateUtils;
-import com.ruoyi.common.utils.OrderUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.web.controller.common.ApiBaseController;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
-import com.ruoyi.common.annotation.Log;
-import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
-import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.bussiness.domain.TLoadOrder;
 import com.ruoyi.bussiness.service.ITLoadOrderService;
-import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
 
 /**
@@ -73,7 +61,7 @@ public class TLoadOrderController extends ApiBaseController
     /**
      * 新增贷款订单
      */
-    @PostMapping
+    //@PostMapping
     public AjaxResult add(@RequestBody TLoadOrder tLoadOrder)
     {
         return toAjax(tLoadOrderService.insertTLoadOrder(tLoadOrder));
@@ -134,7 +122,7 @@ public class TLoadOrderController extends ApiBaseController
      * @param loadOrder
      * @return
      */
-    @PostMapping("submit")
+    //@PostMapping("submit")
     //type=3是USDT
     public AjaxResult submit(@RequestBody TLoadOrder loadOrder) {
         TAppUser user=getAppUser();
