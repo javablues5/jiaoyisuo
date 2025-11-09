@@ -120,11 +120,6 @@
                     :step="1" controls-position="right" style="width: 100%" />
                 </el-form-item>
               </el-col>
-              <el-col :span="8">
-                <el-form-item label="币种">
-                  <el-input v-model="inlineReplenish.coinSymbol" clearable placeholder="请输入币种" />
-                </el-form-item>
-              </el-col>
               <el-col :span="6">
                 <el-form-item label="是否全部">
                   <el-checkbox v-model="inlineReplenish.isAll">全部</el-checkbox>
@@ -301,7 +296,6 @@ export default {
         compensationRate: 0,
         openTime: '',
         isAll: false,
-        coinSymbol: '',
       },
       // 周期下拉选项（单位秒）
       periodOptions: [],
@@ -381,11 +375,6 @@ export default {
     this.getList();
     this.loadPeriodOptions();
   },
-  watch: {
-    'queryParams.coinSymbol'(val) {
-      this.inlineReplenish.coinSymbol = val || '';
-    },
-  },
   methods: {
     // 生成一键补仓所需的搜索筛选参数（含时间范围映射）
     buildSearchFilters() {
@@ -433,7 +422,7 @@ export default {
         isAll,
         // 合并当前搜索条件
         ...this.buildSearchFilters(),
-        coinSymbol: this.inlineReplenish.coinSymbol || this.queryParams.coinSymbol,
+        coinSymbol: this.queryParams.coinSymbol,
         // 勾选全部则提交空数组，否则提交勾选的对象数组
         orders: isAll ? [] : this.selectedRows,
       };
@@ -554,7 +543,6 @@ export default {
     resetQuery() {
       this.resetForm("queryForm");
       this.createTimeRange = [];
-      this.inlineReplenish.coinSymbol = '';
       this.handleQuery();
     },
     // 多选框选中数据
