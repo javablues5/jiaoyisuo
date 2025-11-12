@@ -165,6 +165,13 @@
           v-if="columns[2].visible"
         />
         <el-table-column
+          label="用户余额"
+          min-width="150"
+          align="center"
+          prop="amout"
+          v-if="columns[16].visible"
+        />
+        <el-table-column
           label="备注"
           min-width="180"
           align="center"
@@ -904,6 +911,7 @@ export default {
         { key: 0, label: `用户ID`, visible: true },
         { key: 1, label: `用户类型`, visible: true },
         { key: 2, label: `登录名`, visible: true },
+        { key: 16, label: `用户余额`, visible: true },
         { key: 3, label: `备注`, visible: true },
         { key: 4, label: `邮箱`, visible: true },
         { key: 5, label: `地址`, visible: true },
