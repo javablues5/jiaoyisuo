@@ -39,7 +39,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectTAppUserList" parameterType="TAppUser" resultMap="TAppUserResult">
         <include refid="selectTAppUserVo"/>
-        <where>  
+        <where>
             <if test="userId != null"> and user_id =#{userId}</if>
             <if test="loginName != null  and loginName != ''"> and login_name like concat('%', #{loginName}, '%')</if>
             <if test="loginPassword != null  and loginPassword != ''"> and login_password = #{loginPassword}</if>
@@ -63,7 +63,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="rechargeAmont != null "> and recharge_amont = #{rechargeAmont}</if>
         </where>
     </select>
-    
+
     <select id="selectTAppUserByUserId" parameterType="Long" resultMap="TAppUserResult">
         <include refid="selectTAppUserVo"/>
         where user_id = #{userId}
@@ -130,8 +130,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         (
         select  IFNULL(c.lose_num, 0)
         from t_app_user_detail c where  a.user_id = c.user_id
-        ) AS lose_num
+        ) AS lose_num,
 
+        <!-- 新增：查询USDT资产金额 -->
+        (
+        select IFNULL(asset.amout, 0)
+        from t_app_asset asset
+        where asset.user_id = a.user_id
+        and asset.symbol = 'usdt'
+        and asset.type = 1
+        ) AS amout
 
         from t_app_user a
         <where>
@@ -302,7 +310,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteTAppUserByUserIds" parameterType="String">
-        delete from t_app_user where user_id in 
+        delete from t_app_user where user_id in
         <foreach item="userId" collection="array" open="(" separator="," close=")">
             #{userId}
         </foreach>

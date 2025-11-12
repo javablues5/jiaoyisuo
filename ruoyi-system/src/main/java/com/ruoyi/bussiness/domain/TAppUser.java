@@ -41,7 +41,11 @@ private static final long serialVersionUID=1L;
 
     @TableField(exist=false)
     private String code;
+
+    @TableField(exist=false)
+    private String amout;
     /**
+     *
      * 姓名
      */
     @Excel(name = "登录名")
@@ -123,7 +127,7 @@ private static final long serialVersionUID=1L;
     @Excel(name = "手机号")
     private String phone;
     /**
-     * vip等级 
+     * vip等级
      */
     private Integer level;
     /**
