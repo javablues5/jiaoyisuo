@@ -335,9 +335,10 @@ public class TWithdrawServiceImpl extends ServiceImpl<TWithdrawMapper, TWithdraw
             if (Objects.nonNull(addMosaic) && Objects.nonNull(addMosaic.getIsOpen())
                     && addMosaic.getIsOpen()) {
                 if (Objects.isNull(user.getRechargeAmont())) user.setRechargeAmont(BigDecimal.ZERO);
-                if (user.getTotleAmont().compareTo(user.getRechargeAmont()) < 0) {
-                    return MessageUtils.message("withdraw_require_error");
-                }
+//                当总打码量小于充值打码量时，不能提现
+//                if (user.getTotleAmont().compareTo(user.getRechargeAmont()) < 0) {
+//                    return MessageUtils.message("withdraw_require_error");
+//                }
             }
         }
 
