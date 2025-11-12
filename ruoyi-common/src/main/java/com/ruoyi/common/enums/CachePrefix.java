@@ -69,7 +69,7 @@ public enum CachePrefix {
     /**
      * 玩家公共的站内信
      */
-    COMMONALITY_MAIL,
+    COMMONALITY_MAIL_TEST,
     /**
      * 币币交易订单key
      */

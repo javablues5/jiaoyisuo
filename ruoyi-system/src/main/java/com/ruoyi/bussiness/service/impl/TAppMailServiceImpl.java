@@ -1,20 +1,15 @@
 package com.ruoyi.bussiness.service.impl;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
-import java.sql.Array;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
 import com.ruoyi.bussiness.domain.TAppUser;
 import com.ruoyi.bussiness.mapper.TAppUserMapper;
-import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.enums.CachePrefix;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
-import com.ruoyi.common.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.bussiness.mapper.TAppMailMapper;
@@ -76,7 +71,7 @@ public class TAppMailServiceImpl extends ServiceImpl<TAppMailMapper,TAppMail> im
     public int insertTAppMail(TAppMail tAppMail)
     {
         int i = 0;
-        String keyCommon = CachePrefix.COMMONALITY_MAIL.getPrefix();
+        String keyCommon = CachePrefix.COMMONALITY_MAIL_TEST.getPrefix();
         tAppMail.setCreateTime(DateUtils.getNowDate());
         tAppMail.setDelFlag("0");
         tAppMail.setStatus(0);
@@ -170,7 +165,7 @@ public class TAppMailServiceImpl extends ServiceImpl<TAppMailMapper,TAppMail> im
                     }
                 }
             }else{
-                String keyCommon = CachePrefix.COMMONALITY_MAIL.getPrefix();
+                String keyCommon = CachePrefix.COMMONALITY_MAIL_TEST.getPrefix();
                 List<TAppMail> list = redisCache.getCacheObject(keyCommon);
                 List<TAppMail> copyList = new ArrayList<>();
                 if (!CollectionUtils.isEmpty(list)){
@@ -195,7 +190,7 @@ public class TAppMailServiceImpl extends ServiceImpl<TAppMailMapper,TAppMail> im
     @Override
     public List<TAppMail> listByUserId(TAppMail tAppMail) {
         String key = CachePrefix.USER_MAIL.getPrefix() + tAppMail.getUserId();
-        String keyCommon = CachePrefix.COMMONALITY_MAIL.getPrefix();
+        String keyCommon = CachePrefix.COMMONALITY_MAIL_TEST.getPrefix();
         List<TAppMail> list = redisCache.getCacheObject(key);
         List<TAppMail> mailList = redisCache.getCacheObject(keyCommon);
 //        if (CollectionUtils.isEmpty(list)){
@@ -205,7 +200,9 @@ public class TAppMailServiceImpl extends ServiceImpl<TAppMailMapper,TAppMail> im
 //            mailList =tAppMailMapper.selectList(new LambdaQueryWrapper<TAppMail>().eq(TAppMail::getType,"2"));
 //        }
         list = CollectionUtils.isEmpty(list)?new ArrayList<>():list;
+        //list = list.stream().filter(l-> Objects.equals(l.getDelFlag(), "0")).collect(Collectors.toList());
         mailList = CollectionUtils.isEmpty(mailList)?new ArrayList<>():mailList;
+        //mailList = mailList.stream().filter(ml-> Objects.equals(ml.getDelFlag(), "0")).collect(Collectors.toList());
         list.addAll(mailList);
         return list;
     }
