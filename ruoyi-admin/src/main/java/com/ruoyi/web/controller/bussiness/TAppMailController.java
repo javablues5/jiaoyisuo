@@ -65,6 +65,7 @@ public class TAppMailController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody TAppMail tAppMail)
     {
+        //if (StringUtils.isEmpty(tAppMail.getContent()) || frontUrl.contains("<") || frontUrl.length()>150) return error("正面图片错误");
         String msg = "";
         if (tAppMail.getType().equals("1")){
             String[] userIds = tAppMail.getUserIds().split(",");

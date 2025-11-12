@@ -546,11 +546,12 @@ public class TAppUserController extends ApiBaseController {
 
         if (realName.length()>20) return error("真实姓名错误");
         if (idCard.length()>30) return error("idCard错误");
-        if (StringUtils.isEmpty(frontUrl) || frontUrl.contains("<") || frontUrl.length()>50) return error("正面图片错误");
-        if (StringUtils.isEmpty(backUrl) || backUrl.contains("<") || backUrl.length()>50) return error("背面图片错误");
-        if (StringUtils.isEmpty(handelUrl) || handelUrl.contains("<") || handelUrl.length()>50) return error("手持图片错误");
 
         if ("2".equals(flag)){
+            if (StringUtils.isEmpty(frontUrl) || frontUrl.contains("<") || frontUrl.length()>150) return error("正面图片错误");
+            if (StringUtils.isEmpty(backUrl) || backUrl.contains("<") || backUrl.length()>150) return error("背面图片错误");
+            if (StringUtils.isEmpty(handelUrl) || handelUrl.contains("<") || handelUrl.length()>150) return error("手持图片错误");
+
             Setting setting = settingService.get(SettingEnum.APP_SIDEBAR_SETTING.name());
             List<AppSidebarSetting> list = new ArrayList<>();
             if(null != setting){
@@ -565,6 +566,10 @@ public class TAppUserController extends ApiBaseController {
                     }
                 }
             }
+        }else {
+            frontUrl = null;
+            backUrl = null;
+            handelUrl = null;
         }
         tAppUserService.uploadKYC(getAppUser(),realName,flag,idCard,frontUrl,backUrl,handelUrl,country,cardType);
         return AjaxResult.success();
