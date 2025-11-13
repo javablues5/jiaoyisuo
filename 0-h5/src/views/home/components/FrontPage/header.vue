@@ -14,6 +14,11 @@
         <div><Logo></Logo> <span class="title">{{ _t18('digital_currency_trading') }}</span></div>
         <div class="leftSide">
           <svg-load name="sousuo" class="rightImg" @click="$router.push('/quote')"></svg-load>
+          <svg-load
+            name="kefu"
+            class="rightImg"
+            @click="dispatchCustomEvent('event_serviceChange')"
+          ></svg-load>
           <svg-load name="message" class="rightImg" @click="$router.push('/message')"></svg-load>
           <svg-load name="user" class="rightImg" @click="openSideBar"></svg-load>
         </div>
@@ -64,6 +69,7 @@ import { useMainStore } from '@/store/index.js'
 import { useRouter } from 'vue-router'
 import { onMounted, computed, ref } from 'vue'
 import { publiceNotice } from '@/api/common/index'
+import { dispatchCustomEvent } from '@/utils'
 import { _t18 } from '@/utils/public'
 import SideBar from '@/views/home/sidebar/index.vue'
 const show = ref(false)
