@@ -65,7 +65,7 @@ token:
     # 令牌自定义标识
     header: Authorization
     # 令牌密钥
-    secret: abcdefghijklmnopqrstuvwxyz
+    secret: abcdguyg7ef7ghijklmnrs56bgvzl87
     # 令牌有效期（默认30分钟）
     expireTime: 240
   
@@ -121,9 +121,9 @@ mifeng:
 telegram:
   user:
     name: Tetris_Echo2_Bot
-    token: 6569654388:AAGOibgZcZJPimx2-beGGNF42mENmUbtdd8
+    token: 8010104347:AAFuuum7ZjnZc-_xXOsND0-67oEPSLunLCY
   group:
-    charId: -905665230
+    charId: -4841561424L
 
 
 #stream 相关配置

@@ -15,7 +15,8 @@ ruoyi:
   # 验证码类型 math 数字计算 char 字符验证
   captchaType: math
 
-  googleHost : https://win999.com
+  #googleHost : https://win999.com
+  googleHost : qergwhtsgrb
 
 # 开发环境配置
 server:
@@ -67,7 +68,7 @@ token:
     # 令牌自定义标识
     header: Authorization
     # 令牌密钥
-    secret: abcdefghijklmnopqrstuvwxyz
+    secret: abcde23tfghmno322y3th2pqrstu2h4
     # 令牌有效期（默认30分钟）
     expireTime: 300
   
